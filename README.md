@@ -1,5 +1,13 @@
 # SigmaTokens
 
+## Install dependencies
+Before running the application, please install the dependencies in each folder: 
+1. root folder
+2. client folder
+3. server folder
+
+Using the script: `npm install` in each one of the folders.
+
 ## How to run the application
 
 ### Production

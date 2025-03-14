@@ -5,7 +5,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Define the absolute path to your client build folder.
-const clientBuildPath = path.resolve(process.cwd(), '../client', 'dist');
+const clientBuildPath = path.join(__dirname, '../client/dist');
 
 // Serve static files from the client build directory.
 app.use(express.static(clientBuildPath));

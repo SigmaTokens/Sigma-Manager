@@ -2,7 +2,12 @@
     "scripts": {
         "build-client": "npm --prefix client run build",
         "start-server": "npm --prefix server run start",
-        "start": "npm run build-client && npm run start-server"
+        "start": "npm run build-client && npm run start-server",
+
+        "dev:client": "npm --prefix client run dev",
+        "dev:server": "npm --prefix server run dev",
+        "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\""
+
     },
     "name": "sigmatokens",
     "version": "1.0.0",

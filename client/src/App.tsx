@@ -1,12 +1,18 @@
-//import { useState } from 'react'
-//import 'styles/App.css'
+import {BrowserRouter, Routes, Route} from "react-router-dom"
+import Header from "./components/Header"
+import Home from "./pages/Home"
+import Alerts from "./pages/Alerts"
 
 function App() {
-  //const [someState, setSomeState] = useState(0)
-
   return (
     <>
-      <h1>App</h1>
+      <Header />
+      <BrowserRouter>
+        <Routes>
+            <Route path="/" element={<Home />}></Route>
+            <Route path="/alerts" element={<Alerts />}></Route>
+        </Routes>
+      </BrowserRouter>
     </>
   )
 }

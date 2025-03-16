@@ -3,10 +3,12 @@
   "scripts": {
     "prod-client": "npm --prefix client run build",
     "prod-server": "npm --prefix server run start",
-    "prod": "concurrently \"npm run prod-server\" \"npm run prod-client\"",
+    "prod-database": "npm --prefix database run init",
+    "prod": "concurrently \"npm run prod-database\" \"npm run prod-server\" \"npm run prod-client\"",
     "dev-client": "npm --prefix client run dev",
     "dev-server": "npm --prefix server run dev",
-    "dev": "concurrently \"npm run dev-client\" \"npm run dev-server\"",
+    "dev-database": "npm --prefix database run init",
+    "dev": "concurrently \"npm run dev-database\" \"npm run dev-server\" \"npm run dev-client\"",
     "start-dev": "node start.js dev",
     "start-prod": "node start.js prod"
   },

@@ -6,11 +6,14 @@ function get_mode() {
   else if (mode.includes("prod")) return "prod";
 
   console.error("[-] Please specify a mode to run the project: dev or prod");
-  process.exit(1);
+  process.exit(-1);
 }
 
 function install_deps() {
   try {
+    console.log("[+] Updating deps for root~~~");
+    execSync("npm install", { stdio: "inherit" });
+
     console.log("[+] Updating deps for client~~~");
     execSync("npm install --prefix client", { stdio: "inherit" });
 
@@ -20,7 +23,7 @@ function install_deps() {
     console.log("[+] Deps update complete!");
   } catch (error) {
     console.error("[-] Failed to update deps:", error.message);
-    process.exit(1);
+    process.exit(-1);
   }
 }
 
@@ -30,7 +33,7 @@ function run_sigmatokens(mode) {
     execSync(`npm run ${mode}`, { stdio: "inherit" });
   } catch (error) {
     console.error("[-] Failed to start:", error.message);
-    process.exit(1);
+    process.exit(-1);
   }
 }
 

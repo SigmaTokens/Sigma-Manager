@@ -1,30 +1,27 @@
 {
-    "scripts": {
-        "build-client": "npm --prefix client run build",
-        "start-server": "npm --prefix server run start",
-        "start": "npm run build-client && npm run start-server",
-
-        "dev:client": "npm --prefix client run dev",
-        "dev:server": "npm --prefix server run dev",
-        "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\""
-
-    },
-    "name": "sigmatokens",
-    "version": "1.0.0",
-    "description": "**Add stuff here later on**",
-    "main": "index.js",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/SigmaTokens/SigmaTokens.git"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/SigmaTokens/SigmaTokens/issues"
-    },
-    "homepage": "https://github.com/SigmaTokens/SigmaTokens#readme",
-    "devDependencies": {
-        "concurrently": "^9.1.2"
-    }
+  "type": "module",
+  "scripts": {
+    "prod-client": "npm --prefix client run build",
+    "prod-server": "npm --prefix server run start",
+    "prod": "npm run prod-server && npm run prod-client",
+    "dev-client": "npm --prefix client run dev",
+    "dev-server": "npm --prefix server run dev",
+    "dev": "npm run dev-server && npm run dev-client",
+    "start-dev": "node start.js dev",
+    "start-prod": "node start.js prod"
+  },
+  "name": "sigmatokens",
+  "version": "1.0.0",
+  "description": "**Add stuff here later on**",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SigmaTokens/SigmaTokens.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SigmaTokens/SigmaTokens/issues"
+  },
+  "homepage": "https://github.com/SigmaTokens/SigmaTokens#readme"
 }

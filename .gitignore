@@ -12,6 +12,7 @@ dist-ssr
 *.local
 .env
 database/database.sqlite
+database.sqlite
 
 .vscode/*
 !.vscode/extensions.json

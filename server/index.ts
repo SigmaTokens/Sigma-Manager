@@ -1,25 +1,22 @@
 import express from "express";
 import { serveClient } from "./routes/client";
-import { dbPromise } from "../database/database";
+import { serveDatabase } from "./routes/database";
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-async function init_database() {
-  try {
-    const database = await dbPromise;
-    console.log("Database connection object:", database);
+serveDatabase()
+  .then((database) => {
     app.locals.db = database;
-  } catch (error) {
-    console.error("Error fetching database connection object:", error);
-    process.exit(-1);
-  }
-}
+    console.log("Database connection initialized:", app.locals.db);
 
-serveClient(app);
+    serveClient(app);
 
-init_database();
-
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+    app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+    });
+  })
+  .catch((error) => {
+    console.error("Failed to initialize server:", error);
+    process.exit(1);
+  });

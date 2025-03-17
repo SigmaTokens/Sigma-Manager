@@ -1,12 +1,35 @@
 import { execSync } from "child_process";
+import fs from "fs";
+import path from "path";
+
+main();
+
+function main() {
+  const mode = get_mode();
+  init_database_file();
+  install_deps();
+  run_sigmatokens(mode);
+}
 
 function get_mode() {
   const mode = process.argv[2];
-  if (mode.includes("dev")) return "dev";
-  else if (mode.includes("prod")) return "prod";
+  return mode.includes("dev")
+    ? "dev"
+    : mode.includes("prod")
+    ? "prod"
+    : (console.error(
+        "[-] Please specify a mode to run the project: dev or prod"
+      ),
+      process.exit(-1));
+}
 
-  console.error("[-] Please specify a mode to run the project: dev or prod");
-  process.exit(-1);
+function init_database_file() {
+  const databaseDir = path.join(process.cwd(), "database");
+  const databasePath = path.join(databaseDir, "database.sqlite");
+
+  if (!fs.existsSync(databasePath)) fs.writeFileSync(databasePath, "");
+
+  console.log("[+] Database file: database.sqlite");
 }
 
 function install_deps() {
@@ -39,11 +62,3 @@ function run_sigmatokens(mode) {
     process.exit(-1);
   }
 }
-
-function main() {
-  const mode = get_mode();
-  install_deps();
-  run_sigmatokens(mode);
-}
-
-main();

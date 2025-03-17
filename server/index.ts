@@ -1,11 +1,11 @@
 import express from "express";
 import { serveClient } from "./routes/client";
-import { serveDatabase } from "./routes/database";
+import { startDatabase } from "../database/database";
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-serveDatabase()
+startDatabase()
   .then((database) => {
     app.locals.db = database;
     console.log("Database connection initialized:", app.locals.db);

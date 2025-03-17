@@ -14,7 +14,10 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.21.2",
-    "is-elevated": "^4.0.0"
+    "is-elevated": "^4.0.0",
+    "sigmatokens": "file:..",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",

@@ -1,5 +1,6 @@
 import sqlite3 from "sqlite3";
 import { open, Database } from "sqlite";
+import path from "path";
 
 async function init_types_table(
   database: Database<sqlite3.Database, sqlite3.Statement>
@@ -87,16 +88,47 @@ async function populate_types_table(
 
   for (const type of types) {
     await database.run(
-      `INSERT OR IGNORE INTO types (type_name, description) VALUES (?, ?)`,
-      [type.type_name, type.description]
+      `INSERT OR REPLACE INTO types (type_id, type_name, description) VALUES (?, ?, ?)`,
+      [type.type_id, type.type_name, type.description]
+    );
+  }
+}
+
+async function is_table_exists(
+  database: Database<sqlite3.Database, sqlite3.Statement>,
+  table_name: string
+) {
+  const result = await database.get(
+    `SELECT name FROM sqlite_master WHERE type='table' AND name=?`,
+    [table_name]
+  );
+  console.log(`[+] Table '${table_name}' status:`, result ? "up" : "down");
+  return result !== undefined;
+}
+
+async function print_table(
+  database: Database<sqlite3.Database, sqlite3.Statement>,
+  table_name: string
+) {
+  try {
+    const rows = await database.all(`SELECT * FROM ${table_name}`);
+    console.log(`[+] Table '${table_name}' data (${rows.length} rows):`, rows);
+  } catch (error) {
+    console.error(
+      `[-] Failed to fetch data from table '${table_name}':`,
+      error
     );
   }
 }
 
 export async function startDatabase() {
   try {
+    const database_absolute_path = path.join(
+      __dirname,
+      "../database/database.sqlite"
+    );
     const database: Database<sqlite3.Database, sqlite3.Statement> = await open({
-      filename: "./database.sqlite",
+      filename: database_absolute_path,
       driver: sqlite3.Database,
     });
 
@@ -107,9 +139,16 @@ export async function startDatabase() {
 
     await populate_types_table(database);
 
+    await is_table_exists(database, "types");
+    await is_table_exists(database, "honeytokens");
+    await is_table_exists(database, "alerts");
+    await is_table_exists(database, "whitelist");
+
+    await print_table(database, "types");
+
     return database;
   } catch (error) {
-    console.error("Failed to initialize database:", error);
+    console.error("[-] Failed to initialize database:", error);
     process.exit(-1);
   }
 }

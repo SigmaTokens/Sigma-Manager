@@ -18,6 +18,18 @@ async function init_honeytokens_table(
   `);
 }
 
+async function init_types_table(
+  database: Database<sqlite3.Database, sqlite3.Statement>
+) {
+  await database.exec(`
+    CREATE TABLE IF NOT EXISTS types (
+      type_id INTEGER PRIMARY KEY AUTOINCREMENT,
+      type_name VARCHAR NOT NULL,
+      description TEXT
+    );
+  `);
+}
+
 export async function startDatabase() {
   try {
     const database: Database<sqlite3.Database, sqlite3.Statement> = await open({
@@ -26,6 +38,7 @@ export async function startDatabase() {
     });
 
     await init_honeytokens_table(database);
+    await init_types_table(database);
 
     return database;
   } catch (error) {

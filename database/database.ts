@@ -62,6 +62,31 @@ async function init_whitelist_table(
   `);
 }
 
+async function is_table_exists(
+  database: Database<sqlite3.Database, sqlite3.Statement>,
+  table_name: string
+) {
+  const result = await database.get(
+    `SELECT name FROM sqlite_master WHERE type='table' AND name=?`,
+    [table_name]
+  );
+  console.log(`[+] Table '${table_name}' status:`, result ? "up" : "down");
+  return result !== undefined;
+}
+
+async function init_tables(
+  database: Database<sqlite3.Database, sqlite3.Statement>
+) {
+  if (await is_table_exists(database, "types"))
+    await init_types_table(database);
+  if (await is_table_exists(database, "honeytokens"))
+    await init_honeytokens_table(database);
+  if (await is_table_exists(database, "alerts"))
+    await init_alerts_table(database);
+  if (await is_table_exists(database, "whitelist"))
+    await init_whitelist_table(database);
+}
+
 async function populate_types_table(
   database: Database<sqlite3.Database, sqlite3.Statement>
 ) {
@@ -94,18 +119,6 @@ async function populate_types_table(
   }
 }
 
-async function is_table_exists(
-  database: Database<sqlite3.Database, sqlite3.Statement>,
-  table_name: string
-) {
-  const result = await database.get(
-    `SELECT name FROM sqlite_master WHERE type='table' AND name=?`,
-    [table_name]
-  );
-  console.log(`[+] Table '${table_name}' status:`, result ? "up" : "down");
-  return result !== undefined;
-}
-
 async function print_table(
   database: Database<sqlite3.Database, sqlite3.Statement>,
   table_name: string
@@ -132,17 +145,9 @@ export async function startDatabase() {
       driver: sqlite3.Database,
     });
 
-    await init_types_table(database);
-    await init_honeytokens_table(database);
-    await init_alerts_table(database);
-    await init_whitelist_table(database);
+    await init_tables(database);
 
     await populate_types_table(database);
-
-    await is_table_exists(database, "types");
-    await is_table_exists(database, "honeytokens");
-    await is_table_exists(database, "alerts");
-    await is_table_exists(database, "whitelist");
 
     await print_table(database, "types");
 

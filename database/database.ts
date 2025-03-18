@@ -1,6 +1,18 @@
 import sqlite3 from "sqlite3";
 import { open, Database } from "sqlite";
 
+async function init_types_table(
+  database: Database<sqlite3.Database, sqlite3.Statement>
+) {
+  await database.exec(`
+    CREATE TABLE IF NOT EXISTS types (
+      type_id INTEGER PRIMARY KEY AUTOINCREMENT,
+      type_name VARCHAR NOT NULL,
+      description TEXT
+    );
+  `);
+}
+
 async function init_honeytokens_table(
   database: Database<sqlite3.Database, sqlite3.Statement>
 ) {
@@ -13,19 +25,7 @@ async function init_honeytokens_table(
       expire_date DATETIME,
       notes TEXT,
       data TEXT,
-      FOREIGN KEY (type_id) REFERENCES types(id)
-    );
-  `);
-}
-
-async function init_types_table(
-  database: Database<sqlite3.Database, sqlite3.Statement>
-) {
-  await database.exec(`
-    CREATE TABLE IF NOT EXISTS types (
-      type_id INTEGER PRIMARY KEY AUTOINCREMENT,
-      type_name VARCHAR NOT NULL,
-      description TEXT
+      FOREIGN KEY (type_id) REFERENCES types(type_id)
     );
   `);
 }
@@ -68,8 +68,9 @@ export async function startDatabase() {
       driver: sqlite3.Database,
     });
 
-    await init_honeytokens_table(database);
+    // Initialize tables in the correct order
     await init_types_table(database);
+    await init_honeytokens_table(database);
     await init_alerts_table(database);
     await init_whitelist_table(database);
 

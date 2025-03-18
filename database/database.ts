@@ -30,6 +30,23 @@ async function init_types_table(
   `);
 }
 
+async function init_alerts_table(
+  database: Database<sqlite3.Database, sqlite3.Statement>
+) {
+  await database.exec(`
+    CREATE TABLE IF NOT EXISTS alerts (
+      alert_id VARCHAR PRIMARY KEY,
+      token_id VARCHAR,
+      alert_grade INTEGER,
+      alert_date DATE,
+      alert_time TIME,
+      access_ip VARCHAR,
+      log TEXT,
+      FOREIGN KEY (token_id) REFERENCES honeytokens(token_id)
+    );
+  `);
+}
+
 export async function startDatabase() {
   try {
     const database: Database<sqlite3.Database, sqlite3.Statement> = await open({
@@ -39,6 +56,7 @@ export async function startDatabase() {
 
     await init_honeytokens_table(database);
     await init_types_table(database);
+    await init_alerts_table(database);
 
     return database;
   } catch (error) {

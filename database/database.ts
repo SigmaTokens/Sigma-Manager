@@ -77,14 +77,22 @@ async function is_table_exists(
 async function init_tables(
   database: Database<sqlite3.Database, sqlite3.Statement>
 ) {
-  if (await is_table_exists(database, "types"))
+  if (!(await is_table_exists(database, "types"))) {
     await init_types_table(database);
-  if (await is_table_exists(database, "honeytokens"))
+    console.log("[+] Initiated types table successfully");
+  }
+  if (!(await is_table_exists(database, "honeytokens"))) {
     await init_honeytokens_table(database);
-  if (await is_table_exists(database, "alerts"))
+    console.log("[+] Initiated honeytokens table successfully");
+  }
+  if (!(await is_table_exists(database, "alerts"))) {
     await init_alerts_table(database);
-  if (await is_table_exists(database, "whitelist"))
+    console.log("[+] Initiated alerts table successfully");
+  }
+  if (!(await is_table_exists(database, "whitelist"))) {
     await init_whitelist_table(database);
+    console.log("[+] Initiated whitelist table successfully");
+  }
 }
 
 async function populate_types_table(

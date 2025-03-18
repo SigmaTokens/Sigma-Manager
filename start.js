@@ -24,12 +24,13 @@ function get_mode() {
 }
 
 function init_database_file() {
-  const databaseDir = path.join(process.cwd(), "database");
-  const databasePath = path.join(databaseDir, "database.sqlite");
+  const database_dir = path.join(process.cwd(), "database");
+  const database_file_name = "database.sqlite";
+  const database_path = path.join(database_dir, database_file_name);
 
-  if (!fs.existsSync(databasePath)) fs.writeFileSync(databasePath, "");
+  if (!fs.existsSync(database_path)) fs.writeFileSync(database_path, "");
 
-  console.log("[+] Database file: database.sqlite");
+  console.log(`[+] Database absolute path: ${database_path}`);
 }
 
 function install_deps() {
@@ -55,7 +56,7 @@ function install_deps() {
 
 function run_sigmatokens(mode) {
   try {
-    console.log(`Starting in ${mode} mode~~~`);
+    console.log(`[+] Starting in ${mode} mode~~~`);
     execSync(`npm run ${mode}`, { stdio: "inherit" });
   } catch (error) {
     console.error("[-] Failed to start:", error.message);

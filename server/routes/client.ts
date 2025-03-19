@@ -4,7 +4,7 @@ import path from "path";
 export const serveClient = (app: any) => {
   const clientBuildPath = path.join(__dirname, "../client/dist");
 
-  if (process.env.NODE_ENV === "production") {
+  if (process.env.MODE === "prod") {
     app.use(express.static(clientBuildPath));
 
     app.get("*", (req: any, res: any) => {

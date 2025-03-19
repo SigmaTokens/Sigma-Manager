@@ -1,0 +1,8 @@
+@import "tailwindcss";
+@import "tailwindcss/preflight";
+@tailwind utilities;
+
+:root {
+  --global-color-1: #0138b7;
+  --global-color-2: #fefefe;
+}

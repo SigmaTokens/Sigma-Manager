@@ -1,6 +1,7 @@
 import { Database } from "sqlite";
 import sqlite3 from "sqlite3";
 import { v4 as uuidv4 } from "uuid";
+import { get_all_types } from "./types";
 
 export async function init_honeytokens_table(
   database: Database<sqlite3.Database, sqlite3.Statement>
@@ -19,24 +20,33 @@ export async function init_honeytokens_table(
   `);
 }
 
+export async function get_all_honeytokens(
+  database: Database<sqlite3.Database, sqlite3.Statement>
+) {
+  return await database.all(`SELECT token_id FROM honeytokens`);
+}
+
+export async function delete_all_honeytokens(
+  database: Database<sqlite3.Database, sqlite3.Statement>
+) {
+  return await database.run(`DELETE FROM honeytokens`);
+}
+
 export async function dummy_populate_honeytokens(
   database: Database<sqlite3.Database, sqlite3.Statement>
 ) {
-  await database.run("DELETE FROM honeytokens");
-
+  await delete_all_honeytokens(database);
   const honeytokens = [];
 
-  const existingTypes = await database.all("SELECT type_id FROM types");
-  if (existingTypes.length === 0) {
-    throw new Error("[-] No types found in types table");
-  }
+  const types = await get_all_types(database);
+
+  if (types.length === 0) throw new Error("[-] No types found in types table");
 
   for (let i = 0; i < 50; i++) {
     honeytokens.push({
       token_id: uuidv4(),
       group_id: `group_${Math.floor(Math.random() * 5) + 1}`,
-      type_id:
-        existingTypes[Math.floor(Math.random() * existingTypes.length)].type_id,
+      type_id: types[Math.floor(Math.random() * types.length)].type_id,
       creation_date: new Date(Date.now() - Math.random() * 10000000000)
         .toISOString()
         .split("T")[0],

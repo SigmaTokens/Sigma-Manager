@@ -26,13 +26,12 @@ export async function startDatabase() {
       await print_table(database, "types");
       await dummy_populate_honeytokens(database);
       await dummy_populate_alerts(database);
-      await print_table(database, "honeytokens");
-      await print_table(database, "alerts");
     }
 
     return database;
   } catch (error) {
-    console.error("[-] Failed to initialize database:", error);
+    if (process.env.MODE === "dev")
+      console.error("[-] Failed to initialize database:", error);
     process.exit(-1);
   }
 }

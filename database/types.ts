@@ -13,6 +13,12 @@ export async function init_types_table(
   `);
 }
 
+export async function get_all_types(
+  database: Database<sqlite3.Database, sqlite3.Statement>
+) {
+  return await database.all(`SELECT type_id FROM types`);
+}
+
 export async function populate_types_table(
   database: Database<sqlite3.Database, sqlite3.Statement>
 ) {

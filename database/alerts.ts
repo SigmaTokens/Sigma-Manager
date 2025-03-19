@@ -1,6 +1,8 @@
 import { Database } from "sqlite";
 import sqlite3 from "sqlite3";
 import { v4 as uuidv4 } from "uuid";
+import { get_all_honeytokens } from "./honeytokens";
+import { get_random_date, get_random_time, get_random_ip } from "./helpers";
 
 export async function init_alerts_table(
   database: Database<sqlite3.Database, sqlite3.Statement>
@@ -36,46 +38,32 @@ export async function get_all_alerts(
   );
 }
 
+export async function delete_all_alerts(
+  database: Database<sqlite3.Database, sqlite3.Statement>
+) {
+  await database.run(`DELETE FROM alerts`);
+}
+
 export async function dummy_populate_alerts(
   database: Database<sqlite3.Database, sqlite3.Statement>
 ) {
-  await database.run("DELETE FROM alerts");
+  await delete_all_alerts(database);
 
   const alerts = [];
-  const getRandomIP = () =>
-    `${Math.floor(Math.random() * 256)}.${Math.floor(
-      Math.random() * 256
-    )}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}`;
+  const honeytokens = await get_all_honeytokens(database);
 
-  const getRandomTime = () => {
-    const hours = String(Math.floor(Math.random() * 24)).padStart(2, "0");
-    const minutes = String(Math.floor(Math.random() * 60)).padStart(2, "0");
-    const seconds = String(Math.floor(Math.random() * 60)).padStart(2, "0");
-    return `${hours}:${minutes}:${seconds}`;
-  };
-
-  const getRandomDate = () => {
-    const now = Date.now();
-    const thirtyDaysAgo = now - 30 * 24 * 60 * 60 * 1000;
-    const randomTimestamp =
-      Math.random() * (now - thirtyDaysAgo) + thirtyDaysAgo;
-    return new Date(randomTimestamp).toISOString().split("T")[0];
-  };
-
-  const existingTokens = await database.all("SELECT token_id FROM honeytokens");
-  if (existingTokens.length === 0)
+  if (honeytokens.length === 0)
     throw new Error("[-] No tokens found in honeytokens table");
 
   for (let i = 0; i < 100; i++) {
     alerts.push({
       alert_id: uuidv4(),
       token_id:
-        existingTokens[Math.floor(Math.random() * existingTokens.length)]
-          .token_id,
+        honeytokens[Math.floor(Math.random() * honeytokens.length)].token_id,
       alert_grade: Math.floor(Math.random() * 10) + 1,
-      alert_date: getRandomDate(),
-      alert_time: getRandomTime(),
-      access_ip: getRandomIP(),
+      alert_date: get_random_date(),
+      alert_time: get_random_time(),
+      access_ip: get_random_ip(),
       log: `Suspicious activity detected on token ${i + 1}`,
     });
   }

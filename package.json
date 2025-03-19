@@ -9,8 +9,8 @@
     "dev-server": "npm --prefix server run dev",
     "dev-database": "npm --prefix database run init",
     "dev": "concurrently \"npm run dev-database\" \"npm run dev-server\" \"npm run dev-client\"",
-    "start-dev": "node start.js dev",
-    "start-prod": "node start.js prod"
+    "start-dev": "cross-env MODE=dev node start.js dev",
+    "start-prod": "cross-env MODE=prod node start.js prod"
   },
   "name": "sigmatokens",
   "version": "1.0.0",
@@ -28,5 +28,8 @@
   "homepage": "https://github.com/SigmaTokens/SigmaTokens#readme",
   "devDependencies": {
     "concurrently": "^9.1.2"
+  },
+  "dependencies": {
+    "cross-env": "^7.0.3"
   }
 }

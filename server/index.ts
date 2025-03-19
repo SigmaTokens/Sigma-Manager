@@ -1,14 +1,19 @@
 import express from "express";
+import cors from "cors";
 import { serveClient } from "./routes/client";
+import { serveAlerts } from "./routes/alerts";
 import { startDatabase } from "../database/database";
 
 const app = express();
+app.use(cors());
 const port = process.env.PORT || 3000;
 
 startDatabase()
   .then((database) => {
     app.locals.db = database;
     console.log("[+] Database connection initialized:", app.locals.db);
+
+    serveAlerts(app);
 
     serveClient(app);
 

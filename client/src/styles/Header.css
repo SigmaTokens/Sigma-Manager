@@ -1,4 +1,39 @@
 .header {
+  background-color: #282c34;
+  padding: 10px;
+}
+
+.header nav {
   display: flex;
-  border: 1px red solid;
+  align-items: center;
+}
+
+.header ul {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.header .logo {
+  height: 40px;
+  margin-right: 15px;
+}
+
+.header ul li {
+  margin-right: 10px;
+}
+
+.header ul li a {
+  text-decoration: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-weight: 600;
+  font-family: Arial, sans-serif;
+  transition: background-color 0.3s;
+}
+
+.header ul li a:hover {
+  background-color: #61dafb;
 }

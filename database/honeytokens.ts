@@ -2,6 +2,7 @@ import { Database } from "sqlite";
 import sqlite3 from "sqlite3";
 import { v4 as uuidv4 } from "uuid";
 import { get_all_types } from "./types";
+import { begin_transaction, commit, rollback } from "./helpers";
 
 export async function init_honeytokens_table(
   database: Database<sqlite3.Database, sqlite3.Statement>
@@ -46,12 +47,19 @@ export async function delete_honeytoken_by_id(
   database: Database<sqlite3.Database, sqlite3.Statement>,
   token_id: String
 ) {
-  database.run(
-    `DELETE 
-    FROM honeytokens
-    WHERE token_id = ?`,
-    [token_id]
-  );
+  try {
+    await begin_transaction(database);
+
+    await database.run(`DELETE FROM alerts WHERE token_id = ?`, [token_id]);
+
+    await database.run(`DELETE FROM honeytokens WHERE token_id = ?`, [
+      token_id,
+    ]);
+
+    await commit(database);
+  } catch (error) {
+    await rollback(database);
+  }
 }
 
 export async function dummy_populate_honeytokens(

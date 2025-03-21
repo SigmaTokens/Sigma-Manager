@@ -4,12 +4,19 @@ function Header() {
 	return (
 		<header className="header">
 			<nav>
-				<li>
-					<a href="/">Home</a>
-				</li>
-				<li>
-					<a href="/alerts">Alerts</a>
-				</li>
+				<ul>
+					<li>
+						<a href="/">Home</a>
+					</li>
+					<li>
+						<a href="/alerts">Alerts</a>
+					</li>
+				</ul>
+				<ul>
+					<li>
+						<a href="/honeytokens">honeytokens</a>
+					</li>
+				</ul>
 			</nav>
 		</header>
 	);

@@ -1,22 +1,4 @@
-.loading-container,
-.error-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-.loading-text {
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-.error-text {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: red;
-}
-
-.tokens-container {
+.honeytokens-container {
   padding: 1.5rem;
   background-color: #f9fafb;
   min-height: 100vh;
@@ -25,7 +7,7 @@
   align-items: center;
 }
 
-.tokens-title {
+.honeytokens-title {
   font-size: 1.875rem;
   font-weight: 700;
   color: #1f2937;
@@ -41,20 +23,20 @@
   max-width: 72rem;
 }
 
-.tokens-table {
+.honeytokens-table {
   width: 100%;
   border-collapse: collapse;
   border: 1px solid #e5e7eb;
 }
 
-.tokens-table th,
-.tokens-table td {
+.honeytokens-table th,
+.honeytokens-table td {
   padding: 0.75rem;
   text-align: center;
   border: 1px solid #e5e7eb;
 }
 
-.tokens-table th {
+.honeytokens-table th {
   background-color: #f9fafb;
   font-size: 0.75rem;
   font-weight: 500;
@@ -62,23 +44,42 @@
   text-transform: uppercase;
 }
 
-.tokens-table td {
+.honeytokens-table td {
   font-size: 0.875rem;
   color: #1f2937;
 }
 
-.tokens-table tbody tr {
+.honeytokens-table tbody tr {
   background-color: white;
   transition: background-color 0.2s;
 }
 
-.tokens-table tbody tr:hover {
+.honeytokens-table tbody tr:hover {
   background-color: #f3f4f6;
 }
 
-.no-tokens {
+.no-honeytokens {
   padding: 1rem;
   text-align: center;
   font-size: 0.875rem;
   color: #6b7280;
+}
+
+.loading-container,
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.loading-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.error-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: red;
 }

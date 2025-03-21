@@ -23,7 +23,17 @@ export async function init_honeytokens_table(
 export async function get_all_honeytokens(
   database: Database<sqlite3.Database, sqlite3.Statement>
 ) {
-  return await database.all(`SELECT token_id FROM honeytokens`);
+  return await database.all(
+    `SELECT 
+    token_id, 
+    group_id, 
+    type_id, 
+    creation_date, 
+    expire_date, 
+    notes, 
+    data 
+    FROM honeytokens`
+  );
 }
 
 export async function delete_all_honeytokens(

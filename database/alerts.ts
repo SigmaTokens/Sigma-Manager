@@ -1,7 +1,7 @@
 import { Database } from "sqlite";
 import sqlite3 from "sqlite3";
 import { v4 as uuidv4 } from "uuid";
-import { get_all_honeytokens } from "./honeytokens";
+import { get_all_honeytokens } from "./HoneyTokens";
 import { get_random_date, get_random_time, get_random_ip } from "./helpers";
 
 export async function init_alerts_table(

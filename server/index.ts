@@ -14,7 +14,7 @@ startDatabase()
     app.locals.db = database;
     console.log("[+] Database connection initialized:", app.locals.db);
 
-    serveHoneytokens(app);
+    serveHoneytokens(app, database);
     serveAlerts(app);
 
     serveClient(app);

@@ -42,6 +42,18 @@ export async function delete_all_honeytokens(
   return await database.run(`DELETE FROM honeytokens`);
 }
 
+export async function delete_honeytoken_by_id(
+  database: Database<sqlite3.Database, sqlite3.Statement>,
+  token_id: String
+) {
+  database.run(
+    `DELETE 
+    FROM honeytokens
+    WHERE token_id = ?`,
+    [token_id]
+  );
+}
+
 export async function dummy_populate_honeytokens(
   database: Database<sqlite3.Database, sqlite3.Statement>
 ) {

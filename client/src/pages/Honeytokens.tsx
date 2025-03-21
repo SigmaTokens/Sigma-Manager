@@ -8,24 +8,43 @@ function Honeytokens() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchHoneytokens = async () => {
-      try {
-        const response = await fetch("http://localhost:3000/api/honeytokens");
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const data: Honeytoken[] = await response.json();
-        setHoneytokens(data);
-      } catch (err) {
-        console.error("Error fetching honeytokens:", err);
-        setError("Failed to fetch honeytokens. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchHoneytokens();
   }, []);
+
+  const fetchHoneytokens = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/api/honeytokens");
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data: Honeytoken[] = await response.json();
+      setHoneytokens(data);
+    } catch (err) {
+      console.error("Error fetching honeytokens:", err);
+      setError("Failed to fetch honeytokens. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (token_id: string) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/honeytokens/${token_id}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      fetchHoneytokens();
+    } catch (err) {
+      console.error("Error deleting honeytoken:", err);
+      setError("Failed to delete honeytoken. Please try again later.");
+    }
+  };
 
   if (loading) {
     return (
@@ -57,6 +76,7 @@ function Honeytokens() {
               <th>Expire Date</th>
               <th>Notes</th>
               <th>Data</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -70,11 +90,19 @@ function Honeytokens() {
                   <td>{new Date(honeytoken.expire_date).toLocaleString()}</td>
                   <td>{honeytoken.notes}</td>
                   <td>{honeytoken.data}</td>
+                  <td>
+                    <button
+                      className="delete-button"
+                      onClick={() => handleDelete(honeytoken.token_id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={7} className="no-honeytokens">
+                <td colSpan={8} className="no-honeytokens">
                   No honeytokens found
                 </td>
               </tr>

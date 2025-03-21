@@ -16,7 +16,7 @@ export async function init_alerts_table(
       alert_time TIME,
       access_ip VARCHAR,
       log TEXT,
-      FOREIGN KEY (token_id) REFERENCES honeytokens(token_id)
+      FOREIGN KEY (token_id) REFERENCES honeytokens(token_id) ON DELETE CASCADE
     );
   `);
 }

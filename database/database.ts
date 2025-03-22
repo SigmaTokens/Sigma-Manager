@@ -4,7 +4,7 @@ import path from "path";
 
 import { init_tables, print_table } from "./helpers";
 import { populate_types_table } from "./types";
-import { dummy_populate_honeytokens } from "./HoneyTokens";
+import { dummy_populate_honeytokens } from "./honeytokens";
 import { dummy_populate_alerts } from "./alerts";
 
 export async function startDatabase() {

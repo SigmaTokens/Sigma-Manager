@@ -1,0 +1,48 @@
+abstract class Honeytoken implements I_Honeytoken {
+	token_id: string;
+	group_id: string;
+	type: HoneytokenType;
+	creationDate?: Date;
+	expirationDate?: Date;
+	notes?: string[];
+
+	constructor(token_id: string, group_id: string, type: HoneytokenType) {
+		this.token_id = token_id;
+		this.group_id = group_id;
+		this.type = type;
+	}
+	getTokenID(): string {
+		return this.token_id;
+	}
+	getGroupID(): string {
+		return this.group_id;
+	}
+	getType(): HoneytokenType {
+		return this.type;
+	}
+	getCreationDate(): Date {
+		return this.creationDate!;
+	}
+	setCreationDate(creationDate: Date): void {
+		this.creationDate = creationDate;
+	}
+	getExpirationDate(): Date {
+		return this.expirationDate!;
+	}
+	setExpirationDate(expirationDate: Date): void {
+		this.expirationDate = expirationDate;
+	}
+	isExpired(): boolean {
+		return this.expirationDate! < new Date();
+	}
+	isTriggered(): boolean {
+		//TODO: implement db request through alerts
+		throw new Error("Method not implemented.");
+	}
+	getNotes(): string[] {
+		return this.notes!;
+	}
+	setNotes(notes: string[]): void {
+		this.notes = notes;
+	}
+}

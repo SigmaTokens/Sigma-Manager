@@ -1,4 +1,5 @@
-.honeytokens-container {
+.honeytokens-container 
+{
   padding: 1.5rem;
   background-color: #f9fafb;
   min-height: 100vh;
@@ -7,14 +8,16 @@
   align-items: center;
 }
 
-.honeytokens-title {
+.honeytokens-title 
+{
   font-size: 1.875rem;
   font-weight: 700;
   color: #1f2937;
   margin-bottom: 1.5rem;
 }
 
-.table-container {
+.table-container 
+{
   background-color: white;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   border-radius: 0.5rem;
@@ -23,7 +26,8 @@
   max-width: 72rem;
 }
 
-.honeytokens-table {
+.honeytokens-table 
+{
   width: 100%;
   border-collapse: collapse;
   border: 1px solid #e5e7eb;

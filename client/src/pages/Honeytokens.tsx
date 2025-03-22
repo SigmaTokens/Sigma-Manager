@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import "../styles/Honeytokens.css";
 import { Honeytoken } from "../interfaces/honeytoken";
 
-function Honeytokens() {
+function Honeytokens() 
+{
   const [honeytokens, setHoneytokens] = useState<Honeytoken[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

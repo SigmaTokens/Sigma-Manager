@@ -94,3 +94,21 @@ export function get_random_date() {
   const randomTimestamp = Math.random() * (now - thirtyDaysAgo) + thirtyDaysAgo;
   return new Date(randomTimestamp).toISOString().split("T")[0];
 }
+
+export async function begin_transaction(
+  database: Database<sqlite3.Database, sqlite3.Statement>
+) {
+  await database.run("BEGIN TRANSACTION");
+}
+
+export async function commit(
+  database: Database<sqlite3.Database, sqlite3.Statement>
+) {
+  await database.run("COMMIT");
+}
+
+export async function rollback(
+  database: Database<sqlite3.Database, sqlite3.Statement>
+) {
+  await database.run("ROLLBACK");
+}

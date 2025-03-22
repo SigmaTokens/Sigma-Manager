@@ -2,7 +2,7 @@ import { Database } from "sqlite";
 import sqlite3 from "sqlite3";
 
 import { init_alerts_table } from "./alerts";
-import { init_honeytokens_table } from "./HoneyTokens";
+import { init_honeytokens_table } from "./honeytokens";
 import { init_types_table } from "./types";
 import { init_whitelist_table } from "./whitelist";
 

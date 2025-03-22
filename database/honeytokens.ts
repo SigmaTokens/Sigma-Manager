@@ -17,7 +17,7 @@ export async function init_honeytokens_table(
       expire_date DATETIME,
       notes TEXT,
       data TEXT,
-      FOREIGN KEY (type_id) REFERENCES types(type_id)
+      FOREIGN KEY (type_id) REFERENCES types(type_id) ON DELETE CASCADE
     );
   `);
 }

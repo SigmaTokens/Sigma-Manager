@@ -16,15 +16,10 @@ function Header() {
 						<a href="/honeytokens">Honeytokens</a>
 					</li>
 					<li>
-						<a href="/tokens">Tokens</a>
+						<a href="/alerts">Alerts</a>
 					</li>
 					<li>
 						<a href="/create">Create</a>
-					</li>
-				</ul>
-				<ul>
-					<li>
-						<a href="/alerts">Alerts</a>
 					</li>
 				</ul>
 			</nav>

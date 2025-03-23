@@ -1,35 +1,35 @@
 {
-  "type": "module",
-  "scripts": {
-    "prod-client": "npm --prefix client run build",
-    "prod-server": "npm --prefix server run start",
-    "prod-database": "npm --prefix database run init",
-    "prod": "concurrently \"npm run prod-database\" \"npm run prod-server\" \"npm run prod-client\"",
-    "dev-client": "npm --prefix client run dev",
-    "dev-server": "npm --prefix server run dev",
-    "dev-database": "npm --prefix database run init",
-    "dev": "concurrently \"npm run dev-database\" \"npm run dev-server\" \"npm run dev-client\"",
-    "start-dev": "cross-env MODE=dev node start.js dev",
-    "start-prod": "cross-env MODE=prod node start.js prod"
-  },
-  "name": "sigmatokens",
-  "version": "1.0.0",
-  "description": "**Add stuff here later on**",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/SigmaTokens/SigmaTokens.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/SigmaTokens/SigmaTokens/issues"
-  },
-  "homepage": "https://github.com/SigmaTokens/SigmaTokens#readme",
-  "devDependencies": {
-    "concurrently": "^9.1.2"
-  },
-  "dependencies": {
-    "cross-env": "^7.0.3"
-  }
+	"type": "module",
+	"scripts": {
+		"prod-client": "npm --prefix client run build",
+		"prod-server": "npm --prefix server run start",
+		"prod-database": "npm --prefix database run init",
+		"prod": "concurrently \"npm run prod-database\" \"npm run prod-server\" \"npm run prod-client\"",
+		"dev-client": "npm --prefix client run dev",
+		"dev-server": "npm --prefix server run dev",
+		"dev-database": "npm --prefix database run init",
+		"dev": "concurrently \"npm run dev-database\" \"npm run dev-server\" \"npm run dev-client\"",
+		"start-dev": "npm install cross-env && cross-env MODE=dev node start.js dev",
+		"start-prod": "npm install cross-env && cross-env MODE=prod node start.js prod"
+	},
+	"name": "sigmatokens",
+	"version": "1.0.0",
+	"description": "**Add stuff here later on**",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/SigmaTokens/SigmaTokens.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/SigmaTokens/SigmaTokens/issues"
+	},
+	"homepage": "https://github.com/SigmaTokens/SigmaTokens#readme",
+	"devDependencies": {
+		"concurrently": "^9.1.2"
+	},
+	"dependencies": {
+		"cross-env": "^7.0.3"
+	}
 }

@@ -2,7 +2,7 @@ import { Database } from "sqlite";
 import sqlite3 from "sqlite3";
 
 import { init_alerts_table } from "./alerts";
-import { init_honeytokens_table } from "./HoneyTokens";
+import { init_honeytokens_table } from "./honeytokens";
 import { init_types_table } from "./types";
 import { init_whitelist_table } from "./whitelist";
 
@@ -93,4 +93,22 @@ export function get_random_date() {
   const thirtyDaysAgo = now - 30 * 24 * 60 * 60 * 1000;
   const randomTimestamp = Math.random() * (now - thirtyDaysAgo) + thirtyDaysAgo;
   return new Date(randomTimestamp).toISOString().split("T")[0];
+}
+
+export async function begin_transaction(
+  database: Database<sqlite3.Database, sqlite3.Statement>
+) {
+  await database.run("BEGIN TRANSACTION");
+}
+
+export async function commit(
+  database: Database<sqlite3.Database, sqlite3.Statement>
+) {
+  await database.run("COMMIT");
+}
+
+export async function rollback(
+  database: Database<sqlite3.Database, sqlite3.Statement>
+) {
+  await database.run("ROLLBACK");
 }

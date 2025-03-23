@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { serveClient } from "./routes/client";
+import { serveHoneytokens } from "./routes/honeytokens";
 import { serveAlerts } from "./routes/alerts";
 import { startDatabase } from "../database/database";
 
@@ -13,6 +14,7 @@ startDatabase()
     app.locals.db = database;
     console.log("[+] Database connection initialized:", app.locals.db);
 
+    serveHoneytokens(app, database);
     serveAlerts(app);
 
     serveClient(app);

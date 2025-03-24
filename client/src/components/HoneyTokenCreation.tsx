@@ -5,31 +5,7 @@ import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Checkbox } from './ui/checkbox';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './ui/select';
-
-
-import styled from 'styled-components';
-
-const PopupCard = styled.div`
-  width: 300px;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  margin-left: -150px;
-  background-color: white;
-  padding: 40px;
-  transform: translateY(-50%);
-`;
-
-const Overlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 999;
-  width: 100vw;
-  height: 100vh;
-  background-color: black;
-  background-color: rgba(0, 0, 0, 0.75);
-`;
+import "../styles/HoneyTokenCreation.css";
 
 interface HoneytokenType {
     id: string;
@@ -73,8 +49,8 @@ const CreateHoneytokenForm: React.FC<CreateHoneytokenFormProps> = ({ types, onCl
     };
 
     return (
-        <Overlay>
-        <PopupCard>
+        <div className="overlay">
+        <div className="popup-card">
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <Card className="w-full max-w-xl p-6 rounded-2xl shadow-xl">
                 <h2 className="text-xl font-semibold mb-6">Create Honeytoken</h2>
@@ -151,8 +127,8 @@ const CreateHoneytokenForm: React.FC<CreateHoneytokenFormProps> = ({ types, onCl
                 </div>
             </Card>
         </div>
-        </PopupCard>
-        </Overlay>
+        </div>
+        </div>
     );
 };
 

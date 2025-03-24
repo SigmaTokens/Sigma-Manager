@@ -8,8 +8,8 @@ function Header() {
 
   const honeytokenTypes = [
     { id: "1", name: "text file" },
-    { id: "2", name: "api key" },
-    { id: "3", name: "database record" }
+    //{ id: "2", name: "api key" },
+    //{ id: "3", name: "database record" }
   ];
 
   return (
@@ -23,9 +23,9 @@ function Header() {
           <li><a href="/honeytokens">Honeytokens</a></li>
           <li><a href="/alerts">Alerts</a></li>
           <li>
-            <button className="create-btn" onClick={() => setShowCreatePopup(true)}>
+            <a onClick={() => setShowCreatePopup(true)}>
               Create
-            </button>
+            </a>
           </li>
         </ul>
       </nav>

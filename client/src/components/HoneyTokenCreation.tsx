@@ -1,0 +1,159 @@
+import React, { useState } from 'react';
+import { Card } from './ui/card';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Textarea } from './ui/textarea';
+import { Checkbox } from './ui/checkbox';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './ui/select';
+
+
+import styled from 'styled-components';
+
+const PopupCard = styled.div`
+  width: 300px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-left: -150px;
+  background-color: white;
+  padding: 40px;
+  transform: translateY(-50%);
+`;
+
+const Overlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  width: 100vw;
+  height: 100vh;
+  background-color: black;
+  background-color: rgba(0, 0, 0, 0.75);
+`;
+
+interface HoneytokenType {
+    id: string;
+    name: string;
+}
+
+interface CreateHoneytokenFormProps {
+    types: HoneytokenType[];
+    onClose: () => void;
+}
+
+interface HoneytokenPayload {
+    quantity: number;
+    excludeAddresses: string;
+    selectedType: string;
+    spreadAuto: boolean;
+    description: string;
+    ComponentAddresses: string;
+}
+
+
+const CreateHoneytokenForm: React.FC<CreateHoneytokenFormProps> = ({ types, onClose }) => {
+    const [quantity, setQuantity] = useState<number>(1);
+    const [excludeAddresses, setExcludeAddresses] = useState<string>('');
+    const [selectedType, setSelectedType] = useState<string>('');
+    const [spreadAuto, setSpreadAuto] = useState<boolean>(true);
+    const [description, setDescription] = useState<string>('');
+    const [ComponentAddresses, setComponentAddresses] = useState<string>('');
+
+    const handleSubmit = (): void => {
+        const payload: HoneytokenPayload = {
+            quantity,
+            excludeAddresses,
+            selectedType,
+            spreadAuto,
+            description,
+            ComponentAddresses,
+        };
+        console.log('Submitting Honeytoken:', payload);
+        // TODO: Replace with API call
+    };
+
+    return (
+        <Overlay>
+        <PopupCard>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <Card className="w-full max-w-xl p-6 rounded-2xl shadow-xl">
+                <h2 className="text-xl font-semibold mb-6">Create Honeytoken</h2>
+
+                <div className="space-y-4">
+                    <p>
+                    <a>Quantity<br/></a>
+                    <Input
+                        type="number"
+                        placeholder="Quantity"
+                        min={1}
+                        value={quantity}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuantity(Number(e.target.value))}
+                    />
+                    </p>
+
+                    <p>
+                    <a>Exclude Addresses<br/></a>
+                    <Textarea
+                        placeholder="Exclude Addresses (comma-separated)"
+                        value={excludeAddresses}
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setExcludeAddresses(e.target.value)}
+                    />
+                    </p>
+
+                    <p>
+                    <a>Type<br/></a>
+                    <Select onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedType(e.target.value)}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select Honeytoken Type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {types.map((type) => (
+                                <SelectItem key={type.id} value={type.id}>
+                                    {type.name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    </p>
+
+                    <p>
+                    <Textarea
+                        placeholder="Description"
+                        value={description}
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
+                    />
+                    </p>
+
+                    <p>
+                    <div className="flex items-center space-x-2">
+                        <Checkbox
+                            checked={spreadAuto}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSpreadAuto(e.target.checked)}
+                        />
+                        <span>Spread Tokens Automatically</span>
+                    </div>
+                    </p>
+                    {!spreadAuto && selectedType && (
+                        <p>
+                        <a>Locations Component for type: {selectedType}<br/></a>
+                        <Textarea
+                            placeholder="Component Addresses (comma-separated)"
+                            value={ComponentAddresses}
+                            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setComponentAddresses(e.target.value)}
+                        />
+                        </p>
+                    )}
+                </div>
+
+                <div className="mt-6 flex justify-between">
+                    <Button variant="outline" onClick={onClose}>Cancel</Button>
+                    <Button onClick={handleSubmit}>Submit</Button>
+                </div>
+            </Card>
+        </div>
+        </PopupCard>
+        </Overlay>
+    );
+};
+
+export default CreateHoneytokenForm

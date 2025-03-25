@@ -10,7 +10,7 @@ function submitHoneytoken(payload: HoneytokenPayload, onClose: () => void): void
     onClose();
 }
 
-const CreateHoneytokenForm: React.FC<CreateHoneytokenFormProps> = ({ types, onClose }) => {
+function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
     const [quantity, setQuantity] = useState<number>(1);
     const [excludeAddresses, setExcludeAddresses] = useState<string>('');
     const [selectedType, setSelectedType] = useState<string>('');
@@ -107,6 +107,6 @@ const CreateHoneytokenForm: React.FC<CreateHoneytokenFormProps> = ({ types, onCl
         </div>
         </div>
     );
-};
+}
 
 export default CreateHoneytokenForm

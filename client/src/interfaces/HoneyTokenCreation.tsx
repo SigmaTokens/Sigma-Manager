@@ -21,6 +21,27 @@ interface HoneytokenPayload {
     ComponentAddresses: string;
 }
 
+const submitHoneytoken = (
+    quantity: number,
+    excludeAddresses: string,
+    selectedType: string,
+    spreadAuto: boolean,
+    description: string,
+    ComponentAddresses: string,
+    onClose: () => void
+): void => {
+    const payload: HoneytokenPayload = {
+        quantity,
+        excludeAddresses,
+        selectedType,
+        spreadAuto,
+        description,
+        ComponentAddresses,
+    };
+    console.log('Submitting Honeytoken:', payload);
+    // TODO: Replace with API call
+    onClose();
+};
 
 const CreateHoneytokenForm: React.FC<CreateHoneytokenFormProps> = ({ types, onClose }) => {
     const [quantity, setQuantity] = useState<number>(1);
@@ -29,20 +50,6 @@ const CreateHoneytokenForm: React.FC<CreateHoneytokenFormProps> = ({ types, onCl
     const [spreadAuto, setSpreadAuto] = useState<boolean>(true);
     const [description, setDescription] = useState<string>('');
     const [ComponentAddresses, setComponentAddresses] = useState<string>('');
-
-    const handleSubmit = (): void => {
-        const payload: HoneytokenPayload = {
-            quantity,
-            excludeAddresses,
-            selectedType,
-            spreadAuto,
-            description,
-            ComponentAddresses,
-        };
-        console.log('Submitting Honeytoken:', payload);
-        // TODO: Replace with API call
-        onClose();
-    };
 
     return (
         <div className="overlay">
@@ -119,7 +126,15 @@ const CreateHoneytokenForm: React.FC<CreateHoneytokenFormProps> = ({ types, onCl
 
                 <div className="mt-6 flex justify-between">
                     <Button variant="outline" onClick={onClose}>Cancel</Button>
-                    <Button onClick={handleSubmit}>Submit</Button>
+                    <Button onClick={() => submitHoneytoken(
+                                quantity,
+                                excludeAddresses,
+                                selectedType,
+                                spreadAuto,
+                                description,
+                                ComponentAddresses,
+                                onClose
+                            )}>Submit</Button>
                 </div>
             </Card>
         </div>

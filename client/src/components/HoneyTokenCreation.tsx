@@ -1,25 +1,8 @@
 import React, { useState } from 'react';
-import { Card, Button, Input, Textarea, Checkbox, Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/popup';
+import { Card, Button, Input, Textarea, Checkbox, Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './popup';
 import "../styles/HoneyTokenCreation.css";
-
-interface HoneytokenType {
-    id: string;
-    name: string;
-}
-
-interface CreateHoneytokenFormProps {
-    types: HoneytokenType[];
-    onClose: () => void;
-}
-
-interface HoneytokenPayload {
-    quantity: number;
-    excludeAddresses: string;
-    selectedType: string;
-    spreadAuto: boolean;
-    description: string;
-    ComponentAddresses: string;
-}
+import { HoneytokenPayload } from '../interfaces/HoneytokenPayload';
+import { CreateHoneytokenFormProps } from '../interfaces/CreateHoneytokenFormProps';
 
 const submitHoneytoken = (
     quantity: number,

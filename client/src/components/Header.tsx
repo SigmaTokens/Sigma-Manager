@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "../styles/Header.css";
 import logo from "../../public/logo.png";
-import CreateHoneytokenForm from "../interfaces/HoneyTokenCreation";
+import CreateHoneytokenForm from "./HoneyTokenCreation";
 
 function Header() {
   const [showCreatePopup, setShowCreatePopup] = useState(false);

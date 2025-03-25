@@ -8,8 +8,8 @@ function Header() {
 
   const honeytokenTypes = [
     { id: "1", name: "text file" },
-    //{ id: "2", name: "api key" },
-    //{ id: "3", name: "database record" }
+    // { id: "2", name: "api key" },
+    // { id: "3", name: "database record" }
   ];
 
   return (

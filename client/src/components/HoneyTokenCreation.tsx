@@ -4,27 +4,11 @@ import "../styles/HoneyTokenCreation.css";
 import { HoneytokenPayload } from '../interfaces/HoneytokenPayload';
 import { CreateHoneytokenFormProps } from '../interfaces/CreateHoneytokenFormProps';
 
-const submitHoneytoken = (
-    quantity: number,
-    excludeAddresses: string,
-    selectedType: string,
-    spreadAuto: boolean,
-    description: string,
-    ComponentAddresses: string,
-    onClose: () => void
-): void => {
-    const payload: HoneytokenPayload = {
-        quantity,
-        excludeAddresses,
-        selectedType,
-        spreadAuto,
-        description,
-        ComponentAddresses,
-    };
+function submitHoneytoken(payload: HoneytokenPayload, onClose: () => void): void {
     console.log('Submitting Honeytoken:', payload);
     // TODO: Replace with API call
     onClose();
-};
+}
 
 const CreateHoneytokenForm: React.FC<CreateHoneytokenFormProps> = ({ types, onClose }) => {
     const [quantity, setQuantity] = useState<number>(1);
@@ -95,7 +79,7 @@ const CreateHoneytokenForm: React.FC<CreateHoneytokenFormProps> = ({ types, onCl
                         <span>Spread Tokens Automatically</span>
                     </div>
                     </p>
-                    {!spreadAuto && selectedType && (
+                    {!spreadAuto && (selectedType || types.length < 2) && (
                         <p>
                         <a>Locations Component for type: {selectedType}<br/></a>
                         <Textarea
@@ -109,15 +93,14 @@ const CreateHoneytokenForm: React.FC<CreateHoneytokenFormProps> = ({ types, onCl
 
                 <div className="mt-6 flex justify-between">
                     <Button variant="outline" onClick={onClose}>Cancel</Button>
-                    <Button onClick={() => submitHoneytoken(
+                    <Button onClick={() => submitHoneytoken({
                                 quantity,
                                 excludeAddresses,
                                 selectedType,
                                 spreadAuto,
                                 description,
-                                ComponentAddresses,
-                                onClose
-                            )}>Submit</Button>
+                                ComponentAddresses
+                            }, onClose)}>Submit</Button>
                 </div>
             </Card>
         </div>

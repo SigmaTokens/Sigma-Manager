@@ -32,8 +32,9 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                         type="number"
                         placeholder="Quantity"
                         min={1}
-                        value={quantity}
+                        value={spreadAuto ? quantity : 1}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuantity(Number(e.target.value))}
+                        disabled={!spreadAuto}
                     />
                     </p>
 

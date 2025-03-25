@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import { Card } from './ui/card';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Textarea } from './ui/textarea';
-import { Checkbox } from './ui/checkbox';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './ui/select';
+import { Card, Button, Input, Textarea, Checkbox, Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../components/popup';
 import "../styles/HoneyTokenCreation.css";
 
 interface HoneytokenType {
@@ -46,6 +41,7 @@ const CreateHoneytokenForm: React.FC<CreateHoneytokenFormProps> = ({ types, onCl
         };
         console.log('Submitting Honeytoken:', payload);
         // TODO: Replace with API call
+        onClose();
     };
 
     return (

@@ -15,7 +15,9 @@ function main(): void {
 
 	isAdmin().then((isAdmin) => {
 		if (!isAdmin) {
-			console.error("Please run as administrator");
+			//TODO: close client and server processes
+			console.error("\x1b[31m", "Please run as administrator");
+			return;
 		}
 
 		startDatabase()

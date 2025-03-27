@@ -1,3 +1,3 @@
-interface I_HoneytokenMonitor {
+export interface I_HoneytokenMonitor {
 	monitor(): void;
 }

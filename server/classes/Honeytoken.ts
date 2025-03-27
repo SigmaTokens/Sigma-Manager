@@ -1,4 +1,7 @@
-abstract class Honeytoken implements I_Honeytoken {
+import { I_Honeytoken } from "../interfaces/honeytoken";
+import { HoneytokenType } from "../interfaces/type";
+
+export abstract class Honeytoken implements I_Honeytoken {
 	token_id: string;
 	group_id: string;
 	type: HoneytokenType;

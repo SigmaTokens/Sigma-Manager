@@ -1,4 +1,6 @@
-interface I_Honeytoken {
+import { HoneytokenType } from "./type";
+
+export interface I_Honeytoken {
 	getTokenID(): string;
 	getGroupID(): string;
 	getType(): HoneytokenType;
@@ -9,12 +11,12 @@ interface I_Honeytoken {
 	getNotes(): string[];
 }
 
-interface I_HoneytokenManager {
+export interface I_HoneytokenManager {
 	createTokens(token_type: HoneytokenType, numOfTokens: number): void;
 	deleteTokens(groupID: string): void;
 }
 
-interface I_HoneytokenScatter {
+export interface I_HoneytokenScatter {
 	manualPlacement(tokens: I_Honeytoken[], where: any): void;
 	autoPlacement(tokens: I_Honeytoken[]): void;
 }

@@ -1,5 +1,6 @@
 import fs from "fs";
 import { Monitor } from "./Monitor";
+import { exec } from "child_process";
 
 export class Monitor_Text extends Monitor {
 	file: string;
@@ -8,9 +9,5 @@ export class Monitor_Text extends Monitor {
 		this.file = file;
 	}
 
-	monitor(): void {
-		fs.watch(this.file, (eventType, filename) => {
-			console.log("Event type: " + eventType + ", filename: " + filename + " modified");
-		});
-	}
+	monitor(): void {}
 }

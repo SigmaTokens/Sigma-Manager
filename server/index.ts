@@ -5,6 +5,7 @@ import { serveHoneytokens } from "./routes/honeytokens";
 import { serveAlerts } from "./routes/alerts";
 import { isAdmin } from "./utilities/auth";
 import { startDatabase } from "../database/database";
+import { Constants } from "./constants";
 
 main();
 
@@ -16,7 +17,7 @@ function main(): void {
 	isAdmin().then((isAdmin) => {
 		if (!isAdmin) {
 			//TODO: close client and server processes
-			console.error("\x1b[31m", "Please run as administrator");
+			console.error(Constants.TEXT_RED_COLOR, "Please run as administrator");
 			return;
 		}
 

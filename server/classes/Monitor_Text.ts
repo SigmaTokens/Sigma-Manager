@@ -71,7 +71,7 @@ export class Monitor_Text extends Monitor {
 					if (accessDate > this.last_access_time) {
 						this.last_access_time = accessDate;
 						if (this.not_first_log) {
-							console.log("Event log: " + eventData);
+							console.log("Event log: " + JSON.stringify(eventData, null, 2));
 							console.log("Access date: " + accessDate);
 							// TODO: write the alert into the alerts table in the database.
 						} else this.not_first_log = true;

@@ -65,10 +65,12 @@ export function get_random_ip() {
 // }
 
 export function get_random_date() {
-	const now = Date.now();
-	const thirtyDaysAgo = now - 30 * 24 * 60 * 60 * 1000;
-	const randomTimestamp = Math.random() * (now - thirtyDaysAgo) + thirtyDaysAgo;
-	return new Date(randomTimestamp);
+	const start = new Date(1970, 0, 1); // January 1, 1970
+	const end = new Date(2030, 11, 31); // December 31, 2030
+	const randomTime = start.getTime() + Math.random() * (end.getTime() - start.getTime());
+	const date = new Date(randomTime);
+	console.log(date);
+	return date;
 }
 
 export async function begin_transaction(database: Database<sqlite3.Database, sqlite3.Statement>) {

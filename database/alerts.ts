@@ -10,7 +10,7 @@ export async function init_alerts_table(database: Database<sqlite3.Database, sql
       alert_id VARCHAR PRIMARY KEY,
       token_id VARCHAR,
       alert_epoch VARCHAR,
-      accessed_by VARCHAR,
+      accessed_by INTEGER,
       log TEXT,
       FOREIGN KEY (token_id) REFERENCES honeytokens(token_id) ON DELETE CASCADE
     );

@@ -168,7 +168,7 @@ export async function dummy_populate_alerts(database: Database<sqlite3.Database,
 
 	if (honeytokens.length === 0) throw new Error("[-] No tokens found in honeytokens table");
 
-	for (let i = 0; i < 100; i++) {
+	for (let i = 0; i < 10; i++) {
 		alerts.push({
 			alert_id: uuidv4(),
 			token_id: honeytokens[Math.floor(Math.random() * honeytokens.length)].token_id,

@@ -31,7 +31,7 @@ function main(): void {
 					serveAlerts(app);
 					serveClient(app);
 
-					//test_honeytoken();
+					test_honeytoken();
 
 					app.listen(port, () => {
 						console.log(`[+] Server running on port ${port}`);

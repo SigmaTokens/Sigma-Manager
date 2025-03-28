@@ -31,7 +31,7 @@ function main(): void {
 					serveAlerts(app);
 					serveClient(app);
 
-					test_honeytoken();
+					//test_honeytoken();
 
 					app.listen(port, () => {
 						console.log(`[+] Server running on port ${port}`);
@@ -47,11 +47,14 @@ function main(): void {
 
 async function init() {
 	if (isWindows()) await windows_enable_auditing();
+	// TODO: check whether something similar needs to be done for macOS and linux
 }
+// Test honeytoken alert - change the
 
 import { Honeytoken_Text } from "./classes/Honeytoken_Text";
 
 function test_honeytoken(): void {
-	let ht_t = new Honeytoken_Text("1", "1", "text", "C:\\Users\\danie\\Desktop\\test.txt");
+	const file = "C:\\Users\\danie\\Desktop\\test.txt"; // CHANGE THIS - create a new file first
+	let ht_t = new Honeytoken_Text("1", "1", "text", file);
 	ht_t.startAgent();
 }

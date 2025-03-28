@@ -70,8 +70,10 @@ export class Monitor_Text extends Monitor {
 					const accessDate = this.extract_access_date_from_event(eventData);
 					if (accessDate > this.last_access_time) {
 						this.last_access_time = accessDate;
-						if (this.not_first_log) console.log("Access date: " + accessDate);
-						else this.not_first_log = true;
+						if (this.not_first_log) {
+							console.log("Access date: " + accessDate);
+							// TODO: write the alert into the alerts table in the database.
+						} else this.not_first_log = true;
 					}
 				}
 			}

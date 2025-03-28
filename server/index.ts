@@ -31,7 +31,7 @@ function main(): void {
 					serveAlerts(app);
 					serveClient(app);
 
-					test_honeytoken();
+					test_honeytoken_windows();
 
 					app.listen(port, () => {
 						console.log(`[+] Server running on port ${port}`);
@@ -53,7 +53,7 @@ async function init() {
 
 import { Honeytoken_Text } from "./classes/Honeytoken_Text";
 
-function test_honeytoken(): void {
+function test_honeytoken_windows(): void {
 	const file = "C:\\Users\\danie\\Desktop\\test.txt"; // CHANGE THIS - create a new file first
 	let ht_t = new Honeytoken_Text("1", "1", "text", file);
 	ht_t.startAgent();

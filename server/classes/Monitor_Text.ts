@@ -78,8 +78,8 @@ export class Monitor_Text extends Monitor {
 						this.last_access_time = accessDate;
 						if (this.not_first_log) {
 							const jsonData = JSON.stringify(eventData, null, 2);
-							console.log("Event log: " + jsonData);
-							console.log("Access date: " + accessDate);
+							//console.log("Event log: " + jsonData);
+							//console.log("Access date: " + accessDate);
 
 							const subjectAccount = eventData.Properties[1].Value;
 							const subjectDomain = eventData.Properties[2].Value;

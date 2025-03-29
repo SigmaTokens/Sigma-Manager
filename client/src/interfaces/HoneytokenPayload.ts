@@ -1,8 +1,12 @@
 export interface HoneytokenPayload {
-    quantity: number;
-    excludeAddresses: string;
-    selectedType: string;
-    spreadAuto: boolean;
-    description: string;
-    ComponentAddresses: string;
+  quantity: number;
+  excludeAccess: string;
+  selectedType: string;
+  spreadAuto: boolean;
+  fileName: string;
+  fileContent: string;
+  notes: string;
+  grade: number;
+  expirationDate: string;
+  ComponentAddresses: string;
 }

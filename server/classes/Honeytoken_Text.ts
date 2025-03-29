@@ -9,7 +9,7 @@ export class Honeytoken_Text extends Honeytoken {
 	constructor(token_id: string, group_id: string, type: HoneytokenType, location: string) {
 		super(token_id, group_id, type);
 		this.location = location;
-		this.agent = new Monitor_Text(location);
+		this.agent = new Monitor_Text(location, this);
 	}
 
 	startAgent(): void {

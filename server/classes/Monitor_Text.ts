@@ -5,14 +5,20 @@ import { Constants } from "../constants";
 import { isWindows } from "../utilities/host";
 import { stderr } from "process";
 import { sleep } from "../utilities/utilities";
+import { Honeytoken_Text } from "./Honeytoken_Text";
+import { create_alert_to_token_id } from "../../database/alerts";
+import { Globals } from "../globals";
 
 export class Monitor_Text extends Monitor {
 	file: string;
+	token: Honeytoken_Text;
 	last_access_time: Date;
 	not_first_log: boolean;
-	constructor(file: string) {
+
+	constructor(file: string, token: Honeytoken_Text) {
 		super();
 		this.file = file;
+		this.token = token;
 		this.last_access_time = new Date();
 		this.not_first_log = false;
 	}
@@ -71,9 +77,20 @@ export class Monitor_Text extends Monitor {
 					if (accessDate > this.last_access_time) {
 						this.last_access_time = accessDate;
 						if (this.not_first_log) {
-							console.log("Event log: " + JSON.stringify(eventData, null, 2));
+							const jsonData = JSON.stringify(eventData, null, 2);
+							console.log("Event log: " + jsonData);
 							console.log("Access date: " + accessDate);
-							// TODO: write the alert into the alerts table in the database.
+
+							const subjectAccount = eventData.Properties[1].Value;
+							const subjectDomain = eventData.Properties[2].Value;
+
+							create_alert_to_token_id(
+								Globals.app.locals.db,
+								"test",
+								accessDate.getTime(),
+								subjectDomain + "/" + subjectAccount,
+								jsonData
+							);
 						} else this.not_first_log = true;
 					}
 				}

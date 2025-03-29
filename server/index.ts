@@ -12,6 +12,7 @@ main();
 
 function main(): void {
 	const app = express();
+
 	app.use(cors());
 	const port = process.env.PORT || 3000;
 
@@ -30,6 +31,8 @@ function main(): void {
 					serveHoneytokens(app, database);
 					serveAlerts(app);
 					serveClient(app);
+
+					Globals.app = app;
 
 					test_honeytoken_windows();
 
@@ -52,6 +55,7 @@ async function init() {
 // Test honeytoken alert - change the
 
 import { Honeytoken_Text } from "./classes/Honeytoken_Text";
+import { Globals } from "./globals";
 
 function test_honeytoken_windows(): void {
 	const file = "C:\\Users\\danie\\Desktop\\test.txt"; // CHANGE THIS - create a new file first

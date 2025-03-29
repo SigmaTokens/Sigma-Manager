@@ -13,8 +13,10 @@ export async function init_honeytokens_table(database: Database<sqlite3.Database
       grade INTEGER,
       creation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
       expire_date DATETIME,
+	  location VARCHAR, 
+	  file_name VARCHAR,
+	  data TEXT,
       notes TEXT,
-      data TEXT,
       FOREIGN KEY (type_id) REFERENCES types(type_id) ON DELETE CASCADE
     );
   `);
@@ -23,14 +25,16 @@ export async function init_honeytokens_table(database: Database<sqlite3.Database
 export async function get_all_honeytokens(database: Database<sqlite3.Database, sqlite3.Statement>) {
 	return await database.all(
 		`SELECT token_id, 
-    group_id, 
-    type_id, 
-    grade,
-    creation_date, 
-    expire_date, 
-    notes, 
-    data 
-    FROM honeytokens`
+					 group_id, 
+					 type_id, 
+					 grade,
+					 creation_date, 
+					 expire_date, 
+					 location, 
+					 file_name,
+					 data,
+					 notes
+		   FROM honeytokens`
 	);
 }
 
@@ -46,9 +50,11 @@ export async function get_honeytoken_by_token_id(
            grade,
            creation_date,
            expire_date,
-           notes,
-           data
-    FROM honeytokens
+		   location , 
+	  	   file_name ,
+		   data,
+           notes
+      FROM honeytokens
     WHERE token_id = ?;
     `,
 		[token_id]
@@ -67,8 +73,10 @@ export async function get_honeytokens_by_type_id(
            grade,
            creation_date,
            expire_date,
-           notes,
-           data
+		   location , 
+	  	   file_name ,
+		   data,
+           notes
     FROM honeytokens
     WHERE type_id = ?;
     `,
@@ -88,6 +96,8 @@ export async function get_honeytokens_by_group_id(
            grade,
            creation_date,
            expire_date,
+		   location , 
+	  	   file_name ,
            notes,
            data
     FROM honeytokens
@@ -168,15 +178,16 @@ export async function dummy_populate_honeytokens(database: Database<sqlite3.Data
 			grade: Math.floor(Math.random() * 10) + 1,
 			creation_date: new Date(Date.now() - Math.random() * 10000000000).toISOString().split("T")[0],
 			expire_date: new Date(Date.now() + Math.random() * 10000000000).toISOString().split("T")[0],
-			notes: `Sample notes for token ${i + 1}`,
+			location: "sample location",
+			file_name: "sample file_name",
 			data: `Sample data for token ${i + 1}`,
+			notes: `Sample notes for token ${i + 1}`,
 		});
 	}
 
 	for (const token of honeytokens) {
 		await database.run(
-			`INSERT INTO honeytokens (token_id, group_id, type_id, grade, creation_date, expire_date, notes, data)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+			`INSERT INTO honeytokens (token_id, group_id, type_id, grade, creation_date, expire_date, location , file_name ,data, notes ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 			[
 				token.token_id,
 				token.group_id,
@@ -184,8 +195,10 @@ export async function dummy_populate_honeytokens(database: Database<sqlite3.Data
 				token.grade,
 				token.creation_date,
 				token.expire_date,
-				token.notes,
+				token.location,
+				token.file_name,
 				token.data,
+				token.notes,
 			]
 		);
 	}

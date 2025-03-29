@@ -22,6 +22,6 @@ Server is running in [localhost:3000](localhost:3000)
 
 1. Daniel Nagornov
 2. Daniel Adin
-3. Shaked Shamay
+3. Shaked S.
 4. Maya Zirin
 5. Danielle Menadeva

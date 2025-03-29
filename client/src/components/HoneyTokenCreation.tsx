@@ -25,11 +25,15 @@ function submitHoneytoken(
 
 function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
   const [quantity, setQuantity] = useState<number>(1);
-  const [excludeAddresses, setExcludeAddresses] = useState<string>("");
+  const [excludeAccess, setExcludeAccess] = useState<string>("");
   const [selectedType, setSelectedType] = useState<string>("");
   const [spreadAuto, setSpreadAuto] = useState<boolean>(false);
-  const [description, setDescription] = useState<string>("");
+  const [notes, setNotes] = useState<string>("");
   const [ComponentAddresses, setComponentAddresses] = useState<string>("");
+  const [expirationDate, setExpirationDate] = useState<string>("");
+  const [grade, setGrade] = useState<number>(1);
+  const [fileName, setFileName] = useState<string>("");
+  const [fileContent, setFileContent] = useState<string>("");
 
   return (
     <div className="overlay" onClick={onClose}>
@@ -51,23 +55,11 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
             </p>
 
             <p>
-              <label>Exclude Addresses</label>
-              <Textarea
-                placeholder="Exclude Addresses (comma-separated)"
-                value={excludeAddresses}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                  setExcludeAddresses(e.target.value)
-                }
-              />
-            </p>
-
-            <p>
               <label>Type</label>
               <Select
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                   setSelectedType(e.target.value)
-                }
-              >
+                }>
                 <SelectTrigger>
                   <SelectValue placeholder="Select Honeytoken Type" />
                 </SelectTrigger>
@@ -82,12 +74,76 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
             </p>
 
             <p>
-              <label>Description</label>
-              <Textarea
-                placeholder="Description"
-                value={description}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                  setDescription(e.target.value)
+              <label>Exclude Access</label>
+              <Input
+                type="text"
+                placeholder="Exclude Access (comma-separated)"
+                value={excludeAccess}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setExcludeAccess(e.target.value)
+                }
+              />
+            </p>
+
+            <p>
+              <label>Notes</label>
+              <Input
+                type="text"
+                placeholder="Notes"
+                value={notes}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setNotes(e.target.value)
+                }
+              />
+            </p>
+
+            <p>
+              <label>File Name</label>
+              <Input
+                type="text"
+                placeholder="Enter file name"
+                value={fileName}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setFileName(e.target.value)
+                }
+              />
+            </p>
+
+            <p>
+              <label>File Content</label>
+              <Input
+                type="text"
+                placeholder="Enter the content of the file"
+                value={fileContent}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setFileContent(e.target.value)
+                }
+              />
+            </p>
+
+            <p>
+              <label>Grade </label>
+              <small className="grade-subtitle">
+                (Choose a grade between 1-10)
+              </small>
+              <Input
+                type="number"
+                min={1}
+                max={10}
+                value={grade}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setGrade(Number(e.target.value))
+                }
+              />
+            </p>
+
+            <p>
+              <label>Expiration Date</label>
+              <Input
+                type="date"
+                value={expirationDate}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setExpirationDate(e.target.value)
                 }
               />
             </p>
@@ -108,10 +164,11 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
             {!spreadAuto && (selectedType || types.length < 2) && (
               <p>
                 <label>Locations Component for type: {selectedType}</label>
-                <Textarea
-                  placeholder="Component Addresses (comma-separated)"
+                <Input
+                  type="text"
+                  placeholder="File Path (Location)"
                   value={ComponentAddresses}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setComponentAddresses(e.target.value)
                   }
                 />
@@ -130,16 +187,19 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                 submitHoneytoken(
                   {
                     quantity,
-                    excludeAddresses,
                     selectedType,
+                    excludeAccess,
                     spreadAuto,
-                    description,
+                    notes,
+                    fileName,
+                    fileContent,
+                    grade,
+                    expirationDate,
                     ComponentAddresses,
                   },
                   onClose
                 )
-              }
-            >
+              }>
               Submit
             </button>
           </div>

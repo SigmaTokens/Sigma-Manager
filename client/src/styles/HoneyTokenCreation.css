@@ -1,12 +1,16 @@
 .popup-card {
-  width: 90%;
-  max-width: 500px;
+  width: 80%;
+  max-width: 900px;
+  height: auto;
   padding: 24px;
-  border-radius: 16px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
   background-color: white;
   margin: auto;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .popup-title {
@@ -14,89 +18,104 @@
   font-weight: bold;
   color: #1f2937;
   text-align: center;
-  margin-bottom: 2rem;
 }
 
-.popup-content p {
-  margin-bottom: 1.5rem;
+.popup-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 40px;
+  padding: 0 12px;
+}
+
+.popup-item {
+  display: flex;
+  flex-direction: column;
+  padding: 0 8px;
 }
 
 label {
-  display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.3rem;
   font-weight: 500;
   color: #374151;
+  font-size: 0.9rem;
 }
 
 input,
 textarea,
 select {
   width: 100%;
-  padding: 10px;
+  padding: 8px;
   border: 1px solid #d1d5db;
   border-radius: 8px;
   outline: none;
   transition: border-color 0.3s;
-  font-size: 0.875rem;
+  font-size: 0.85rem;
 }
 
 input:focus,
 textarea:focus,
 select:focus {
   border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.grade-subtitle {
+  margin-top: -4px;
+  margin-bottom: 4px;
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-style: italic;
 }
 
 .button-container {
   display: flex;
   justify-content: space-between;
-  margin-top: 24px;
+  margin-top: 10px;
 }
 
-.button-container .button {
-  padding: 12px 24px;
-  border-radius: 12px;
-  border: none;
-  cursor: pointer;
+.button {
+  padding: 8px 16px;
+  border-radius: 8px;
   font-weight: bold;
-  font-size: 0.875rem;
-  transition: all 0.3s;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+  font-size: 0.85rem;
 }
 
-.button-container .button-outline {
+.button-outline {
   background-color: white;
-  color: #374151;
   border: 1px solid #d1d5db;
+  color: #374151;
 }
 
-.button-container .button-outline:hover {
+.button-outline:hover {
   background-color: #f3f4f6;
   color: #111827;
-  transform: scale(1.03);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: scale(1.05);
 }
 
-.button-container .button-primary {
+.button-primary {
   background-color: #2563eb;
-  color: white;
   border: none;
+  color: white;
 }
 
-.button-container .button-primary:hover {
+.button-primary:hover {
   background-color: #1d4ed8;
-  transform: scale(1.03);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: scale(1.05);
 }
 
 .checkbox-container {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .checkbox {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
 }
 
 .overlay {

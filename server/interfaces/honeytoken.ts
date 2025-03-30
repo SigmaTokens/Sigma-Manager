@@ -8,7 +8,7 @@ export interface I_Honeytoken {
 	getExpirationDate(): Date;
 	isExpired(): boolean;
 	isTriggered(): boolean;
-	getNotes(): string[];
+	getNotes(): string;
 }
 
 export interface I_HoneytokenManager {

@@ -14,6 +14,7 @@ function main(): void {
 	const app = express();
 
 	app.use(cors());
+	app.use(express.urlencoded({ extended: true }));
 	const port = process.env.PORT || 3000;
 
 	isAdmin().then((isAdmin) => {
@@ -58,7 +59,8 @@ import { Honeytoken_Text } from "./classes/Honeytoken_Text";
 import { Globals } from "./globals";
 
 function test_honeytoken_windows(): void {
-	const file = "C:\\Users\\danie\\Desktop\\test.txt"; // CHANGE THIS - create a new file first
-	let ht_t = new Honeytoken_Text("1", "1", "text", file);
+	const location = "C:\\Users\\danie\\Desktop";
+	const file_name = "test.txt"; // CHANGE THIS - create a new file first
+	let ht_t = new Honeytoken_Text("1", "1", "text", new Date(), 5, "help", location, file_name);
 	ht_t.startAgent();
 }

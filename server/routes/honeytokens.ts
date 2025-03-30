@@ -1,6 +1,9 @@
 import { Router, Express } from "express";
 import { Database } from "sqlite";
 import sqlite3 from "sqlite3";
+import { v4 as uuidv4 } from "uuid";
+import * as fs from "fs";
+import * as path from "path";
 import {
 	get_all_honeytokens,
 	get_honeytoken_by_token_id,
@@ -9,7 +12,10 @@ import {
 	delete_honeytoken_by_id,
 	delete_honeytokens_by_type_id,
 	delete_honeytokens_by_group_id,
+	insert_honeytoken,
 } from "../../database/honeytokens";
+import { Honeytoken_Text } from "../classes/Honeytoken_Text";
+import { Globals } from "../globals";
 
 export function serveHoneytokens(app: Express, database: Database<sqlite3.Database, sqlite3.Statement>) {
 	const router = Router();
@@ -102,11 +108,53 @@ export function serveHoneytokens(app: Express, database: Database<sqlite3.Databa
         3. check if location is initial or does not exist - send error
         4. create Honeytoken to array in globals.ts
         5. write the honeytoken to the database
+		6. create mapping for HoneytokenType
       */
-
-			const { something } = req.body;
-
+			console.log(req.body);
 			const { file_name, location, grade, expiration_date, data, notes } = req.body;
+
+			console.log("help");
+
+			const newToken = new Honeytoken_Text(
+				uuidv4(),
+				uuidv4(),
+				"text",
+				expiration_date,
+				grade,
+				notes,
+				location,
+				file_name
+			);
+
+			Globals.tokens.push(newToken);
+
+			//TODO: check if file exists - if not - create it using createFile in Honeytoken_Text.ts
+
+			const filePath = path.join(location, file_name);
+
+			if (!fs.existsSync(filePath)) {
+				fs.writeFileSync(filePath, data);
+			}
+
+			newToken.startAgent();
+
+			console.log("----------------not stuck test----------------");
+
+			insert_honeytoken(
+				database,
+				newToken.getTokenID(),
+				newToken.getGroupID(),
+				1,
+				newToken.getGrade(),
+				newToken.getCreationDate(),
+				newToken.getExpirationDate(),
+				newToken.getLocation(),
+				newToken.getFileName(),
+				data,
+				newToken.getNotes()
+			);
+
+			res.send().status(200);
 		} catch (error: any) {
 			res.status(500).json({ failure: error.message });
 		}

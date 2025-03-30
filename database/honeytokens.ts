@@ -97,7 +97,7 @@ export async function get_honeytokens_by_group_id(
            creation_date,
            expire_date,
 		   location , 
-	  	   file_name ,
+	  	   file_name,
            notes,
            data
     FROM honeytokens
@@ -160,6 +160,25 @@ export async function delete_honeytokens_by_group_id(
 	} catch (error) {
 		await rollback(database);
 	}
+}
+
+export async function insert_honeytoken(
+	database: Database<sqlite3.Database, sqlite3.Statement>,
+	token_id: string,
+	group_id: string,
+	type_id: any,
+	grade: number,
+	creation_date: Date,
+	expiration_date: Date,
+	location: string,
+	file_name: string,
+	data: string,
+	notes: string
+) {
+	await database.run(
+		`INSERT INTO honeytokens (token_id, group_id, type_id, grade, creation_date, expire_date, location , file_name ,data, notes ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		[token_id, group_id, type_id, grade, creation_date, expiration_date, location, file_name, data, notes]
+	);
 }
 
 export async function dummy_populate_honeytokens(database: Database<sqlite3.Database, sqlite3.Statement>) {

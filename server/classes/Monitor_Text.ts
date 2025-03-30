@@ -71,26 +71,28 @@ export class Monitor_Text extends Monitor {
 				if (error) {
 					console.error(Constants.TEXT_RED_COLOR, "Error fetching event:", error);
 				} else {
-					const eventData = JSON.parse(stdout);
-					//console.log("Latest access event:", eventData);
-					const accessDate = this.extract_access_date_from_event(eventData);
-					if (accessDate > this.last_access_time) {
-						this.last_access_time = accessDate;
-						if (this.not_first_log) {
-							const jsonData = JSON.stringify(eventData, null, 2);
-							//console.log("Event log: " + jsonData);
-							//console.log("Access date: " + accessDate);
+					if (stdout) {
+						const eventData = JSON.parse(stdout);
+						const accessDate = this.extract_access_date_from_event(eventData);
+						if (accessDate > this.last_access_time) {
+							this.last_access_time = accessDate;
+							if (this.not_first_log) {
+								const jsonData = JSON.stringify(eventData, null, 2);
 
-							const subjectAccount = eventData.Properties[1].Value;
-							const subjectDomain = eventData.Properties[2].Value;
+								const subjectAccount = eventData.Properties[1].Value;
+								const subjectDomain = eventData.Properties[2].Value;
 
-							create_alert_to_token_id(
-								Globals.app.locals.db,
-								"test",
-								accessDate.getTime(),
-								subjectDomain + "/" + subjectAccount,
-								jsonData
-							);
+								// TODO: check whether the last alert doesn't already exists in the db
+								// TODO: replace the "test" with actual stuff
+
+								create_alert_to_token_id(
+									Globals.app.locals.db,
+									"test",
+									accessDate.getTime(),
+									subjectDomain + "/" + subjectAccount,
+									jsonData
+								);
+							}
 						} else this.not_first_log = true;
 					}
 				}

@@ -11,54 +11,61 @@ import { isWindows, windows_enable_auditing, isMac } from "./utilities/host";
 main();
 
 function main(): void {
-    const app = express();
-    app.use(cors());
-    const port = process.env.PORT || 3000;
+	const app = express();
 
-    isAdmin().then((isAdmin) => {
-        if (!isAdmin) {
-            console.error(Constants.TEXT_RED_COLOR, "Please run as administrator");
-            return;
-        }
-        init().then(() => {
-            startDatabase()
-                .then((database) => {
-                    app.locals.db = database;
-                    console.log("[+] Database connection initialized:", app.locals.db);
+	app.use(cors());
+	app.use(express.urlencoded({ extended: true }));
+	const port = process.env.PORT || 3000;
 
-                    serveHoneytokens(app, database);
-                    serveAlerts(app);
-                    serveClient(app);
+	isAdmin().then((isAdmin) => {
+		if (!isAdmin) {
+			console.error(Constants.TEXT_RED_COLOR, "Please run as administrator");
+			return;
+		}
+		init().then(() => {
+			startDatabase()
+				.then((database) => {
+					app.locals.db = database;
+					console.log("[+] Database connection initialized:", app.locals.db);
 
-                    test_honeytoken();
+					serveHoneytokens(app, database);
+					serveAlerts(app);
+					serveClient(app);
 
-                    app.listen(port, () => {
-                        console.log(`[+] Server running on port ${port}`);
-                    });
-                })
-                .catch((error) => {
-                    console.error("[-] Failed to initialize server:", error);
-                    process.exit(1);
-                });
-        });
-    });
+					Globals.app = app;
+
+					test_honeytoken();
+
+					app.listen(port, () => {
+						console.log(`[+] Server running on port ${port}`);
+					});
+				})
+				.catch((error) => {
+					console.error("[-] Failed to initialize server:", error);
+					process.exit(1);
+				});
+		});
+	});
 }
 
 async function init() {
-    if (isWindows()) {
-        await windows_enable_auditing();
-    } else if (isMac()) {
-        console.log("Running on Mac");
-    }
+	if (isWindows()) {
+		await windows_enable_auditing();
+	} else if (isMac()) {
+		console.log("Running on Mac");
+	}
 }
 
 import { Honeytoken_Text } from "./classes/Honeytoken_Text";
+import { Globals } from "./globals";
 
 function test_honeytoken(): void {
-    let file = "C:\\Users\\danie\\Desktop\\test.txt";
-    if (isMac()) {
-        file = "/Users/sh/Desktop/a.txt"; 
-    }
-    let ht_t = new Honeytoken_Text("1", "1", "text", file);
-    ht_t.startAgent();
+	let location = "C:\\Users\\danie\\Desktop";
+	let file_name = "test.txt"; // CHANGE THIS - create a new file first
+	if (isMac()) {
+		location = "/Users/sh/Desktop/";
+		file_name = "a.txt";
+	}
+	let ht_t = new Honeytoken_Text("1", "1", "text", new Date(), 5, "help", location, file_name);
+	ht_t.startAgent();
 }

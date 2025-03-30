@@ -163,15 +163,41 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
 
             {!spreadAuto && (selectedType || types.length < 2) && (
               <p>
-                <label>Locations Component for type: {selectedType}</label>
-                <Input
-                  type="text"
-                  placeholder="File Path (Location)"
-                  value={ComponentAddresses}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setComponentAddresses(e.target.value)
-                  }
-                />
+                <label>File Location</label>
+                <div
+                  style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                  <Input
+                    type="text"
+                    placeholder="Enter file path or click to choose"
+                    value={ComponentAddresses}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setComponentAddresses(e.target.value)
+                    }
+                  />
+
+                  {/* open file explorer */}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      document.getElementById("fileInputHidden")?.click()
+                    }
+                    className="button button-secondary">
+                    📁
+                  </button>
+
+                  {/* hidden input */}
+                  <input
+                    id="fileInputHidden"
+                    type="file"
+                    style={{ display: "none" }}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setComponentAddresses(file.name);
+                      }
+                    }}
+                  />
+                </div>
               </p>
             )}
           </div>
@@ -183,23 +209,45 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
 
             <button
               className="button button-primary"
-              onClick={() =>
-                submitHoneytoken(
-                  {
-                    quantity,
-                    selectedType,
-                    excludeAccess,
-                    spreadAuto,
-                    notes,
-                    fileName,
-                    fileContent,
-                    grade,
-                    expirationDate,
-                    ComponentAddresses,
-                  },
-                  onClose
-                )
-              }>
+              onClick={async () => {
+                if (quantity === 1) {
+                  try {
+                    const response = await fetch(
+                      "http://localhost:3000/api/honeytoken/text",
+                      {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                          file_name: fileName,
+                          location: ComponentAddresses,
+                          grade: grade,
+                          expiration_date: expirationDate,
+                          data: fileContent,
+                          notes: notes,
+                        }),
+                      }
+                    );
+
+                    if (!response.ok) {
+                      const errorText = await response.text();
+                      console.error("Error:", errorText);
+                      alert("Failed to create honeytoken.");
+                    } else {
+                      console.log("Honeytoken created successfully!");
+                      onClose();
+                    }
+                  } catch (err) {
+                    console.error("Request failed:", err);
+                    alert(
+                      "Something went wrong while creating the honeytoken."
+                    );
+                  }
+                } else {
+                  //TODO: handle quantity > 1 in the future
+                }
+              }}>
               Submit
             </button>
           </div>

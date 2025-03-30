@@ -36,4 +36,6 @@
 
 .header ul li a:hover {
   background-color: #61dafb;
+  color: white;
+  cursor: pointer;
 }

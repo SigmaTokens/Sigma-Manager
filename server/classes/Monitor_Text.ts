@@ -2,7 +2,7 @@ import fs from "fs";
 import { Monitor } from "./Monitor";
 import { exec } from "child_process";
 import { Constants } from "../constants";
-import { isWindows } from "../utilities/host";
+import { isWindows, isMac } from "../utilities/host";
 import { stderr } from "process";
 import { sleep } from "../utilities/utilities";
 import { Honeytoken_Text } from "./Honeytoken_Text";
@@ -14,6 +14,7 @@ export class Monitor_Text extends Monitor {
 	token: Honeytoken_Text;
 	last_access_time: Date;
 	not_first_log: boolean;
+	fsUsageProcess: any; // To store the fs_usage process
 
 	constructor(file: string, token: Honeytoken_Text) {
 		super();
@@ -24,7 +25,11 @@ export class Monitor_Text extends Monitor {
 	}
 
 	async monitor() {
-		if (isWindows()) this.monitorWindows();
+		if (isWindows()) {
+			this.monitorWindows();
+		} else if (isMac()) {
+			this.monitorMac();
+		}
 	}
 
 	// -------- WINDOWS --------
@@ -38,11 +43,11 @@ export class Monitor_Text extends Monitor {
 
 	async add_audit_rule() {
 		const psCommand = `$path = '${this.file}';
-											$acl = Get-Acl $path;
-											$auditRule = New-Object System.Security.AccessControl.FileSystemAuditRule('Everyone','Read','None','None','Success');
-											$acl.SetAuditRule($auditRule);
-											Set-Acl -Path $path -AclObject $acl;
-											Write-Output "Audit rule set successfully on $path";`;
+                                            $acl = Get-Acl $path;
+                                            $auditRule = New-Object System.Security.AccessControl.FileSystemAuditRule('Everyone','Read','None','None','Success');
+                                            $acl.SetAuditRule($auditRule);
+                                            Set-Acl -Path $path -AclObject $acl;
+                                            Write-Output "Audit rule set successfully on $path";`;
 
 		const oneLinePsCommand = psCommand.replace(/\r?\n+/g, ";").replace(/;+/g, ";");
 		const command = `powershell.exe -NoProfile -Command "${oneLinePsCommand}"`;
@@ -106,5 +111,34 @@ export class Monitor_Text extends Monitor {
 		const accessDate = new Date(millis);
 		return accessDate;
 	}
+
+	// -------- macOS --------
+	async monitorMac() {
+		this.add_fsusage_rule();
+	}
+
+	add_fsusage_rule() {
+		const fsUsageCommand = `sudo fs_usage -f filesys | grep "${this.file}"`;
+
+		this.fsUsageProcess = exec(fsUsageCommand, { encoding: "utf8" }, (error, stdout, stderr) => {
+			if (error) {
+				console.error(Constants.TEXT_RED_COLOR, `Error running fs_usage: ${error}`);
+			}
+		});
+
+		this.fsUsageProcess.stdout.on("data", (data: string) => {
+			const accessDate = new Date(); // fs_usage output doesn't contain a date
+			if (accessDate > this.last_access_time) {
+				this.last_access_time = accessDate;
+				if (this.not_first_log) {
+					console.log("File accessed: " + data);
+					// TODO: write the alert into the alerts table in the database.
+				} else this.not_first_log = true;
+			}
+		});
+
+		this.fsUsageProcess.stderr.on("data", (data: string) => {
+			console.error(Constants.TEXT_RED_COLOR, `fs_usage stderr: ${data}`);
+		});
+	}
 }
-// -------------------------

@@ -1,122 +1,132 @@
 .popup-card {
-  width: 300px;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  margin-left: -150px;
+  width: 80%;
+  max-width: 900px;
+  height: auto;
+  padding: 24px;
+  border-radius: 20px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
   background-color: white;
-  padding: 40px;
-  transform: translateY(-50%);
+  margin: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 999;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.75);
+.popup-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1f2937;
+  text-align: center;
 }
 
-.button-base {
-  border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
+.popup-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 40px;
+  padding: 0 12px;
+}
+
+.popup-item {
+  display: flex;
+  flex-direction: column;
+  padding: 0 8px;
+}
+
+label {
+  margin-bottom: 0.3rem;
   font-weight: 500;
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
   outline: none;
+  transition: border-color 0.3s;
+  font-size: 0.85rem;
 }
 
-.button-default {
-  background-color: #2563eb;
-  color: white;
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
 
-.button-default:hover {
-  background-color: #1d4ed8;
+.grade-subtitle {
+  margin-top: -4px;
+  margin-bottom: 4px;
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+  font-size: 0.85rem;
 }
 
 .button-outline {
+  background-color: white;
   border: 1px solid #d1d5db;
   color: #374151;
 }
 
 .button-outline:hover {
   background-color: #f3f4f6;
+  color: #111827;
+  transform: scale(1.05);
 }
 
 .button-primary {
-  background-color: #16a34a;
+  background-color: #2563eb;
+  border: none;
   color: white;
 }
 
 .button-primary:hover {
-  background-color: #15803d;
+  background-color: #1d4ed8;
+  transform: scale(1.05);
 }
 
-.card {
-  background-color: white;
-  border-radius: 0.75rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  padding: 1rem;
-}
-
-.card-content {
-  padding: 1rem;
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .checkbox {
-  width: 1.25rem;
-  height: 1.25rem;
-  color: #2563eb;
-  border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
-  outline: none;
+  width: 16px;
+  height: 16px;
 }
 
-.checkbox:focus {
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
-}
-
-.input {
-  width: 100%;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-  padding: 0.5rem;
-  font-size: 0.875rem;
-  outline: none;
-}
-
-.input:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
-}
-
-.select {
-  width: 100%;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-  padding: 0.5rem;
-  font-size: 0.875rem;
-  outline: none;
-}
-
-.select:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
-}
-
-.textarea {
-  width: 100%;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-  padding: 0.5rem;
-  font-size: 0.875rem;
-  resize: none;
-  outline: none;
-}
-
-.textarea:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
 }

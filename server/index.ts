@@ -6,7 +6,7 @@ import { serveAlerts } from "./routes/alerts";
 import { isAdmin } from "./utilities/auth";
 import { startDatabase } from "../database/database";
 import { Constants } from "./constants";
-import { isWindows, windows_enable_auditing } from "./utilities/host";
+import { isWindows, windows_enable_auditing, isMac } from "./utilities/host";
 
 main();
 
@@ -19,7 +19,6 @@ function main(): void {
 
 	isAdmin().then((isAdmin) => {
 		if (!isAdmin) {
-			//TODO: close client and server processes
 			console.error(Constants.TEXT_RED_COLOR, "Please run as administrator");
 			return;
 		}
@@ -35,7 +34,7 @@ function main(): void {
 
 					Globals.app = app;
 
-					test_honeytoken_windows();
+					test_honeytoken();
 
 					app.listen(port, () => {
 						console.log(`[+] Server running on port ${port}`);
@@ -50,17 +49,23 @@ function main(): void {
 }
 
 async function init() {
-	if (isWindows()) await windows_enable_auditing();
-	// TODO: check whether something similar needs to be done for macOS and linux
+	if (isWindows()) {
+		await windows_enable_auditing();
+	} else if (isMac()) {
+		console.log("Running on Mac");
+	}
 }
-// Test honeytoken alert - change the
 
 import { Honeytoken_Text } from "./classes/Honeytoken_Text";
 import { Globals } from "./globals";
 
-function test_honeytoken_windows(): void {
-	const location = "C:\\Users\\danie\\Desktop";
-	const file_name = "test.txt"; // CHANGE THIS - create a new file first
+function test_honeytoken(): void {
+	let location = "C:\\Users\\danie\\Desktop";
+	let file_name = "test.txt"; // CHANGE THIS - create a new file first
+	if (isMac()) {
+		location = "/Users/sh/Desktop/";
+		file_name = "a.txt";
+	}
 	let ht_t = new Honeytoken_Text("1", "1", "text", new Date(), 5, "help", location, file_name);
 	ht_t.startAgent();
 }

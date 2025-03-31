@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "dist/database.js",
   "scripts": {
+    "format": "prettier --write \"**/*.{js,ts,jsx,tsx,json,md}\"",
     "init": "ts-node database.ts"
   },
   "keywords": [],
@@ -17,5 +18,8 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.8.2",
     "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "prettier": "3.5.3"
   }
 }

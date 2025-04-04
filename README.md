@@ -1,4 +1,4 @@
-# SigmaTokens
+# Sigma-Manager
 
 ## How to run the application
 

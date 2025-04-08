@@ -29,6 +29,11 @@ body {
   background-color: #ffffff;
 }
 
+.top-threats-container ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
 .stats-container ul {
   list-style: none;
   padding: 0;

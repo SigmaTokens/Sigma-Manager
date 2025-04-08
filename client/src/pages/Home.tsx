@@ -14,6 +14,7 @@ function Home() {
     medium: 0,
     high: 0,
   });
+  const [topThreats, setTopThreats] = useState([]);
 
   useEffect(() => {
     const fetchAlerts = async () => {
@@ -25,6 +26,7 @@ function Home() {
         const data = await response.json();
         setAlertsData(data);
         calculateAlertsStats(data);
+        calculateTopThreats(data);
       } catch (err) {
         console.error('Error fetching alerts:', err);
         setError('Failed to fetch alerts. Please try again later.');
@@ -70,6 +72,20 @@ function Home() {
     setAlertsStats(stats);
   };
 
+  const calculateTopThreats = (data) => {
+    const threats = {};
+    data.forEach((alert) => {
+      if (threats[alert.threat]) {
+        threats[alert.threat]++;
+      } else {
+        threats[alert.threat] = 1;
+      }
+    });
+    const sortedThreats = Object.keys(threats).sort((a, b) => threats[b] - threats[a]);
+    const top5Threats = sortedThreats.slice(0, 5).map((threat) => ({ threat, count: threats[threat] }));
+    setTopThreats(top5Threats);
+  };
+
   if (loading) {
     return (
       <div className="loading-container">
@@ -92,7 +108,6 @@ function Home() {
         <div className="card">
           <h3>Alerts Overview</h3>
           <div className="card-body">
-            <Alerts data={alertsData} />
             <div className="stats-container">
               <h4>Alerts Statistics</h4>
               <ul>
@@ -102,6 +117,15 @@ function Home() {
                 <li>High Grade Alerts: {alertsStats.high}</li>
               </ul>
             </div>
+            <div className="top-threats-container">
+              <h4>Top 5 Threats</h4>
+              <ul>
+                {topThreats.map((threat, index) => (
+                  <li key={index}>{threat.threat}: {threat.count}</li>
+                ))}
+              </ul>
+            </div>
+            <Alerts data={alertsData} />
           </div>
         </div>
         <div className="card">
@@ -115,4 +139,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Home

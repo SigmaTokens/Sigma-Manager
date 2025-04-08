@@ -8,6 +8,12 @@ function Home() {
   const [honeytokensData, setHoneytokensData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [alertsStats, setAlertsStats] = useState({
+    total: 0,
+    low: 0,
+    medium: 0,
+    high: 0,
+  });
 
   useEffect(() => {
     const fetchAlerts = async () => {
@@ -18,6 +24,7 @@ function Home() {
         }
         const data = await response.json();
         setAlertsData(data);
+        calculateAlertsStats(data);
       } catch (err) {
         console.error('Error fetching alerts:', err);
         setError('Failed to fetch alerts. Please try again later.');
@@ -43,6 +50,26 @@ function Home() {
     });
   }, []);
 
+  const calculateAlertsStats = (data) => {
+    const stats = {
+      total: 0,
+      low: 0,
+      medium: 0,
+      high: 0,
+    };
+    data.forEach((alert) => {
+      stats.total++;
+      if (alert.grade === 'low') {
+        stats.low++;
+      } else if (alert.grade === 'medium') {
+        stats.medium++;
+      } else if (alert.grade === 'high') {
+        stats.high++;
+      }
+    });
+    setAlertsStats(stats);
+  };
+
   if (loading) {
     return (
       <div className="loading-container">
@@ -61,12 +88,20 @@ function Home() {
 
   return (
     <>
-     
       <div className="dashboard-container" style={{ display: 'block' }}>
         <div className="card">
           <h3>Alerts Overview</h3>
           <div className="card-body">
             <Alerts data={alertsData} />
+            <div className="stats-container">
+              <h4>Alerts Statistics</h4>
+              <ul>
+                <li>Total Alerts: {alertsStats.total}</li>
+                <li>Low Grade Alerts: {alertsStats.low}</li>
+                <li>Medium Grade Alerts: {alertsStats.medium}</li>
+                <li>High Grade Alerts: {alertsStats.high}</li>
+              </ul>
+            </div>
           </div>
         </div>
         <div className="card">

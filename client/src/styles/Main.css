@@ -1,0 +1,39 @@
+.dashboard-container {
+    display: block;
+    width: 80%;
+    margin: 0 auto;
+  }
+  
+  .card {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+  }
+  
+  .card-body {
+    padding: 20px;
+  }
+  
+  .table-container {
+    margin-top: 20px;
+    width: 100%;
+  }
+  
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+  }
+  
+  th {
+    background-color: #f0f0f0;
+  }
+  

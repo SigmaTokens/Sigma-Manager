@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   Card,
   Input,
-  Textarea,
   Checkbox,
   Select,
   SelectTrigger,
@@ -11,19 +10,10 @@ import {
   SelectItem,
 } from "./popup";
 import "../styles/HoneyTokenCreation.css";
-import { HoneytokenPayload } from "../interfaces/HoneytokenPayload";
 import { CreateHoneytokenFormProps } from "../interfaces/CreateHoneytokenFormProps";
 
-function submitHoneytoken(
-  payload: HoneytokenPayload,
-  onClose: () => void
-): void {
-  console.log("Submitting Honeytoken:", payload);
-  // TODO: Replace with API call
-  onClose();
-}
 
-function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
+function CreateHoneytokenForm({ types, agents, onClose }: CreateHoneytokenFormProps) {
   const [quantity, setQuantity] = useState<number>(1);
   const [excludeAccess, setExcludeAccess] = useState<string>("");
   const [selectedType, setSelectedType] = useState<string>("");
@@ -34,6 +24,8 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
   const [grade, setGrade] = useState<number>(1);
   const [fileName, setFileName] = useState<string>("");
   const [fileContent, setFileContent] = useState<string>("");
+  const [agentIP, setAgentIP] = useState<string>("");
+
 
   return (
     <div className="overlay" onClick={onClose}>
@@ -147,7 +139,24 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                 }
               />
             </p>
-
+            <p>
+              <label>agent</label>
+              <Select
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                  setAgentIP(e.target.value)
+                }>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Agent IP" />
+                </SelectTrigger>
+                <SelectContent>
+                  {agents.map((agent) => (
+                    <SelectItem key={agent.id} value={agent.id}>
+                      {agent.IP}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </p>
             <p>
               <div className="checkbox-container">
                 <Checkbox
@@ -213,7 +222,7 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                 if (quantity === 1) {
                   try {
                     const response = await fetch(
-                      "http://localhost:3000/api/honeytoken/text",
+                      "http://"+agentIP+":9007/api/honeytoken/text",
                       {
                         method: "POST",
                         headers: {

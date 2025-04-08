@@ -1,39 +1,78 @@
+body {
+  background-color: #ffffff;
+}
+
 .dashboard-container {
-    display: block;
-    width: 80%;
-    margin: 0 auto;
-  }
-  
-  .card {
-    margin: 20px;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 100%;
-  }
-  
-  .card-body {
-    padding: 20px;
-  }
-  
-  .table-container {
-    margin-top: 20px;
-    width: 100%;
-  }
-  
-  table {
-    border-collapse: collapse;
-    width: 100%;
-  }
-  
-  th, td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: left;
-  }
-  
-  th {
-    background-color: #f0f0f0;
-  }
-  
+  display: block;
+  width: 80%;
+  margin: 0 auto;
+  background-color: #ffffff;
+}
+
+.card {
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.0);
+  width: 100%;
+  background-color: #ffffff;
+}
+
+.card-body {
+  padding: 20px;
+  background-color: #ffffff;
+}
+
+.stats-container {
+  margin-top: 20px;
+  background-color: #ffffff;
+}
+
+.stats-container ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.stats-container li {
+  margin-bottom: 10px;
+  color: #333333; /* Set text color to dark gray */
+}
+
+.stats-container h4 {
+  margin-top: 0;
+  color: #333333; /* Set text color to dark gray */
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #ffffff;
+}
+
+.loading-text {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333333; /* Set text color to dark gray */
+}
+
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #ffffff;
+}
+
+.error-text {
+  font-size: 24px;
+  font-weight: bold;
+  color: #ff0000; /* Keep error text red */
+}
+
+h3 {
+  color: #333333; /* Set text color to dark gray */
+}

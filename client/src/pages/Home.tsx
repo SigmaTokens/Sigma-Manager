@@ -2,6 +2,24 @@
 import React, { useState, useEffect } from 'react';
 import Alerts from './Alerts';
 import Honeytokens from './Honeytokens';
+import '../styles/Home.css'; // Corrected path for OverviewCard.css
+import '../styles/Main.css';       
+
+interface OverviewCardProps {
+  title: string;
+  value: string | number;
+  trend?: string;
+}
+
+const OverviewCard: React.FC<OverviewCardProps> = ({ title, value, trend }) => {
+  return (
+    <div className="overview-card">
+      <h3>{title}</h3>
+      <div className="value">{value}</div>
+      {trend && <div className="trend">{trend}</div>}
+    </div>
+  );
+};
 
 function Home() {
   const [alertsData, setAlertsData] = useState([]);
@@ -15,6 +33,8 @@ function Home() {
     high: 0,
   });
   const [topThreats, setTopThreats] = useState([]);
+  const [monthlyTrend, setMonthlyTrend] = useState('+14%'); // Placeholder
+  const [yearlyTrend, setYearlyTrend] = useState('-6%');   // Placeholder
 
   useEffect(() => {
     const fetchAlerts = async () => {
@@ -103,40 +123,50 @@ function Home() {
   }
 
   return (
-    <>
-      <div className="dashboard-container" style={{ display: 'block' }}>
-        <div className="card">
-          <h3>Alerts Overview</h3>
-          <div className="card-body">
-            <div className="stats-container">
-              <h4>Alerts Statistics</h4>
-              <ul>
-                <li>Total Alerts: {alertsStats.total}</li>
-                <li>Low Grade Alerts: {alertsStats.low}</li>
-                <li>Medium Grade Alerts: {alertsStats.medium}</li>
-                <li>High Grade Alerts: {alertsStats.high}</li>
-              </ul>
-            </div>
-            <div className="top-threats-container">
-              <h4>Top 5 Threats</h4>
-              <ul>
-                {topThreats.map((threat, index) => (
-                  <li key={index}>{threat.threat}: {threat.count}</li>
-                ))}
-              </ul>
-            </div>
-            <Alerts data={alertsData} />
-          </div>
-        </div>
-        <div className="card">
-          <h3>Honeytokens Overview</h3>
-          <div className="card-body">
-            <Honeytokens data={honeytokensData} />
-          </div>
-        </div>
+    <div className="dashboard-grid">
+      <OverviewCard title="All Alarms - Quarter to Quarter" value={alertsStats.total} trend={monthlyTrend} />
+      <OverviewCard title="Product Team - Year over Year" value={`${yearlyTrend} (QTD)`} />
+      <div className="card">
+        <h3>Top and Bottom 3 Items - Percentage of Goals (YTD)</h3>
+        {/* You'll need to structure this data and potentially use a chart */}
       </div>
-    </>
+      <div className="card">
+        <h3>Quarterly Alarm Performance - Last 2 Years (Percentage of Goal)</h3>
+        {/* This will likely involve a line or bar chart */}
+      </div>
+      <div className="card">
+        <h3>Meetings Attended by Team (QTD)</h3>
+        {/* This could be a donut chart or a simple percentage */}
+      </div>
+      <div className="card">
+        <h3>Engineering Performance (QTD)</h3>
+        {/* Another percentage or metric */}
+      </div>
+      <div className="card">
+        <h3>Alerts Statistics</h3>
+        <ul>
+          <li>Total Alerts: <strong>{alertsStats.total}</strong></li>
+          <li>Low Grade Alerts: <strong>{alertsStats.low}</strong></li>
+          <li>Medium Grade Alerts: <strong>{alertsStats.medium}</strong></li>
+          <li>High Grade Alerts: <strong>{alertsStats.high}</strong></li>
+        </ul>
+        <h4>Top 5 Threats</h4>
+        <ul>
+          {topThreats.map((threat, index) => (
+            <li key={index}>{threat.threat}: <strong>{threat.count}</strong></li>
+          ))}
+        </ul>
+      </div>
+      <div className="full-width-card">
+        <h3>Alerts Data</h3>
+        <Alerts data={alertsData} />
+      </div>
+      <div className="full-width-card">
+        <h3>Honeytokens Data</h3>
+        <Honeytokens data={honeytokensData} />
+      </div>
+    </div>
   );
 }
 
-export default Home
+export default Home;

@@ -1,27 +1,82 @@
 /* Home.css */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px; /* Add space between grid items */
+  padding: 20px; /* Add padding around the grid */
+}
+
 .overview-card {
-    background-color: #f9f9f9;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    text-align: left;
-  }
-  
-  .overview-card h3 {
-    font-size: 1.2rem;
-    margin-top: 0;
-    margin-bottom: 5px;
-    color: #333;
-  }
-  
-  .overview-card .value {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #007bff; /* Example primary color */
-  }
-  
-  .overview-card .trend {
-    font-size: 0.9rem;
-    color: #555;
-    margin-top: 5px;
-  }
+  background-color: #f9f9f9;
+  padding: 20px; /* Increased padding for better spacing */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Slightly stronger shadow */
+  text-align: left;
+  transition: transform 0.2s; /* Add transition for hover effect */
+}
+
+.overview-card:hover {
+  transform: translateY(-5px); /* Lift effect on hover */
+}
+
+.overview-card h3 {
+  font-size: 1.5rem; /* Increased font size for better visibility */
+  margin-top: 0;
+  margin-bottom: 10px; /* Increased margin for better spacing */
+  color: #333;
+}
+
+.overview-card .value {
+  font-size: 2rem; /* Increased font size for emphasis */
+  font-weight: bold;
+  color: #007bff; /* Example primary color */
+}
+
+.overview-card .trend {
+  font-size: 1rem; /* Increased font size for better visibility */
+  color: #555;
+  margin-top: 5px;
+}
+
+.graph-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Space between graph cards */
+}
+
+.graph-card {
+  background-color: #fff; /* White background for graph cards */
+  padding: 20px; /* Padding for graph cards */
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.graph-card h3 {
+  margin: 0 0 15px; /* Margin for spacing */
+  font-size: 1.5rem; /* Increased font size for better visibility */
+}
+
+.card {
+  background-color: #fff; /* White background for stats card */
+  padding: 20px; /* Padding for stats card */
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.full-width-card {
+  grid-column: span 2; /* Make full-width cards span two columns */
+  background-color: #fff; /* White background for full-width cards */
+  padding: 20px; /* Padding for full-width cards */
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.loading-container, .error-container {
+  text-align: center; /* Center text for loading and error messages */
+  padding: 20px; /* Padding for better spacing */
+}
+
+.loading-text, .error-text {
+  font-size: 1.2rem; /* Increased font size for better visibility */
+  color: #555; /* Darker color for text */
+}

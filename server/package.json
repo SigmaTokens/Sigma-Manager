@@ -5,6 +5,10 @@
   "directories": {
     "test": "test"
   },
+
+  "scripts": {
+    "install-charts": "sudo npm install chart.js react-chartjs-2"
+  },
   "scripts": {
     "format": "prettier --write \"**/*.{js,ts,jsx,tsx,json,md}\"",
     "start": "cross-env NODE_ENV=production ts-node index.ts",

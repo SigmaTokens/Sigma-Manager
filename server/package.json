@@ -5,7 +5,6 @@
   "directories": {
     "test": "test"
   },
-
   "scripts": {
     "install-charts": "sudo npm install chart.js react-chartjs-2"
   },

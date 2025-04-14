@@ -16,6 +16,7 @@ interface OverviewCardProps {
   trend?: string;
 }
 
+
 const OverviewCard: React.FC<OverviewCardProps> = ({ title, value, trend }) => {
   return (
     <div className="overview-card">
@@ -179,8 +180,16 @@ function Home() {
 
   return (
     <div className="dashboard-grid">
-      <OverviewCard title="All Alarms - Quarter to Quarter" value={alertsStats.total} trend={monthlyTrend} />
-      <OverviewCard title="Product Team - Year over Year" value={`${yearlyTrend} (QTD)`} />
+
+      <div className="dashboard-grid">
+  <div className="small-card">
+    <OverviewCard title="All Alarms - Quarter to Quarter" value={alertsStats.total} trend={monthlyTrend} />
+  </div>
+  <div className="small-card">
+    <OverviewCard title="Product Team - Year over Year" value={`${yearlyTrend} (QTD)`} />
+  </div>
+  
+</div>
 
       {/* Graphs placed above the Alerts dashboard */}
       <div className="graph-container">
@@ -188,6 +197,51 @@ function Home() {
           <h3>Monthly Alerts Trend</h3>
           <Line data={alertsTrendData} />
         </div>
+        <div className="graph-container">
+  {/* existing graphs */}
+  
+  <div className="graph-card">
+  <h3>New Bar Graph</h3>
+  <Bar 
+    data={{
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+      datasets: [
+        {
+          label: 'New Data',
+          data: [10, 20, 30, 40, 50],
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#FF9F40'],
+          borderColor: '#fff',
+          borderWidth: 1,
+        },
+      ],
+    }}
+    options={{
+      responsive: true,
+      scales: {
+        y: { beginAtZero: true },
+      },
+    }}
+  />
+</div>
+
+  <div className="graph-card">
+    <h3>New Line Graph</h3>
+    <Line 
+      data={{
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+        datasets: [
+          {
+            label: 'New Data',
+            data: [10, 20, 30, 40, 50],
+            borderColor: 'rgba(255, 99, 132, 1)',
+            tension: 0.4,
+            fill: false,
+          },
+        ],
+      }}
+    />
+  </div>
+</div>
 
         <div className="graph-card">
           <h3>Alerts Stats (Grade Distribution)</h3>
@@ -220,21 +274,22 @@ function Home() {
       </div>
 
       {/* Alerts Statistics Section */}
-      <div className="card">
-        <h3>Alerts Statistics</h3>
-        <ul>
-          <li>Total Alerts: <strong>{alertsStats.total}</strong></li>
-          <li>Low Grade Alerts: <strong>{alertsStats.low}</strong></li>
-          <li>Medium Grade Alerts: <strong>{alertsStats.medium}</strong></li>
-          <li>High Grade Alerts: <strong>{alertsStats.high}</strong></li>
-        </ul>
-        <h4>Top 5 Threats</h4>
-        <ul>
-          {topThreats.map((threat, index) => (
-            <li key={index}>{threat.threat}: <strong>{threat.count}</strong></li>
-          ))}
-        </ul>
-      </div>
+      <div className="small-card card">
+  <h3>Alerts Statistics</h3>
+  <ul>
+    <li>Total Alerts: <strong>{alertsStats.total}</strong></li>
+    <li>Low Grade Alerts: <strong>{alertsStats.low}</strong></li>
+    <li>Medium Grade Alerts: <strong>{alertsStats.medium}</strong></li>
+    <li>High Grade Alerts: <strong>{alertsStats.high}</strong></li>
+  </ul>
+  <h4>Top 5 Threats</h4>
+  <ul>
+    {topThreats.map((threat, index) => (
+      <li key={index}>{threat.threat}: <strong>{threat.count}</strong></li>
+    ))}
+  </ul>
+</div>
+
 
       <div className="full-width-card">
         <h3>Alerts Data</h3>

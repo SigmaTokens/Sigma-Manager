@@ -6,7 +6,6 @@ import { serveAlerts } from './routes/alerts'
 import { isAdmin } from './utilities/auth'
 import { startDatabase } from '../database/database'
 import { Constants } from './constants'
-import { isWindows, windows_enable_auditing, isMac } from './utilities/host'
 import { Globals } from './globals'
 
 main()

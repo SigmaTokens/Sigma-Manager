@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Card,
   Input,
@@ -8,24 +8,26 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
-} from "./popup";
-import "../styles/HoneyTokenCreation.css";
-import { CreateHoneytokenFormProps } from "../interfaces/CreateHoneytokenFormProps";
+} from './popup';
+import '../styles/HoneyTokenCreation.css';
+import { CreateHoneytokenFormProps } from '../interfaces/CreateHoneytokenFormProps';
 
-
-function CreateHoneytokenForm({ types, agents, onClose }: CreateHoneytokenFormProps) {
+function CreateHoneytokenForm({
+  types,
+  agents,
+  onClose,
+}: CreateHoneytokenFormProps) {
   const [quantity, setQuantity] = useState<number>(1);
-  const [excludeAccess, setExcludeAccess] = useState<string>("");
-  const [selectedType, setSelectedType] = useState<string>("");
+  const [excludeAccess, setExcludeAccess] = useState<string>('');
+  const [selectedType, setSelectedType] = useState<string>('');
   const [spreadAuto, setSpreadAuto] = useState<boolean>(false);
-  const [notes, setNotes] = useState<string>("");
-  const [ComponentAddresses, setComponentAddresses] = useState<string>("");
-  const [expirationDate, setExpirationDate] = useState<string>("");
+  const [notes, setNotes] = useState<string>('');
+  const [ComponentAddresses, setComponentAddresses] = useState<string>('');
+  const [expirationDate, setExpirationDate] = useState<string>('');
   const [grade, setGrade] = useState<number>(1);
-  const [fileName, setFileName] = useState<string>("");
-  const [fileContent, setFileContent] = useState<string>("");
-  const [agentIP, setAgentIP] = useState<string>("");
-
+  const [fileName, setFileName] = useState<string>('');
+  const [fileContent, setFileContent] = useState<string>('');
+  const [agentIP, setAgentIP] = useState<string>('');
 
   return (
     <div className="overlay" onClick={onClose}>
@@ -51,7 +53,8 @@ function CreateHoneytokenForm({ types, agents, onClose }: CreateHoneytokenFormPr
               <Select
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                   setSelectedType(e.target.value)
-                }>
+                }
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select Honeytoken Type" />
                 </SelectTrigger>
@@ -144,7 +147,8 @@ function CreateHoneytokenForm({ types, agents, onClose }: CreateHoneytokenFormPr
               <Select
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                   setAgentIP(e.target.value)
-                }>
+                }
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select Agent IP" />
                 </SelectTrigger>
@@ -174,7 +178,8 @@ function CreateHoneytokenForm({ types, agents, onClose }: CreateHoneytokenFormPr
               <p>
                 <label>File Location</label>
                 <div
-                  style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                  style={{ display: 'flex', gap: '8px', alignItems: 'center' }}
+                >
                   <Input
                     type="text"
                     placeholder="Enter file path or click to choose"
@@ -188,9 +193,10 @@ function CreateHoneytokenForm({ types, agents, onClose }: CreateHoneytokenFormPr
                   <button
                     type="button"
                     onClick={() =>
-                      document.getElementById("fileInputHidden")?.click()
+                      document.getElementById('fileInputHidden')?.click()
                     }
-                    className="button button-secondary">
+                    className="button button-secondary"
+                  >
                     📁
                   </button>
 
@@ -198,7 +204,7 @@ function CreateHoneytokenForm({ types, agents, onClose }: CreateHoneytokenFormPr
                   <input
                     id="fileInputHidden"
                     type="file"
-                    style={{ display: "none" }}
+                    style={{ display: 'none' }}
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (file) {
@@ -222,41 +228,43 @@ function CreateHoneytokenForm({ types, agents, onClose }: CreateHoneytokenFormPr
                 if (quantity === 1) {
                   try {
                     const response = await fetch(
-                      "http://"+agentIP+":9007/api/honeytoken/text",
+                      'http://' + agentIP + ':9007/api/honeytoken/add',
                       {
-                        method: "POST",
+                        method: 'POST',
                         headers: {
-                          "Content-Type": "application/json",
+                          'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
+                          type: selectedType,
                           file_name: fileName,
                           location: ComponentAddresses,
                           grade: grade,
                           expiration_date: expirationDate,
-                          data: fileContent,
                           notes: notes,
+                          data: fileContent,
                         }),
-                      }
+                      },
                     );
 
                     if (!response.ok) {
                       const errorText = await response.text();
-                      console.error("Error:", errorText);
-                      alert("Failed to create honeytoken.");
+                      console.error('Error:', errorText);
+                      alert('Failed to create honeytoken.');
                     } else {
-                      console.log("Honeytoken created successfully!");
+                      console.log('Honeytoken created successfully!');
                       onClose();
                     }
                   } catch (err) {
-                    console.error("Request failed:", err);
+                    console.error('Request failed:', err);
                     alert(
-                      "Something went wrong while creating the honeytoken."
+                      'Something went wrong while creating the honeytoken.',
                     );
                   }
                 } else {
                   //TODO: handle quantity > 1 in the future
                 }
-              }}>
+              }}
+            >
               Submit
             </button>
           </div>

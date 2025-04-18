@@ -95,7 +95,8 @@ function create_file(filePath, content) {
     fs.writeFileSync(filePath, content, 'utf8')
     console.log(`[+] Created: ${filePath}`)
   } else {
-    console.log(`[+] Already Exists: ${filePath}`)
+    fs.writeFileSync(filePath, content, 'utf8')
+    console.log(`[+] Updated: ${filePath}`)
   }
 }
 
@@ -104,7 +105,7 @@ function setup_prettier_config(rootDir) {
     "singleQuote": true,
     "trailingComma": "all",
     "tabWidth": 2,
-    "semi": false
+    "semi": true
   }`
 
   const prettierIgnore = `node_modules

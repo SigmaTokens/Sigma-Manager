@@ -228,7 +228,7 @@ function CreateHoneytokenForm({
                 if (quantity === 1) {
                   try {
                     const response = await fetch(
-                      'http://' + agentIP + ':9007/api/honeytoken/text',
+                      'http://' + agentIP + ':9007/api/honeytoken/add',
                       {
                         method: 'POST',
                         headers: {
@@ -240,8 +240,8 @@ function CreateHoneytokenForm({
                           location: ComponentAddresses,
                           grade: grade,
                           expiration_date: expirationDate,
-                          data: fileContent,
                           notes: notes,
+                          data: fileContent,
                         }),
                       },
                     );

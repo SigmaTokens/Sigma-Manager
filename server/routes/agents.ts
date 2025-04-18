@@ -1,21 +1,7 @@
-import { Router, Express } from 'express';
-import { Database } from 'sqlite';
-import sqlite3 from 'sqlite3';
-import { v4 as uuidv4 } from 'uuid';
-// import {
-//   get_all_agents,
-//   get_agent_by_agent_id,
-//   get_agent_by_ip,
-//   delete_agent_by_id,
-//   insert_agent,
-// } from "../../database/agents";
-import { Agent } from '../classes/Agent';
+import { Router } from 'express';
+import { Globals } from '../globals';
 
-//fix: currently it's just a dummy...
-export function serveAgents(
-  app: Express,
-  database: Database<sqlite3.Database, sqlite3.Statement>,
-) {
+export function serveAgents() {
   const router = Router();
 
   router.get('/agents', async (req, res) => {
@@ -69,7 +55,7 @@ export function serveAgents(
 
       console.log('help');
 
-      const newAgent = new Agent(uuidv4(), ip, notes);
+      //const newAgent = new Agent(uuidv4(), ip, notes);
 
       //   insert_agent(
       //     database,
@@ -84,5 +70,5 @@ export function serveAgents(
     }
   });
 
-  app.use('/api', router);
+  Globals.app.use('/api', router);
 }

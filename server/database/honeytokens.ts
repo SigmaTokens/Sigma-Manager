@@ -1,13 +1,10 @@
-import { Database } from 'sqlite';
-import sqlite3 from 'sqlite3';
 import { v4 as uuidv4 } from 'uuid';
 import { get_all_types } from './types';
 import { begin_transaction, commit, rollback } from './helpers';
+import { Globals } from '../globals';
 
-export async function init_honeytokens_table(
-  database: Database<sqlite3.Database, sqlite3.Statement>,
-) {
-  await database.exec(`
+export async function init_honeytokens_table() {
+  await Globals.app.locals.db.exec(`
     CREATE TABLE IF NOT EXISTS honeytokens (
       token_id VARCHAR PRIMARY KEY,
       group_id VARCHAR,
@@ -26,10 +23,8 @@ export async function init_honeytokens_table(
   `);
 }
 
-export async function get_all_honeytokens(
-  database: Database<sqlite3.Database, sqlite3.Statement>,
-) {
-  return await database.all(
+export async function get_all_honeytokens() {
+  return await Globals.app.locals.db.all(
     `SELECT token_id, 
 					 group_id, 
 					 type_id, 
@@ -44,11 +39,8 @@ export async function get_all_honeytokens(
   );
 }
 
-export async function get_honeytoken_by_token_id(
-  database: Database<sqlite3.Database, sqlite3.Statement>,
-  token_id: String,
-) {
-  return await database.get(
+export async function get_honeytoken_by_token_id(token_id: String) {
+  return await Globals.app.locals.db.get(
     `
     SELECT token_id,
            group_id,
@@ -67,11 +59,8 @@ export async function get_honeytoken_by_token_id(
   );
 }
 
-export async function get_honeytokens_by_type_id(
-  database: Database<sqlite3.Database, sqlite3.Statement>,
-  type_id: String,
-) {
-  return await database.all(
+export async function get_honeytokens_by_type_id(type_id: String) {
+  return await Globals.app.locals.db.all(
     `
     SELECT token_id,
            group_id,
@@ -90,11 +79,8 @@ export async function get_honeytokens_by_type_id(
   );
 }
 
-export async function get_honeytokens_by_group_id(
-  database: Database<sqlite3.Database, sqlite3.Statement>,
-  group_id: String,
-) {
-  return await database.all(
+export async function get_honeytokens_by_group_id(group_id: String) {
+  return await Globals.app.locals.db.all(
     `
     SELECT token_id,
            group_id,
@@ -113,69 +99,68 @@ export async function get_honeytokens_by_group_id(
   );
 }
 
-export async function delete_all_honeytokens(
-  database: Database<sqlite3.Database, sqlite3.Statement>,
-) {
-  return await database.run(`DELETE FROM honeytokens`);
+export async function delete_all_honeytokens() {
+  return await Globals.app.locals.db.run(`DELETE FROM honeytokens`);
 }
 
-export async function delete_honeytoken_by_id(
-  database: Database<sqlite3.Database, sqlite3.Statement>,
-  token_id: String,
-) {
+export async function delete_honeytoken_by_id(token_id: String) {
   try {
-    await begin_transaction(database);
+    await begin_transaction();
 
-    await database.run(`DELETE FROM alerts WHERE token_id = ?`, [token_id]);
-
-    await database.run(`DELETE FROM honeytokens WHERE token_id = ?`, [
+    await Globals.app.locals.db.run(`DELETE FROM alerts WHERE token_id = ?`, [
       token_id,
     ]);
 
-    await commit(database);
+    await Globals.app.locals.db.run(
+      `DELETE FROM honeytokens WHERE token_id = ?`,
+      [token_id],
+    );
+
+    await commit();
   } catch (error) {
-    await rollback(database);
+    await rollback();
   }
 }
 
-export async function delete_honeytokens_by_type_id(
-  database: Database<sqlite3.Database, sqlite3.Statement>,
-  type_id: String,
-) {
+export async function delete_honeytokens_by_type_id(type_id: String) {
   try {
-    await begin_transaction(database);
+    await begin_transaction();
 
-    await database.run(`DELETE FROM alerts WHERE type_id = ?`, [type_id]);
+    await Globals.app.locals.db.run(`DELETE FROM alerts WHERE type_id = ?`, [
+      type_id,
+    ]);
 
-    await database.run(`DELETE FROM honeytokens WHERE type_id = ?`, [type_id]);
+    await Globals.app.locals.db.run(
+      `DELETE FROM honeytokens WHERE type_id = ?`,
+      [type_id],
+    );
 
-    await commit(database);
+    await commit();
   } catch (error) {
-    await rollback(database);
+    await rollback();
   }
 }
 
-export async function delete_honeytokens_by_group_id(
-  database: Database<sqlite3.Database, sqlite3.Statement>,
-  group_id: String,
-) {
+export async function delete_honeytokens_by_group_id(group_id: String) {
   try {
-    await begin_transaction(database);
+    await begin_transaction();
 
-    await database.run(`DELETE FROM alerts WHERE group_id = ?`, [group_id]);
-
-    await database.run(`DELETE FROM honeytokens WHERE group_id = ?`, [
+    await Globals.app.locals.db.run(`DELETE FROM alerts WHERE group_id = ?`, [
       group_id,
     ]);
 
-    await commit(database);
+    await Globals.app.locals.db.run(
+      `DELETE FROM honeytokens WHERE group_id = ?`,
+      [group_id],
+    );
+
+    await commit();
   } catch (error) {
-    await rollback(database);
+    await rollback();
   }
 }
 
 export async function insert_honeytoken(
-  database: Database<sqlite3.Database, sqlite3.Statement>,
   token_id: string,
   group_id: string,
   type_id: any,
@@ -187,7 +172,7 @@ export async function insert_honeytoken(
   data: string,
   notes: string,
 ) {
-  await database.run(
+  await Globals.app.locals.db.run(
     `INSERT INTO honeytokens (token_id, group_id, type_id, grade, creation_date, expire_date, location , file_name ,data, notes ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       token_id,
@@ -204,13 +189,11 @@ export async function insert_honeytoken(
   );
 }
 
-export async function dummy_populate_honeytokens(
-  database: Database<sqlite3.Database, sqlite3.Statement>,
-) {
-  await delete_all_honeytokens(database);
+export async function dummy_populate_honeytokens() {
+  await delete_all_honeytokens();
   const honeytokens = [];
 
-  const types = await get_all_types(database);
+  const types = await get_all_types();
 
   if (types.length === 0) throw new Error('[-] No types found in types table');
 
@@ -234,7 +217,7 @@ export async function dummy_populate_honeytokens(
   }
 
   for (const token of honeytokens) {
-    await database.run(
+    await Globals.app.locals.db.run(
       `INSERT INTO honeytokens (token_id, group_id, type_id, grade, creation_date, expire_date, location , file_name ,data, notes ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         token.token_id,

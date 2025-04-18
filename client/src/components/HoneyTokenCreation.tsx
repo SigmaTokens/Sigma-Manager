@@ -12,11 +12,7 @@ import {
 import '../styles/HoneyTokenCreation.css';
 import { CreateHoneytokenFormProps } from '../interfaces/CreateHoneytokenFormProps';
 
-function CreateHoneytokenForm({
-  types,
-  agents,
-  onClose,
-}: CreateHoneytokenFormProps) {
+function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
   const [quantity, setQuantity] = useState<number>(1);
   const [excludeAccess, setExcludeAccess] = useState<string>('');
   const [selectedType, setSelectedType] = useState<string>('');
@@ -152,13 +148,6 @@ function CreateHoneytokenForm({
                 <SelectTrigger>
                   <SelectValue placeholder="Select Agent IP" />
                 </SelectTrigger>
-                <SelectContent>
-                  {agents.map((agent) => (
-                    <SelectItem key={agent.id} value={agent.id}>
-                      {agent.IP}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
               </Select>
             </p>
             <p>

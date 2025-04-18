@@ -1,25 +1,5 @@
 {
-  "name": "database",
-  "version": "1.0.0",
-  "main": "dist/database.js",
-  "scripts": {
-    "format": "prettier --write \"**/*.{js,ts,jsx,tsx,json,md}\"",
-    "init": "ts-node database.ts"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
-    "@types/node": "^22.13.10",
-    "sigmatokens": "file:..",
-    "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.7",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.8.2",
-    "uuid": "^11.1.0"
-  },
-  "devDependencies": {
-    "prettier": "3.5.3"
+    "sigmatokens": "file:.."
   }
 }

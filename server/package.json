@@ -19,7 +19,8 @@
     "is-elevated": "^4.0.0",
     "sigmatokens": "file:..",
     "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

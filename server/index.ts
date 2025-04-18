@@ -4,9 +4,7 @@ import { serveClient } from './routes/client';
 import { serveHoneytokens } from './routes/honeytokens';
 import { serveAlerts } from './routes/alerts';
 import { serveAgents } from './routes/agents';
-import { isAdmin } from './utilities/auth';
-import { startDatabase } from '../database/database';
-import { Constants } from './constants';
+import { startDatabase } from './database/database';
 import { Globals } from './globals';
 main();
 
@@ -18,30 +16,23 @@ function main(): void {
   app.use(express.urlencoded({ extended: true }));
   const port = process.env.PORT || 3000;
 
-  isAdmin().then((isAdmin) => {
-    if (!isAdmin) {
-      console.error(Constants.TEXT_RED_COLOR, 'Please run as administrator');
-      return;
-    }
-    startDatabase()
-      .then((database) => {
-        app.locals.db = database;
-        console.log('[+] Database connection initialized:', app.locals.db);
+  Globals.app = app;
 
-        serveHoneytokens(app, database);
-        serveAlerts(app);
-        serveAgents(app, database);
-        serveClient(app);
+  startDatabase()
+    .then((database) => {
+      console.log('[+] Database connection initialized:', app.locals.db);
 
-        Globals.app = app;
+      serveHoneytokens();
+      serveAlerts();
+      serveAgents();
+      serveClient();
 
-        app.listen(port, () => {
-          console.log(`[+] Server running on port ${port}`);
-        });
-      })
-      .catch((error) => {
-        console.error('[-] Failed to initialize server:', error);
-        process.exit(1);
+      app.listen(port, () => {
+        console.log(`[+] Server running on port ${port}`);
       });
-  });
+    })
+    .catch((error) => {
+      console.error('[-] Failed to initialize server:', error);
+      process.exit(1);
+    });
 }

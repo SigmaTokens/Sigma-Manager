@@ -44,7 +44,7 @@ function get_mode() {
 }
 
 function init_database_file() {
-  const database_dir = path.join(process.cwd(), 'database');
+  const database_dir = path.join(process.cwd(), 'server/database');
   const database_file_name = 'database.sqlite';
   const database_path = path.join(database_dir, database_file_name);
 

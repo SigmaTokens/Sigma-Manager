@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Card,
   Input,
@@ -10,6 +10,7 @@ import {
   SelectItem,
 } from './popup';
 import '../styles/HoneyTokenCreation.css';
+import { getAgents } from '../models/Agents';
 
 function CreateHoneytokenForm({ types, onClose }: any) {
   const [quantity, setQuantity] = useState<number>(1);
@@ -23,6 +24,14 @@ function CreateHoneytokenForm({ types, onClose }: any) {
   const [fileName, setFileName] = useState<string>('');
   const [fileContent, setFileContent] = useState<string>('');
   const [agentIP, setAgentIP] = useState<string>('');
+  const [agents, setAgents] = useState<any[]>([]);
+
+  useEffect(() => {
+    getAgents().then((data) => {
+      console.log('hui', data);
+      setAgents(data);
+    });
+  }, []);
 
   return (
     <div className="overlay" onClick={onClose}>
@@ -147,6 +156,13 @@ function CreateHoneytokenForm({ types, onClose }: any) {
                 <SelectTrigger>
                   <SelectValue placeholder="Select Agent IP" />
                 </SelectTrigger>
+                <SelectContent>
+                  {agents.map((agent) => (
+                    <SelectItem key={agent.agent_id} value={agent.agent_id}>
+                      {agent.ip}:{agent.port} | {agent.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
               </Select>
             </p>
 

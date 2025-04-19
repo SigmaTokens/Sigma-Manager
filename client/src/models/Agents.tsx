@@ -1,4 +1,4 @@
-export async function GetAgents() {
+export async function getAgents() {
   try {
     const response = await fetch('http://localhost:3000/api/agents', {
       method: 'GET',

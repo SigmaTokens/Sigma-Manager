@@ -155,7 +155,7 @@ function install_deps() {
     execSync('npm install', { stdio: 'inherit' });
 
     console.log('[+] Updating deps for database~~~');
-    execSync('npm install --prefix database', { stdio: 'inherit' });
+    execSync('npm install --prefix server/database', { stdio: 'inherit' });
 
     console.log('[+] Updating deps for client~~~');
     execSync('npm install --prefix client', { stdio: 'inherit' });

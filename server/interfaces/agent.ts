@@ -1,5 +1,6 @@
 export interface I_Agent {
-    getAgentID(): string;
-    getIP(): string;
-    getNotes(): string;
+  getAgentID(): string
+  getIP(): string
+  getName(): string
+  getPort(): number
 }

@@ -32,7 +32,12 @@
     "prettier": "3.5.3"
   },
   "dependencies": {
+    "@types/node": "^22.14.1",
     "cross-env": "^7.0.3",
+    "ping": "^0.4.4",
+    "sqlite3": "^5.1.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3",
     "uuid": "^11.1.0"
   }
 }

@@ -10,9 +10,8 @@ import {
   SelectItem,
 } from './popup';
 import '../styles/HoneyTokenCreation.css';
-import { CreateHoneytokenFormProps } from '../interfaces/CreateHoneytokenFormProps';
 
-function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
+function CreateHoneytokenForm({ types, onClose }: any) {
   const [quantity, setQuantity] = useState<number>(1);
   const [excludeAccess, setExcludeAccess] = useState<string>('');
   const [selectedType, setSelectedType] = useState<string>('');
@@ -55,7 +54,7 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                   <SelectValue placeholder="Select Honeytoken Type" />
                 </SelectTrigger>
                 <SelectContent>
-                  {types.map((type) => (
+                  {types.map((type: any) => (
                     <SelectItem key={type.id} value={type.id}>
                       {type.name}
                     </SelectItem>

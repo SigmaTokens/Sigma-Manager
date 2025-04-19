@@ -23,7 +23,7 @@ function CreateHoneytokenForm({ types, onClose }: any) {
   const [grade, setGrade] = useState<number>(1);
   const [fileName, setFileName] = useState<string>('');
   const [fileContent, setFileContent] = useState<string>('');
-  const [agentIP, setAgentIP] = useState<string>('');
+  const [agentID, setAgentID] = useState<string>('');
   const [agents, setAgents] = useState<any[]>([]);
 
   useEffect(() => {
@@ -149,9 +149,10 @@ function CreateHoneytokenForm({ types, onClose }: any) {
             <p>
               <label>agent</label>
               <Select
-                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                  setAgentIP(e.target.value)
-                }
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                  console.log('help:', e.target);
+                  setAgentID(e.target.value);
+                }}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select Agent IP" />
@@ -223,6 +224,7 @@ function CreateHoneytokenForm({ types, onClose }: any) {
                           expiration_date: expirationDate,
                           notes: notes,
                           data: fileContent,
+                          agent_id: agentID,
                         }),
                       },
                     );

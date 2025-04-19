@@ -54,20 +54,18 @@ export function serveAgents() {
     }
   });
 
-  // TODO: move this to another funciton and call it there
-  // setInterval(async () => {
-  //   try {
-  //     const agents = await get_all_agents();
-  //     for (const agent of agents) {
-  //       const status = await checkAgentStatus(agent.agent_ip);
-  //       agentStatusMap[agent.agent_id] = status;
-  //     }
-  //     if (process.env.MODE === 'dev')
-  //       console.log('[+] Updated agent statuses:', agentStatusMap);
-  //   } catch (err) {
-  //     console.error('[-] Failed to update agent statuses:', err);
-  //   }
-  // }, 5000);
+  // TODO: this needs to move to somewhere else and be in a while loop
+  setInterval(async () => {
+    try {
+      const agents = await get_all_agents();
+      for (const agent of agents) {
+        const status = await checkAgentStatus(agent.agent_ip);
+        agentStatusMap[agent.agent_id] = status;
+      }
+    } catch (err) {
+      console.error('[-] Failed to update agent statuses:', err);
+    }
+  }, 5000);
 
   Globals.app.use('/api', router);
 }

@@ -35,3 +35,7 @@ Server is running in [localhost:3000](localhost:3000)
 ### Windows: "running scripts is disabled on this system"
 
 Please run the following command in powershell: `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`
+
+### Updated database tables ?
+
+Please delete the file `database.sqlite` so the tables will recreate themself

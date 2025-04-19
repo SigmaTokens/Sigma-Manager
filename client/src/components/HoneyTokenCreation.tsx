@@ -190,11 +190,10 @@ function CreateHoneytokenForm({ types, onClose }: any) {
             <button
               className="button button-primary"
               onClick={async () => {
-                // TODO: move all this logic to the server-side
                 if (quantity === 1) {
                   try {
                     const response = await fetch(
-                      'http://' + agentIP + ':9007/api/honeytoken/add',
+                      'http://localhost:3000/api/honeytoken/text',
                       {
                         method: 'POST',
                         headers: {

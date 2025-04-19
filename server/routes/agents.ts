@@ -27,7 +27,7 @@ export function serveAgents() {
         name: agent.agent_name,
         ip: agent.agent_ip,
         port: agent.agent_port,
-        status: agentStatusMap[agent.agent_id] || 'unknown',
+        status: agentStatusMap[agent.agent_id] || 'unknown', // TODO: this needs to move to client - client needs to request the statuses every X seconds
       }));
 
       res.json(agentsWithStatus);
@@ -39,14 +39,8 @@ export function serveAgents() {
 
   router.post('/agents/text', async (req, res) => {
     try {
-      console.log(req.body);
       const { ip, name, port } = req.body;
-
-      console.log('help');
-      console.log('req.body:', req.body);
-
       await insert_agent(uuidv4(), ip, name, parseInt(port));
-
       res.send().status(200);
     } catch (error: any) {
       console.error(Constants.TEXT_RED_COLOR, error);

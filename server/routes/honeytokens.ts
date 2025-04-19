@@ -23,6 +23,15 @@ export function serveHoneytokens() {
     }
   });
 
+  router.post('/honeytoken/text', async (req, res) => {
+    try {
+      console.log(req.body);
+    } catch (error) {
+      console.error('error');
+      res.status(500).json({ failure: error });
+    }
+  });
+
   router.get('/honeytokens/token/:token_id', async (req, res) => {
     const { token_id } = req.params;
     try {

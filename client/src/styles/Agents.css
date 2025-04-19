@@ -1,0 +1,79 @@
+.agents-container {
+  padding: 1.5rem;
+  background-color: #f9fafb;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.agents-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+}
+
+.table-container {
+  background-color: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  width: 100%;
+  max-width: 72rem;
+}
+
+.agents-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #e5e7eb;
+}
+
+.agents-table th,
+.agents-table td {
+  padding: 0.75rem;
+  text-align: center;
+  border: 1px solid #e5e7eb;
+}
+
+.agents-table th {
+  background-color: #f9fafb;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: uppercase;
+}
+
+.agents-table td {
+  font-size: 0.875rem;
+  color: #1f2937;
+}
+
+.agents-table tbody tr {
+  background-color: white;
+  transition: background-color 0.2s;
+}
+
+.agents-table tbody tr:hover {
+  background-color: #f3f4f6;
+}
+
+.agents-status-online {
+  color: green;
+  font-weight: bold;
+}
+
+.agents-status-online {
+  color: green !important;
+  font-weight: bold;
+}
+
+.agents-status-offline {
+  color: red !important;
+  font-weight: bold;
+}
+
+.agents-status-unknown {
+  color: gray !important;
+  font-weight: bold;
+}

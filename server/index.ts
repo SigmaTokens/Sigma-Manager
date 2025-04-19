@@ -3,9 +3,11 @@ import cors from 'cors';
 import { serveClient } from './routes/client';
 import { serveHoneytokens } from './routes/honeytokens';
 import { serveAlerts } from './routes/alerts';
-import { serveAgents } from './routes/agents';
-import { startDatabase } from './database/database';
+import { isAdmin } from './utilities/auth';
+import { startDatabase } from '../database/database';
+import { Constants } from './constants';
 import { Globals } from './globals';
+import { serveAgents } from './routes/agents';
 main();
 
 function main(): void {

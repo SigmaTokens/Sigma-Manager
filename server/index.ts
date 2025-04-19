@@ -7,7 +7,7 @@ import { isAdmin } from './utilities/auth'
 import { startDatabase } from '../database/database'
 import { Constants } from './constants'
 import { Globals } from './globals'
-
+import { serveAgents } from './routes/agents'
 main()
 
 function main(): void {
@@ -29,6 +29,7 @@ function main(): void {
         console.log('[+] Database connection initialized:', app.locals.db)
 
         serveHoneytokens(app, database)
+        serveAgents(app, database)
         serveAlerts(app)
         serveClient(app)
 

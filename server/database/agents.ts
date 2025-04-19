@@ -9,3 +9,19 @@ export async function init_agents_table() {
     );
   `);
 }
+
+export async function insert_agent(
+  agent_id: string,
+  ip: string,
+  name: string,
+  port: number,
+) {
+  await Globals.app.locals.db.run(
+    `INSERT INTO agents (agent_id, agent_ip, agent_name, agent_port) VALUES (?, ?, ?, ?)`,
+    [agent_id, ip, name, port],
+  );
+}
+
+export async function get_all_agents() {
+  return await Globals.app.locals.db.all(`SELECT * FROM agents`);
+}

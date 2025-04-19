@@ -26,6 +26,18 @@ export function serveHoneytokens() {
   router.post('/honeytoken/text', async (req, res) => {
     try {
       console.log(req.body);
+      // TODO: add stuff here LMFAO
+
+      const {
+        type,
+        file_name,
+        location,
+        grade,
+        expiration_date,
+        notes,
+        data,
+        agent_id,
+      } = req.body;
     } catch (error) {
       console.error('error');
       res.status(500).json({ failure: error });

@@ -26,3 +26,16 @@ export async function insert_agent(
 export async function get_all_agents() {
   return await Globals.app.locals.db.all(`SELECT * FROM agents`);
 }
+
+export async function get_agent(agent_id: string) {
+  return await Globals.app.locals.db.get(
+    `
+    SELECT  agent_id, 
+                  agent_name, 
+                  agent_ip, 
+                  agent_port
+      FROM  agents
+    WHERE  agent_id = ?;`,
+    [agent_id],
+  );
+}

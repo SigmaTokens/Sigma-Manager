@@ -30,8 +30,12 @@ function CreateHoneytokenForm({ types, onClose }: any) {
     getAgents().then((data) => {
       console.log('hui', data);
       setAgents(data);
+      console.log('helpbylaty', data[0]);
+      setAgentID(data[0].agent_id);
     });
   }, []);
+
+  useEffect(() => {});
 
   return (
     <div className="overlay" onClick={onClose}>

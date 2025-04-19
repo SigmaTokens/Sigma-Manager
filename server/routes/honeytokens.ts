@@ -9,6 +9,7 @@ import {
   delete_honeytokens_by_group_id,
 } from '../database/honeytokens';
 import { Globals } from '../globals';
+import { get_agent } from '../database/agents';
 
 export function serveHoneytokens() {
   const router = Router();
@@ -26,7 +27,9 @@ export function serveHoneytokens() {
   router.post('/honeytoken/text', async (req, res) => {
     try {
       console.log(req.body);
-      // TODO: add stuff here LMFAO
+
+      // TODO: write the honeytoken to the database
+      // TODO: send the honeytoken for creation to the agent
 
       const {
         type,
@@ -38,6 +41,10 @@ export function serveHoneytokens() {
         data,
         agent_id,
       } = req.body;
+
+      const agent = await get_agent(agent_id);
+
+      console.log(agent);
     } catch (error) {
       console.error('error');
       res.status(500).json({ failure: error });

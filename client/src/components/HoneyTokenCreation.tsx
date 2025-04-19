@@ -63,7 +63,7 @@ function CreateHoneytokenForm({ types, onClose }: any) {
               </Select>
             </p>
 
-            <p>
+            {/* <p>
               <label>Exclude Access</label>
               <Input
                 type="text"
@@ -73,7 +73,7 @@ function CreateHoneytokenForm({ types, onClose }: any) {
                   setExcludeAccess(e.target.value)
                 }
               />
-            </p>
+            </p> */}
 
             <p>
               <label>Notes</label>
@@ -149,7 +149,8 @@ function CreateHoneytokenForm({ types, onClose }: any) {
                 </SelectTrigger>
               </Select>
             </p>
-            <p>
+
+            {/* <p>
               <div className="checkbox-container">
                 <Checkbox
                   checked={spreadAuto}
@@ -160,7 +161,7 @@ function CreateHoneytokenForm({ types, onClose }: any) {
                 />
                 <label>Spread Tokens Automatically</label>
               </div>
-            </p>
+            </p> */}
 
             {!spreadAuto && (selectedType || types.length < 2) && (
               <p>
@@ -176,30 +177,6 @@ function CreateHoneytokenForm({ types, onClose }: any) {
                       setComponentAddresses(e.target.value)
                     }
                   />
-
-                  {/* open file explorer */}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      document.getElementById('fileInputHidden')?.click()
-                    }
-                    className="button button-secondary"
-                  >
-                    📁
-                  </button>
-
-                  {/* hidden input */}
-                  <input
-                    id="fileInputHidden"
-                    type="file"
-                    style={{ display: 'none' }}
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        setComponentAddresses(file.name);
-                      }
-                    }}
-                  />
                 </div>
               </p>
             )}
@@ -213,6 +190,7 @@ function CreateHoneytokenForm({ types, onClose }: any) {
             <button
               className="button button-primary"
               onClick={async () => {
+                // TODO: move all this logic to the server-side
                 if (quantity === 1) {
                   try {
                     const response = await fetch(

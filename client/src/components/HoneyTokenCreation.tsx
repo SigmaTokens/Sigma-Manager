@@ -209,6 +209,7 @@ function CreateHoneytokenForm({ types, onClose }: any) {
               onClick={async () => {
                 if (quantity === 1) {
                   try {
+                    // TODO: need to move all this logic to a seperate file
                     const response = await fetch(
                       'http://localhost:3000/api/honeytoken/text',
                       {

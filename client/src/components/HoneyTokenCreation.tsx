@@ -222,7 +222,7 @@ function CreateHoneytokenForm({ types, onClose }: any) {
                           'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                          type: selectedType,
+                          type: 'text',
                           file_name: fileName,
                           location: ComponentAddresses,
                           grade: grade,

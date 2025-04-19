@@ -1,5 +1,5 @@
 const agentStatusMap: Record<string, string> = {};
-import { Router, Express } from 'express';
+import { Router } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import ping from 'ping';
 import { get_all_agents, insert_agent } from '../database/agents';

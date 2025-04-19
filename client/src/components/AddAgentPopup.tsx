@@ -1,15 +1,15 @@
-import React, { useState } from 'react'
-import { Card, Input } from './popup'
-import '../styles/AddAgentPopup.css'
+import { useState } from 'react';
+import { Card, Input } from './popup';
+import '../styles/AddAgentPopup.css';
 
 interface AddAgentPopupProps {
-  onClose: () => void
+  onClose: () => void;
 }
 
 function AddAgentPopup({ onClose }: AddAgentPopupProps) {
-  const [agentIP, setAgentIP] = useState('')
-  const [agentName, setAgentName] = useState('')
-  const [agentPort, setAgentPort] = useState<number>()
+  const [agentIP, setAgentIP] = useState('');
+  const [agentName, setAgentName] = useState('');
+  const [agentPort, setAgentPort] = useState<number>();
 
   const handleSubmit = async () => {
     try {
@@ -23,21 +23,21 @@ function AddAgentPopup({ onClose }: AddAgentPopupProps) {
           name: agentName,
           port: agentPort,
         }),
-      })
+      });
 
       if (!response.ok) {
-        const errorText = await response.text()
-        console.error('Error:', errorText)
-        alert('Failed to add agent.')
+        const errorText = await response.text();
+        console.error('Error:', errorText);
+        alert('Failed to add agent.');
       } else {
-        console.log('Agent added successfully!')
-        onClose()
+        console.log('Agent added successfully!');
+        onClose();
       }
     } catch (err) {
-      console.error('Request failed:', err)
-      alert('Something went wrong while adding the agent.')
+      console.error('Request failed:', err);
+      alert('Something went wrong while adding the agent.');
     }
-  }
+  };
 
   return (
     <div className="overlay" onClick={onClose}>
@@ -89,7 +89,7 @@ function AddAgentPopup({ onClose }: AddAgentPopupProps) {
         </Card>
       </div>
     </div>
-  )
+  );
 }
 
-export default AddAgentPopup
+export default AddAgentPopup;

@@ -164,13 +164,13 @@ export async function insert_honeytoken(
   token_id: string,
   group_id: string,
   type_id: any,
+  file_name: string,
+  location: string,
   grade: number,
   creation_date: Date,
   expiration_date: Date,
-  location: string,
-  file_name: string,
-  data: string,
   notes: string,
+  data: string,
 ) {
   await Globals.app.locals.db.run(
     `INSERT INTO honeytokens (token_id, group_id, type_id, grade, creation_date, expire_date, location , file_name ,data, notes ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,

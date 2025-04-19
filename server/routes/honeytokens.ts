@@ -7,9 +7,11 @@ import {
   delete_honeytoken_by_id,
   delete_honeytokens_by_type_id,
   delete_honeytokens_by_group_id,
+  insert_honeytoken,
 } from '../database/honeytokens';
 import { Globals } from '../globals';
 import { get_agent } from '../database/agents';
+import { v4 as uuidv4 } from 'uuid';
 
 export function serveHoneytokens() {
   const router = Router();
@@ -28,9 +30,6 @@ export function serveHoneytokens() {
     try {
       console.log(req.body);
 
-      // TODO: write the honeytoken to the database
-      // TODO: send the honeytoken for creation to the agent
-
       const {
         type,
         file_name,
@@ -43,6 +42,47 @@ export function serveHoneytokens() {
       } = req.body;
 
       const agent = await get_agent(agent_id);
+
+      const token_id = uuidv4();
+      const group_id = uuidv4();
+
+      await insert_honeytoken(
+        token_id,
+        group_id,
+        type,
+        file_name,
+        location,
+        grade,
+        new Date(),
+        expiration_date,
+        notes,
+        data,
+      );
+
+      const response_from_agent = await fetch(
+        'http://' +
+          agent.agent_ip +
+          ':' +
+          agent.agent_port +
+          '/api/honeytoken/add',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            token_id: token_id,
+            group_id: group_id,
+            type: type,
+            file_name: file_name,
+            location: location,
+            grade: grade,
+            expiration_date: expiration_date,
+            notes: notes,
+            data: data,
+          }),
+        },
+      );
+
+      console.log(response_from_agent);
 
       console.log(agent);
     } catch (error) {

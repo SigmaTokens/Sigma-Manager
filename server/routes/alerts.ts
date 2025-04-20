@@ -1,7 +1,7 @@
 import { Router, Express } from 'express';
 import {
   create_alert_to_token_id,
-  get_all_alerts,
+  get_all_alerts_join,
   get_alert_by_alert_id,
   get_alert_by_token_id,
   delete_alert_by_alert_id,
@@ -31,7 +31,7 @@ export function serveAlerts() {
 
   router.get('/alerts', async (req, res) => {
     try {
-      const alerts = await get_all_alerts();
+      const alerts = await get_all_alerts_join();
       res.json(alerts);
     } catch (error) {
       console.error('[-] Failed to fetch alerts:', error);

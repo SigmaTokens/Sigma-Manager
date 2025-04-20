@@ -29,14 +29,10 @@ function CreateHoneytokenForm({ types, onClose }: any) {
 
   useEffect(() => {
     getAgents().then((data) => {
-      console.log('hui', data);
       setAgents(data);
-      console.log('helpbylaty', data[0]);
       setAgentID(data[0].agent_id);
     });
   }, []);
-
-  useEffect(() => {});
 
   return (
     <div className="overlay" onClick={onClose}>
@@ -151,11 +147,11 @@ function CreateHoneytokenForm({ types, onClose }: any) {
                 }
               />
             </p>
+
             <p>
               <label>agent</label>
               <Select
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                  console.log('help:', e.target);
                   setAgentID(e.target.value);
                 }}
               >
@@ -165,7 +161,7 @@ function CreateHoneytokenForm({ types, onClose }: any) {
                 <SelectContent>
                   {agents.map((agent) => (
                     <SelectItem key={agent.agent_id} value={agent.agent_id}>
-                      {agent.ip}:{agent.port} | {agent.name}
+                      {agent.agent_ip}:{agent.agent_port} | {agent.agent_name}
                     </SelectItem>
                   ))}
                 </SelectContent>

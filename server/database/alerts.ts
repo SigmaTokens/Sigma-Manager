@@ -106,6 +106,22 @@ export async function get_all_alerts() {
   );
 }
 
+export async function get_all_alerts_join() {
+  return await Globals.app.locals.db.all(
+    `SELECT alert_id,
+    token_id,
+    alert_epoch,
+    accessed_by,
+    log,
+    from honeytokens select AS alert.location and AS alert.file_name}
+    from agents select AS alert.agent_ip and AS alert.agent_port}
+FROM alerts
+LEFT JOIN honeytokens ON alerts.token_id = honeytokens.token_id
+LEFT JOIN agents ON honeytokens.agent_id = agents.agent_id
+ORDER BY alerts.alert_epoch DESC`,
+  );
+}
+
 export async function get_alert_by_alert_id(alert_id: String) {
   return await Globals.app.locals.db.get(
     `SELECT alert_id,

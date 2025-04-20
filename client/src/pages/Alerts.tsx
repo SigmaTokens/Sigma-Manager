@@ -22,18 +22,23 @@ function Alerts() {
               <th>Token ID</th>
               <th>Date</th>
               <th>Accessed By</th>
+              <th>File</th>
+              <th>Agent</th>
               <th>Log</th>
             </tr>
           </thead>
           <tbody>
             {alerts.length > 0 ? (
-              alerts.map((alert) => {
+              alerts.map((alert: any) => {
                 console.log(alert.alert_epoch);
                 return (
                   <tr key={alert.alert_id}>
                     <td>{alert.alert_id}</td>
                     <td>{alert.token_id}</td>
                     <td>{new Date(Number(alert.alert_epoch)).toString()}</td>
+                    <td>{alert.accessed_by}</td>
+                    <td>{alert.location + '/' + alert.file_name}</td>
+                    <td>{alert.agent_ip + ':' + alert.agent_port}</td>
                     <td>{alert.accessed_by}</td>
                     <td>{alert.log}</td>
                   </tr>

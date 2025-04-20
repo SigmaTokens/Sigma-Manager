@@ -11,6 +11,17 @@ function Honeytokens() {
     });
   }, []);
 
+  const handleDeleteHoneytoken = async (tokenId: string) => {
+    try {
+      await deleteHoneytoken(tokenId);
+      getHoneytokens().then((data) => {
+        setHoneytokens(data);
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div className="honeytokens-container">
       <h1 className="honeytokens-title">Honeytokens Dashboard</h1>
@@ -46,7 +57,9 @@ function Honeytokens() {
                   <td>
                     <button
                       className="delete-button"
-                      onClick={() => deleteHoneytoken(honeytoken.token_id)}
+                      onClick={() =>
+                        handleDeleteHoneytoken(honeytoken.token_id)
+                      }
                     >
                       Delete
                     </button>

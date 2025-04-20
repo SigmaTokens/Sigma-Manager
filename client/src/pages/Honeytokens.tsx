@@ -29,6 +29,7 @@ function Honeytokens() {
         <table className="honeytokens-table">
           <thead>
             <tr>
+              <th>Agent ID</th>
               <th>Token ID</th>
               <th>Group ID</th>
               <th>Type ID</th>
@@ -45,6 +46,7 @@ function Honeytokens() {
             {honeytokens.length > 0 ? (
               honeytokens.map((honeytoken: any) => (
                 <tr key={honeytoken.token_id}>
+                  <td>{honeytoken.agent_id}</td>
                   <td>{honeytoken.token_id}</td>
                   <td>{honeytoken.group_id}</td>
                   <td>{honeytoken.type_id}</td>

@@ -21,9 +21,9 @@ export async function startDatabase() {
     await populate_types_table();
 
     if (process.env.MODE === 'dev') {
-      await print_table('types');
-      await dummy_populate_honeytokens();
-      await dummy_populate_alerts();
+      //await print_table('types');
+      //await dummy_populate_honeytokens();
+      //await dummy_populate_alerts();
     }
   } catch (error) {
     if (process.env.MODE === 'dev')

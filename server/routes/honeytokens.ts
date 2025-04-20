@@ -47,6 +47,7 @@ export function serveHoneytokens() {
       const group_id = uuidv4();
 
       await insert_honeytoken(
+        agent_id,
         token_id,
         group_id,
         type,
@@ -81,9 +82,6 @@ export function serveHoneytokens() {
           }),
         },
       );
-      // TODO:  find out if there was an error in the resonse from agent & this logic needs to be before creating the honeytoken in the db !!!!
-      //console.log(response_from_agent);
-      //console.log(agent);
       res.status(200).json({ success: 'nice' });
     } catch (error) {
       console.error('error');

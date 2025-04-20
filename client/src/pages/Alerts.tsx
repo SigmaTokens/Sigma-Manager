@@ -55,22 +55,25 @@ function Alerts() {
               <th>Accessed By</th>
               <th>File</th>
               <th>Agent</th>
-              <th>Log</th>
+              {/* <th>Log</th> */}
             </tr>
           </thead>
           <tbody>
             {alerts.length > 0 ? (
-              alerts.map((alert) => (
-                <tr key={alert.alert_id}>
-                  <td>{alert.alert_id}</td>
-                  <td>{alert.token_id}</td>
-                  <td>{formatDate(alert.alert_epoch)}</td>
-                  <td>{alert.accessed_by}</td>
-                  <td>{`${alert.location}/${alert.file_name}`}</td>
-                  <td>{`${alert.agent_ip}:${alert.agent_port}`}</td>
-                  <td>{alert.log}</td>
-                </tr>
-              ))
+              alerts.map((alert) => {
+                console.log(alert);
+                return (
+                  <tr key={alert.alert_id}>
+                    <td>{alert.alert_id}</td>
+                    <td>{alert.token_id}</td>
+                    <td>{formatDate(parseInt(alert.alert_epoch))}</td>
+                    <td>{alert.accessed_by}</td>
+                    <td>{`${alert.location}\\${alert.file_name}`}</td>
+                    <td>{`${alert.agent_ip}:${alert.agent_port}`}</td>
+                    {/* <td>{alert.log}</td> */}
+                  </tr>
+                );
+              })
             ) : (
               <tr>
                 <td colSpan={7} className="no-alerts">

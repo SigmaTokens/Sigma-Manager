@@ -16,16 +16,17 @@ export async function init_honeytokens_table() {
       file_name VARCHAR,
       data TEXT,
       notes TEXT,
-      agent_id INTEGER, -- New column to reference the agent
+      agent_id VARCHAR,
       FOREIGN KEY (type_id) REFERENCES types(type_id) ON DELETE CASCADE,
-      FOREIGN KEY (agent_id) REFERENCES agents(agent_id) ON DELETE SET NULL -- Optional: Decide what happens if an agent is deleted
+      FOREIGN KEY (agent_id) REFERENCES agents(agent_id) ON DELETE SET NULL
     );
   `);
 }
 
 export async function get_all_honeytokens() {
   return await Globals.app.locals.db.all(
-    `SELECT token_id, 
+    `SELECT agent_id,
+           token_id,
 					 group_id, 
 					 type_id, 
 					 grade,
@@ -161,6 +162,7 @@ export async function delete_honeytokens_by_group_id(group_id: String) {
 }
 
 export async function insert_honeytoken(
+  agent_id: string,
   token_id: string,
   group_id: string,
   type_id: any,
@@ -173,8 +175,9 @@ export async function insert_honeytoken(
   data: string,
 ) {
   await Globals.app.locals.db.run(
-    `INSERT INTO honeytokens (token_id, group_id, type_id, grade, creation_date, expire_date, location , file_name ,data, notes ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO honeytokens (agent_id, token_id, group_id, type_id, grade, creation_date, expire_date, location , file_name ,data, notes ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
+      agent_id,
       token_id,
       group_id,
       type_id,

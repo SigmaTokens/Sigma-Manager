@@ -6,6 +6,7 @@ import { serveAlerts } from './routes/alerts';
 import { startDatabase } from './database/database';
 import { Globals } from './globals';
 import { serveAgents } from './routes/agents';
+import { serveHome } from './routes/home';
 main();
 
 function main(): void {
@@ -22,6 +23,7 @@ function main(): void {
     .then((database) => {
       console.log('[+] Database connection initialized:', app.locals.db);
 
+      serveHome();
       serveHoneytokens();
       serveAlerts();
       serveAgents();

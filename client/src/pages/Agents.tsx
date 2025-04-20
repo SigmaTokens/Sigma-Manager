@@ -50,8 +50,11 @@ function AgentsPage() {
     <div className="agents-container">
       <h2 className="agents-title">Agent List</h2>
 
-      <div className="refresh-button-wrapper">
-        <button className="refresh-statuses-button" onClick={refreshStatuses}>
+      <div className="agents-refresh-button-wrapper">
+        <button
+          className="agents-refresh-statuses-button"
+          onClick={refreshStatuses}
+        >
           Refresh Statuses
         </button>
       </div>
@@ -76,7 +79,7 @@ function AgentsPage() {
                 <td>{agent.agent_port}</td>
                 <td>{agent.agent_id}</td>
                 <td
-                  className={`agent-status-${statusUpdates[agent.agent_id] || 'unknown'}`}
+                  className={`agents-status-${statusUpdates[agent.agent_id] || 'unknown'}`}
                 >
                   {statusUpdates[agent.agent_id] || 'unknown'}
                 </td>

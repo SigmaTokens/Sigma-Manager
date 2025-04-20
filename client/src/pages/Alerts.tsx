@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 import '../styles/Alerts.css';
 import { getAlerts } from '../models/Alerts';
 
-//second push
-
 function Alerts() {
   const [alerts, setAlerts] = useState<[]>([]);
 

@@ -1,10 +1,7 @@
-import { Database } from "sqlite";
-import sqlite3 from "sqlite3";
+import { Globals } from '../globals';
 
-export async function init_whitelist_table(
-  database: Database<sqlite3.Database, sqlite3.Statement>
-) {
-  await database.exec(`
+export async function init_whitelist_table() {
+  await Globals.app.locals.db.exec(`
     CREATE TABLE IF NOT EXISTS whitelist (
       token_id VARCHAR,
       access_ip VARCHAR,

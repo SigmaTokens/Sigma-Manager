@@ -1,9 +1,4 @@
-import { Router, Express } from "express";
-import { Database } from "sqlite";
-import sqlite3 from "sqlite3";
-import { v4 as uuidv4 } from "uuid";
-import * as fs from "fs";
-import * as path from "path";
+import { Router } from 'express';
 import {
   get_all_honeytokens,
   get_honeytoken_by_token_id,
@@ -13,156 +8,154 @@ import {
   delete_honeytokens_by_type_id,
   delete_honeytokens_by_group_id,
   insert_honeytoken,
-} from "../../database/honeytokens";
-import { Honeytoken_Text } from "../classes/Honeytoken_Text";
-import { Globals } from "../globals";
+} from '../database/honeytokens';
+import { Globals } from '../globals';
+import { get_agent } from '../database/agents';
+import { v4 as uuidv4 } from 'uuid';
 
-export function serveHoneytokens(
-  app: Express,
-  database: Database<sqlite3.Database, sqlite3.Statement>
-) {
+export function serveHoneytokens() {
   const router = Router();
 
-  router.get("/honeytokens", async (req, res) => {
+  router.get('/honeytokens', async (req, res) => {
     try {
-      const honeytokens = await get_all_honeytokens(database);
+      const honeytokens = await get_all_honeytokens();
       res.json(honeytokens);
     } catch (error) {
-      console.error("[-] Failed to fetch honeytokens:", error);
+      console.error('[-] Failed to fetch honeytokens:', error);
       res.status(500).json({ failure: error });
     }
   });
 
-  router.get("/honeytokens/token/:token_id", async (req, res) => {
+  router.post('/honeytoken/text', async (req, res) => {
+    try {
+      console.log(req.body);
+
+      const {
+        type,
+        file_name,
+        location,
+        grade,
+        expiration_date,
+        notes,
+        data,
+        agent_id,
+      } = req.body;
+
+      const agent = await get_agent(agent_id);
+
+      const token_id = uuidv4();
+      const group_id = uuidv4();
+
+      await insert_honeytoken(
+        token_id,
+        group_id,
+        type,
+        file_name,
+        location,
+        grade,
+        new Date(),
+        expiration_date,
+        notes,
+        data,
+      );
+
+      const response_from_agent = await fetch(
+        'http://' +
+          agent.agent_ip +
+          ':' +
+          agent.agent_port +
+          '/api/honeytoken/add',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            token_id: token_id,
+            group_id: group_id,
+            type: type,
+            file_name: file_name,
+            location: location,
+            grade: grade,
+            expiration_date: expiration_date,
+            notes: notes,
+            data: data,
+          }),
+        },
+      );
+
+      console.log(response_from_agent);
+
+      console.log(agent);
+    } catch (error) {
+      console.error('error');
+      res.status(500).json({ failure: error });
+    }
+  });
+
+  router.get('/honeytokens/token/:token_id', async (req, res) => {
     const { token_id } = req.params;
     try {
-      const honeytoken = await get_honeytoken_by_token_id(database, token_id);
+      const honeytoken = await get_honeytoken_by_token_id(token_id);
       res.json(honeytoken);
     } catch (error) {
-      console.error("[-] Failed to fetch honeytoken by token_id:", error);
+      console.error('[-] Failed to fetch honeytoken by token_id:', error);
       res.status(500).json({ failure: error });
     }
   });
 
-  router.get("/honeytokens/type/:type_id", async (req, res) => {
+  router.get('/honeytokens/type/:type_id', async (req, res) => {
     const { type_id } = req.params;
     try {
-      const honeytokens = await get_honeytokens_by_type_id(database, type_id);
+      const honeytokens = await get_honeytokens_by_type_id(type_id);
       res.json(honeytokens);
     } catch (error) {
-      console.error("[-] Failed to fetch honeytokens by type_id:", error);
+      console.error('[-] Failed to fetch honeytokens by type_id:', error);
       res.status(500).json({ failure: error });
     }
   });
 
-  router.get("/honeytokens/group/:group_id", async (req, res) => {
+  router.get('/honeytokens/group/:group_id', async (req, res) => {
     const { group_id } = req.params;
     try {
-      const honeytokens = await get_honeytokens_by_group_id(database, group_id);
+      const honeytokens = await get_honeytokens_by_group_id(group_id);
       res.json(honeytokens);
     } catch (error) {
-      console.error("[-] Failed to fetch honeytokens by group_id:", error);
+      console.error('[-] Failed to fetch honeytokens by group_id:', error);
       res.status(500).json({ failure: error });
     }
   });
 
-  router.delete("/honeytokens/token/:token_id", async (req, res) => {
+  router.delete('/honeytokens/token/:token_id', async (req, res) => {
     const { token_id } = req.params;
     try {
-      await delete_honeytoken_by_id(database, token_id);
+      await delete_honeytoken_by_id(token_id);
       res.json({ success: true });
     } catch (error) {
-      console.error("[-] Failed to delete honeytoken:", error);
+      console.error('[-] Failed to delete honeytoken:', error);
       res.status(500).json({ failure: error });
     }
   });
 
-  router.delete("/honeytokens/type/:type_id", async (req, res) => {
+  router.delete('/honeytokens/type/:type_id', async (req, res) => {
     const { type_id } = req.params;
     try {
-      await delete_honeytokens_by_type_id(database, type_id);
+      await delete_honeytokens_by_type_id(type_id);
       res.json({ success: true });
     } catch (error) {
-      console.error("[-] Failed to delete honeytokens:", error);
+      console.error('[-] Failed to delete honeytokens:', error);
       res.status(500).json({ failure: error });
     }
   });
 
-  router.delete("/honeytokens/group/:group_id", async (req, res) => {
+  router.delete('/honeytokens/group/:group_id', async (req, res) => {
     const { group_id } = req.params;
     try {
-      await delete_honeytokens_by_group_id(database, group_id);
+      await delete_honeytokens_by_group_id(group_id);
       res.json({ success: true });
     } catch (error) {
-      console.error("[-] Failed to delete honeytokens:", error);
+      console.error('[-] Failed to delete honeytokens:', error);
       res.status(500).json({ failure: error });
     }
   });
 
-  router.post("/honeytoken/text", (req, res) => {
-    try {
-      console.log("working");
-      //console.log(req);
-
-      /*
-        TODO: 
-        1. check if file name is initial - create a name from a list
-        2. check if content is initial - create content from a list - optional ? 
-        3. check if location is initial or does not exist - send error
-        4. create Honeytoken to array in globals.ts
-        5. write the honeytoken to the database
-		6. create mapping for HoneytokenType
-      */
-      console.log(req.body);
-      const { file_name, location, grade, expiration_date, data, notes } =
-        req.body;
-
-      console.log("help");
-
-      const newToken = new Honeytoken_Text(
-        uuidv4(),
-        uuidv4(),
-        "text",
-        expiration_date,
-        grade,
-        notes,
-        location,
-        file_name
-      );
-
-      Globals.tokens.push(newToken);
-
-      //TODO: check if file exists - if not - create it using createFile in Honeytoken_Text.ts
-
-      const filePath = path.join(location, file_name);
-
-      if (!fs.existsSync(filePath)) {
-        fs.writeFileSync(filePath, data);
-      }
-
-      newToken.startAgent();
-
-      console.log("----------------not stuck test----------------");
-
-      insert_honeytoken(
-        database,
-        newToken.getTokenID(),
-        newToken.getGroupID(),
-        1,
-        newToken.getGrade(),
-        newToken.getCreationDate(),
-        newToken.getExpirationDate(),
-        newToken.getLocation(),
-        newToken.getFileName(),
-        data,
-        newToken.getNotes()
-      );
-
-      res.send().status(200);
-    } catch (error: any) {
-      res.status(500).json({ failure: error.message });
-    }
-  });
-
-  app.use("/api", router);
+  Globals.app.use('/api', router);
 }

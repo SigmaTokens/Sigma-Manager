@@ -1,0 +1,100 @@
+import { init_alerts_table } from './alerts';
+import { init_honeytokens_table } from './honeytokens';
+import { init_types_table } from './types';
+import { init_whitelist_table } from './whitelist';
+import { init_agents_table } from './agents';
+import { Globals } from '../globals';
+
+export async function is_table_exists(table_name: string) {
+  const result = await Globals.app.locals.db.get(
+    `SELECT name FROM sqlite_master WHERE type='table' AND name=?`,
+    [table_name],
+  );
+  if (process.env.MODE === 'dev')
+    console.log(`[+] Table '${table_name}' status:`, result ? 'up' : 'down');
+  return result !== undefined;
+}
+
+export async function init_tables() {
+  if (!(await is_table_exists('types'))) {
+    await init_types_table();
+    if (process.env.MODE === 'dev')
+      console.log('[+] Initiated types table successfully');
+  }
+  if (!(await is_table_exists('honeytokens'))) {
+    await init_honeytokens_table();
+    if (process.env.MODE === 'dev')
+      console.log('[+] Initiated honeytokens table successfully');
+  }
+  if (!(await is_table_exists('alerts'))) {
+    await init_alerts_table();
+    if (process.env.MODE === 'dev')
+      console.log('[+] Initiated alerts table successfully');
+  }
+  if (!(await is_table_exists('whitelist'))) {
+    await init_whitelist_table();
+    if (process.env.MODE === 'dev')
+      console.log('[+] Initiated whitelist table successfully');
+  }
+  if (!(await is_table_exists('agents'))) {
+    await init_agents_table();
+    if (process.env.MODE === 'dev')
+      console.log('[+] Initiated agents table successfully');
+  }
+}
+
+export async function print_table(table_name: string) {
+  try {
+    const rows = await Globals.app.locals.db.all(`SELECT * FROM ${table_name}`);
+    if (process.env.MODE === 'dev')
+      console.log(
+        `[+] Table '${table_name}' data (${rows.length} rows):`,
+        rows,
+      );
+  } catch (error) {
+    if (process.env.MODE === 'dev')
+      console.error(
+        `[-] Failed to fetch data from table '${table_name}':`,
+        error,
+      );
+  }
+}
+
+export function get_random_ip() {
+  function octet() {
+    return Math.floor(Math.random() * 256);
+  }
+  let ip;
+  do {
+    ip = `${octet()}.${octet()}.${octet()}.${octet()}`;
+  } while (
+    ip === '0.0.0.0' ||
+    ip === '127.0.0.1' ||
+    ip.startsWith('192.168.') ||
+    ip.startsWith('10.') ||
+    ip.startsWith('172.16.')
+  );
+  return ip;
+}
+
+export function get_random_date() {
+  const start = new Date(1970, 0, 1);
+  const end = new Date(2030, 11, 31);
+  const randomTime =
+    start.getTime() + Math.random() * (end.getTime() - start.getTime());
+  const date = new Date(randomTime);
+  console.log(date);
+  return date;
+}
+
+export async function begin_transaction() {
+  await Globals.app.locals.db.run('BEGIN TRANSACTION');
+}
+
+export async function commit() {
+  await Globals.app.locals.db.run('COMMIT');
+}
+
+export async function rollback() {
+  await Globals.app.locals.db.run('ROLLBACK');
+}

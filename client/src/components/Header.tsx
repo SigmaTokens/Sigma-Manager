@@ -1,49 +1,34 @@
-import { useEffect, useState } from 'react'
-import '../styles/Header.css'
-import logo from '../assets/logo.png'
-import CreateHoneytokenForm from './HoneyTokenCreation'
-import AddAgentPopup from '../components/AddAgentPopup'
+import { useEffect, useState } from 'react';
+import '../styles/Header.css';
+import logo from '../assets/logo.png';
+import CreateHoneytokenForm from './HoneyTokenCreation';
+import AddAgentPopup from '../components/AddAgentPopup';
+import { getAgents } from '../models/Agents';
 
 function useAgents() {
-  const [agents, setAgents] = useState([])
+  const [agents, setAgents] = useState([]);
 
   useEffect(() => {
-    async function fetchAgents() {
+    const fetchAgents = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/agents', {
-          method: 'GET',
-        })
-
-        if (!response.ok) {
-          const errorText = await response.text()
-          console.error('Error:', errorText)
-          alert('Failed to fetch agents.')
-        } else {
-          const data = await response.json()
-          setAgents(data)
-        }
-      } catch (err) {
-        console.error('Request failed:', err)
-        alert('Something went wrong while fetching agents.')
+        const agentData = await getAgents();
+        setAgents(agentData);
+      } catch (error) {
+        console.error('Failed to fetch agents:', error);
       }
-    }
+    };
+    fetchAgents();
+  }, []);
 
-    fetchAgents()
-  }, [])
-
-  return agents
+  return agents;
 }
 
 function Header() {
-  const [showCreatePopup, setShowCreatePopup] = useState(false)
-  const [showAddAgentPopup, setShowAddAgentPopup] = useState(false)
+  const [showCreatePopup, setShowCreatePopup] = useState(false);
+  const [showAddAgentPopup, setShowAddAgentPopup] = useState(false);
 
-  const honeytokenTypes = [
-    { id: '1', name: 'text file' },
-    // { id: "2", name: "api key" },
-    // { id: "3", name: "database record" }
-  ]
-  const agents = useAgents()
+  const honeytokenTypes = [{ id: '1', name: 'text file' }];
+  const agents = useAgents();
 
   return (
     <header className="header">
@@ -85,7 +70,7 @@ function Header() {
         <AddAgentPopup onClose={() => setShowAddAgentPopup(false)} />
       )}
     </header>
-  )
+  );
 }
 
-export default Header
+export default Header;

@@ -1,4 +1,5 @@
 import { Globals } from '../globals';
+import { begin_transaction, commit, rollback } from './helpers';
 
 export async function init_agents_table() {
   await Globals.app.locals.db.run(`
@@ -38,4 +39,20 @@ export async function get_agent(agent_id: string) {
     WHERE  agent_id = ?;`,
     [agent_id],
   );
+}
+
+export async function delete_agent_by_id(agent_id: String) {
+  try {
+    await begin_transaction();
+
+    //TODO: delete associated alerts and tokens
+
+    await Globals.app.locals.db.run(`DELETE FROM agents WHERE agent_id = ?`, [
+      agent_id,
+    ]);
+
+    await commit();
+  } catch (error) {
+    await rollback();
+  }
 }

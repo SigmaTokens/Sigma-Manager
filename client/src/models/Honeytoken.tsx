@@ -48,8 +48,6 @@ export async function deleteHoneytoken(token_id: string) {
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-
-    getHoneytokens();
   } catch (err) {
     console.error('Error deleting honeytoken:', err);
   }

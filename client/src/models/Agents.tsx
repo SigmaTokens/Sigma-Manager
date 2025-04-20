@@ -48,3 +48,19 @@ export async function addAgent(
     alert('Something went wrong while adding the agent.');
   }
 }
+
+export async function deleteAgent(agent_id: string) {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/agents/agent/${agent_id}`,
+      {
+        method: 'DELETE',
+      },
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+  } catch (err) {
+    console.error('Error deleting agent:', err);
+  }
+}

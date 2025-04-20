@@ -1,59 +1,63 @@
-import { useEffect, useState } from 'react'
-import '../styles/Agents.css'
-import { Agent } from '../interfaces/agent'
+import { useEffect, useState } from 'react';
+import '../styles/Agents.css';
+import { getAgents, deleteAgent } from '../models/Agents';
 
 function AgentsPage() {
-  const [agents, setAgents] = useState<Agent[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
-  const [error, setError] = useState<string | null>(null)
+  const [agents, setAgents] = useState([]);
+  const [refreshCounter, setRefreshCounter] = useState(0);
+  const [statusUpdates, setStatusUpdates] = useState({});
 
   useEffect(() => {
-    fetchAgents()
-  }, [])
-
-  const fetchAgents = async () => {
-    try {
-      const response = await fetch('http://localhost:3000/api/agents')
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`)
+    const fetchAgents = async () => {
+      try {
+        const agentData = await getAgents();
+        setAgents(agentData);
+        refreshStatuses();
+      } catch (error) {
+        console.error('Failed to fetch agents:', error);
       }
-      const data: Agent[] = await response.json()
-      setAgents(data)
-    } catch (err) {
-      console.error('Error fetching honeytokens:', err)
-      setError('Failed to fetch honeytokens. Please try again later.')
-    } finally {
-      setLoading(false)
+    };
+
+    fetchAgents();
+  }, [refreshCounter]);
+
+  const handleDelete = async (agentId) => {
+    try {
+      await deleteAgent(agentId);
+      setRefreshCounter((prev) => prev + 1);
+    } catch (error) {
+      console.error('Failed to delete agent:', error);
     }
-  }
+  };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      fetchAgents()
-    }, 5000)
+  const refreshStatuses = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/agents/status');
+      const data = await response.json();
 
-    return () => clearInterval(interval)
-  }, [])
+      const newStatuses = {};
+      data.forEach(({ agent_id, status }) => {
+        newStatuses[agent_id] = status;
+      });
 
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="loading-text">Loading agents...</div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="error-container">
-        <div className="error-text">{error}</div>
-      </div>
-    )
-  }
+      setStatusUpdates((prev) => ({ ...prev, ...newStatuses }));
+    } catch (error) {
+      console.error('Failed to refresh statuses:', error);
+    }
+  };
 
   return (
     <div className="agents-container">
       <h2 className="agents-title">Agent List</h2>
+
+      <div className="agents-refresh-button-wrapper">
+        <button
+          className="agents-refresh-statuses-button"
+          onClick={refreshStatuses}
+        >
+          Refresh Statuses
+        </button>
+      </div>
 
       <div className="table-container">
         <table className="agents-table">
@@ -64,25 +68,28 @@ function AgentsPage() {
               <th>Port</th>
               <th>ID</th>
               <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {agents.map((agent) => (
               <tr key={agent.agent_id}>
-                <td>{agent.name}</td>
-                <td>{agent.ip}</td>
-                <td>{agent.port}</td>
+                <td>{agent.agent_name}</td>
+                <td>{agent.agent_ip}</td>
+                <td>{agent.agent_port}</td>
                 <td>{agent.agent_id}</td>
                 <td
-                  className={`${
-                    agent.status === 'online'
-                      ? 'agents-status-online'
-                      : agent.status === 'offline'
-                        ? 'agents-status-offline'
-                        : 'agents-status-unknown'
-                  }`}
+                  className={`agents-status-${statusUpdates[agent.agent_id] || 'unknown'}`}
                 >
-                  {agent.status}
+                  {statusUpdates[agent.agent_id] || 'unknown'}
+                </td>
+                <td>
+                  <button
+                    className="delete-button"
+                    onClick={() => handleDelete(agent.agent_id)}
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}
@@ -90,7 +97,7 @@ function AgentsPage() {
         </table>
       </div>
     </div>
-  )
+  );
 }
 
-export default AgentsPage
+export default AgentsPage;

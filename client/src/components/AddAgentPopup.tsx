@@ -1,43 +1,16 @@
-import React, { useState } from 'react'
-import { Card, Input } from './popup'
-import '../styles/AddAgentPopup.css'
+import { useState } from 'react';
+import { Card, Input } from './popup';
+import '../styles/AddAgentPopup.css';
+import { addAgent } from '../models/Agents';
 
 interface AddAgentPopupProps {
-  onClose: () => void
+  onClose: () => void;
 }
 
 function AddAgentPopup({ onClose }: AddAgentPopupProps) {
-  const [agentIP, setAgentIP] = useState('')
-  const [agentName, setAgentName] = useState('')
-  const [agentPort, setAgentPort] = useState<number>()
-
-  const handleSubmit = async () => {
-    try {
-      const response = await fetch('http://localhost:3000/api/agents/text', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ip: agentIP,
-          name: agentName,
-          port: agentPort,
-        }),
-      })
-
-      if (!response.ok) {
-        const errorText = await response.text()
-        console.error('Error:', errorText)
-        alert('Failed to add agent.')
-      } else {
-        console.log('Agent added successfully!')
-        onClose()
-      }
-    } catch (err) {
-      console.error('Request failed:', err)
-      alert('Something went wrong while adding the agent.')
-    }
-  }
+  const [agentIP, setAgentIP] = useState('');
+  const [agentName, setAgentName] = useState('');
+  const [agentPort, setAgentPort] = useState<number>();
 
   return (
     <div className="overlay" onClick={onClose}>
@@ -82,14 +55,20 @@ function AddAgentPopup({ onClose }: AddAgentPopupProps) {
               Cancel
             </button>
 
-            <button className="button button-primary" onClick={handleSubmit}>
+            <button
+              className="button button-primary"
+              onClick={async () => {
+                await addAgent(agentIP, agentName, agentPort);
+                onClose();
+              }}
+            >
               Submit
             </button>
           </div>
         </Card>
       </div>
     </div>
-  )
+  );
 }
 
-export default AddAgentPopup
+export default AddAgentPopup;

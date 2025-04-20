@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Card,
   Input,
@@ -10,13 +10,10 @@ import {
   SelectItem,
 } from './popup';
 import '../styles/HoneyTokenCreation.css';
-import { CreateHoneytokenFormProps } from '../interfaces/CreateHoneytokenFormProps';
+import { getAgents } from '../models/Agents';
+import { createHoneytokenText } from '../models/Honeytoken';
 
-function CreateHoneytokenForm({
-  types,
-  agents,
-  onClose,
-}: CreateHoneytokenFormProps) {
+function CreateHoneytokenForm({ types, onClose }: any) {
   const [quantity, setQuantity] = useState<number>(1);
   const [excludeAccess, setExcludeAccess] = useState<string>('');
   const [selectedType, setSelectedType] = useState<string>('');
@@ -27,7 +24,15 @@ function CreateHoneytokenForm({
   const [grade, setGrade] = useState<number>(1);
   const [fileName, setFileName] = useState<string>('');
   const [fileContent, setFileContent] = useState<string>('');
-  const [agentIP, setAgentIP] = useState<string>('');
+  const [agentID, setAgentID] = useState<string>('');
+  const [agents, setAgents] = useState<any[]>([]);
+
+  useEffect(() => {
+    getAgents().then((data) => {
+      setAgents(data);
+      setAgentID(data[0].agent_id);
+    });
+  }, []);
 
   return (
     <div className="overlay" onClick={onClose}>
@@ -59,7 +64,7 @@ function CreateHoneytokenForm({
                   <SelectValue placeholder="Select Honeytoken Type" />
                 </SelectTrigger>
                 <SelectContent>
-                  {types.map((type) => (
+                  {types.map((type: any) => (
                     <SelectItem key={type.id} value={type.id}>
                       {type.name}
                     </SelectItem>
@@ -68,7 +73,7 @@ function CreateHoneytokenForm({
               </Select>
             </p>
 
-            <p>
+            {/* <p>
               <label>Exclude Access</label>
               <Input
                 type="text"
@@ -78,7 +83,7 @@ function CreateHoneytokenForm({
                   setExcludeAccess(e.target.value)
                 }
               />
-            </p>
+            </p> */}
 
             <p>
               <label>Notes</label>
@@ -142,26 +147,28 @@ function CreateHoneytokenForm({
                 }
               />
             </p>
+
             <p>
               <label>agent</label>
               <Select
-                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                  setAgentIP(e.target.value)
-                }
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                  setAgentID(e.target.value);
+                }}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select Agent IP" />
                 </SelectTrigger>
                 <SelectContent>
                   {agents.map((agent) => (
-                    <SelectItem key={agent.id} value={agent.id}>
-                      {agent.IP}
+                    <SelectItem key={agent.agent_id} value={agent.agent_id}>
+                      {agent.agent_ip}:{agent.agent_port} | {agent.agent_name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </p>
-            <p>
+
+            {/* <p>
               <div className="checkbox-container">
                 <Checkbox
                   checked={spreadAuto}
@@ -172,7 +179,7 @@ function CreateHoneytokenForm({
                 />
                 <label>Spread Tokens Automatically</label>
               </div>
-            </p>
+            </p> */}
 
             {!spreadAuto && (selectedType || types.length < 2) && (
               <p>
@@ -187,30 +194,6 @@ function CreateHoneytokenForm({
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setComponentAddresses(e.target.value)
                     }
-                  />
-
-                  {/* open file explorer */}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      document.getElementById('fileInputHidden')?.click()
-                    }
-                    className="button button-secondary"
-                  >
-                    📁
-                  </button>
-
-                  {/* hidden input */}
-                  <input
-                    id="fileInputHidden"
-                    type="file"
-                    style={{ display: 'none' }}
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        setComponentAddresses(file.name);
-                      }
-                    }}
                   />
                 </div>
               </p>
@@ -227,25 +210,16 @@ function CreateHoneytokenForm({
               onClick={async () => {
                 if (quantity === 1) {
                   try {
-                    const response = await fetch(
-                      'http://' + agentIP + ':9007/api/honeytoken/add',
-                      {
-                        method: 'POST',
-                        headers: {
-                          'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                          type: selectedType,
-                          file_name: fileName,
-                          location: ComponentAddresses,
-                          grade: grade,
-                          expiration_date: expirationDate,
-                          notes: notes,
-                          data: fileContent,
-                        }),
-                      },
+                    const response = await createHoneytokenText(
+                      fileName,
+                      ComponentAddresses,
+                      grade,
+                      expirationDate,
+                      notes,
+                      fileContent,
+                      agentID,
                     );
-
+                    console.log(response);
                     if (!response.ok) {
                       const errorText = await response.text();
                       console.error('Error:', errorText);

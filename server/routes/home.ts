@@ -32,6 +32,7 @@ export function serveHome() {
         }
       }
 
+      // TODO: get the statuses ... the status now is initial - it doesn't work
       const onlineAgents = agents.filter(
         (a: any) => a.status === 'online',
       ).length;

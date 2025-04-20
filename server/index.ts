@@ -8,6 +8,8 @@ import { startDatabase } from '../database/database'
 import { Constants } from './constants'
 import { Globals } from './globals'
 import { serveAgents } from './routes/agents'
+import { serveHome } from './routes/home'
+
 main()
 
 function main(): void {
@@ -28,6 +30,7 @@ function main(): void {
         app.locals.db = database
         console.log('[+] Database connection initialized:', app.locals.db)
 
+        serveHome(app, database)
         serveHoneytokens(app, database)
         serveAgents(app, database)
         serveAlerts(app)

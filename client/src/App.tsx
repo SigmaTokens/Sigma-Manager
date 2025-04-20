@@ -12,6 +12,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />}></Route>
+          <Route path="/home" element={<Home />}></Route>
           <Route path="/honeytokens" element={<Honeytokens />}></Route>
           <Route path="/alerts" element={<Alerts />}></Route>
           <Route path="/agents" element={<AgentsPage />} />

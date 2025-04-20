@@ -1,54 +1,24 @@
 import { useEffect, useState } from 'react';
 import '../styles/Agents.css';
+import { getAgents } from '../models/Agents';
 
 function AgentsPage() {
-  const [agents, setAgents] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [agents, setAgents] = useState([]);
 
   useEffect(() => {
-    fetchAgents();
-  }, []);
-
-  const fetchAgents = async () => {
-    try {
-      const response = await fetch('http://localhost:3000/api/agents');
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+    const fetchAgents = async () => {
+      try {
+        const agentData = await getAgents();
+        setAgents(agentData);
+      } catch (error) {
+        console.error('Failed to fetch agents:', error);
       }
-      const data = await response.json();
-      setAgents(data);
-    } catch (err) {
-      console.error('Error fetching honeytokens:', err);
-      setError('Failed to fetch honeytokens. Please try again later.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
+    };
     const interval = setInterval(() => {
       fetchAgents();
     }, 5000);
-
     return () => clearInterval(interval);
   }, []);
-
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="loading-text">Loading agents...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="error-container">
-        <div className="error-text">{error}</div>
-      </div>
-    );
-  }
 
   return (
     <div className="agents-container">

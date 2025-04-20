@@ -17,3 +17,34 @@ export async function getAgents() {
     alert('Something went wrong while fetching agents.');
   }
 }
+
+export async function addAgent(
+  agentIP: string,
+  agentName: string,
+  agentPort: number | undefined,
+) {
+  try {
+    const response = await fetch('http://localhost:3000/api/agents/text', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ip: agentIP,
+        name: agentName,
+        port: agentPort,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Error:', errorText);
+      alert('Failed to add agent.');
+    } else {
+      console.log('Agent added successfully!');
+    }
+  } catch (err) {
+    console.error('Request failed:', err);
+    alert('Something went wrong while adding the agent.');
+  }
+}

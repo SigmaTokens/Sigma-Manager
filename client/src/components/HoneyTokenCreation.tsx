@@ -11,6 +11,7 @@ import {
 } from './popup';
 import '../styles/HoneyTokenCreation.css';
 import { getAgents } from '../models/Agents';
+import { createHoneytokenText } from '../models/Honeytoken';
 
 function CreateHoneytokenForm({ types, onClose }: any) {
   const [quantity, setQuantity] = useState<number>(1);
@@ -213,25 +214,14 @@ function CreateHoneytokenForm({ types, onClose }: any) {
               onClick={async () => {
                 if (quantity === 1) {
                   try {
-                    // TODO: need to move all this logic to a seperate file
-                    const response = await fetch(
-                      'http://localhost:3000/api/honeytoken/text',
-                      {
-                        method: 'POST',
-                        headers: {
-                          'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                          type: 'text',
-                          file_name: fileName,
-                          location: ComponentAddresses,
-                          grade: grade,
-                          expiration_date: expirationDate,
-                          notes: notes,
-                          data: fileContent,
-                          agent_id: agentID,
-                        }),
-                      },
+                    const response = await createHoneytokenText(
+                      fileName,
+                      ComponentAddresses,
+                      grade,
+                      expirationDate,
+                      notes,
+                      fileContent,
+                      agentID,
                     );
 
                     if (!response.ok) {

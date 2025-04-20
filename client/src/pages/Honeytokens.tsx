@@ -32,7 +32,7 @@ function Honeytokens() {
           </thead>
           <tbody>
             {honeytokens.length > 0 ? (
-              honeytokens.map((honeytoken) => (
+              honeytokens.map((honeytoken: any) => (
                 <tr key={honeytoken.token_id}>
                   <td>{honeytoken.token_id}</td>
                   <td>{honeytoken.group_id}</td>

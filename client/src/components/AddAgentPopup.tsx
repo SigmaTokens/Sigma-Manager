@@ -59,6 +59,7 @@ function AddAgentPopup({ onClose }: AddAgentPopupProps) {
               className="button button-primary"
               onClick={async () => {
                 await addAgent(agentIP, agentName, agentPort);
+                onClose();
               }}
             >
               Submit

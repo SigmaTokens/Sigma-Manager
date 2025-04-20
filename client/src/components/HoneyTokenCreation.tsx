@@ -219,7 +219,7 @@ function CreateHoneytokenForm({ types, onClose }: any) {
                       fileContent,
                       agentID,
                     );
-
+                    console.log(response);
                     if (!response.ok) {
                       const errorText = await response.text();
                       console.error('Error:', errorText);

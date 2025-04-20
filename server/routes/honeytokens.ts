@@ -81,10 +81,10 @@ export function serveHoneytokens() {
           }),
         },
       );
-
-      console.log(response_from_agent);
-
-      console.log(agent);
+      // TODO:  find out if there was an error in the resonse from agent & this logic needs to be before creating the honeytoken in the db !!!!
+      //console.log(response_from_agent);
+      //console.log(agent);
+      res.status(200).json({ success: 'nice' });
     } catch (error) {
       console.error('error');
       res.status(500).json({ failure: error });

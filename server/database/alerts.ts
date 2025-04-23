@@ -114,6 +114,7 @@ export async function get_all_alerts_join() {
       alerts.alert_epoch,
       alerts.accessed_by,
       alerts.log,
+      honeytokens.grade AS grade,
       honeytokens.location AS location,
       honeytokens.file_name AS file_name,
       agents.agent_ip AS agent_ip,

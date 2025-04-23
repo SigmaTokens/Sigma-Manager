@@ -12,6 +12,7 @@ interface Alert {
   file_name: string;
   agent_ip: string;
   agent_port: string;
+  grade: number;
 }
 
 function Alerts() {
@@ -55,6 +56,7 @@ function Alerts() {
               <th>Accessed By</th>
               <th>File</th>
               <th>Agent</th>
+              <th>Grade</th>
               {/* <th>Log</th> */}
             </tr>
           </thead>
@@ -70,6 +72,8 @@ function Alerts() {
                     <td>{alert.accessed_by}</td>
                     <td>{`${alert.location}\\${alert.file_name}`}</td>
                     <td>{`${alert.agent_ip}:${alert.agent_port}`}</td>
+                    <td>{alert.grade}</td>
+
                     {/* <td>{alert.log}</td> */}
                   </tr>
                 );

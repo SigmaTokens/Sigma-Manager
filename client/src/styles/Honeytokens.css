@@ -1,99 +1,99 @@
 .honeytokens-container {
-	padding: 1.5rem;
-	background-color: #f9fafb;
-	min-height: 100vh;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
+  padding: 1.5rem;
+  background-color: #f9fafb;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .honeytokens-title {
-	font-size: 1.875rem;
-	font-weight: 700;
-	color: #1f2937;
-	margin-bottom: 1.5rem;
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
 }
 
 .table-container {
-	background-color: white;
-	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-	border-radius: 0.5rem;
-	overflow: hidden;
-	width: 100%;
-	max-width: 72rem;
+  background-color: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  width: 100%;
+  max-width: 72rem;
 }
 
 .honeytokens-table {
-	width: 100%;
-	border-collapse: collapse;
-	border: 1px solid #e5e7eb;
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #e5e7eb;
 }
 
 .honeytokens-table th,
 .honeytokens-table td {
-	padding: 0.75rem;
-	text-align: center;
-	border: 1px solid #e5e7eb;
+  padding: 0.75rem;
+  text-align: center;
+  border: 1px solid #e5e7eb;
 }
 
 .honeytokens-table th {
-	background-color: #f9fafb;
-	font-size: 0.75rem;
-	font-weight: 500;
-	color: #6b7280;
-	text-transform: uppercase;
+  background-color: #f9fafb;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: uppercase;
 }
 
 .honeytokens-table td {
-	font-size: 0.875rem;
-	color: #1f2937;
+  font-size: 0.875rem;
+  color: #1f2937;
 }
 
 .honeytokens-table tbody tr {
-	background-color: white;
-	transition: background-color 0.2s;
+  background-color: white;
+  transition: background-color 0.2s;
 }
 
 .honeytokens-table tbody tr:hover {
-	background-color: #f3f4f6;
+  background-color: #f3f4f6;
 }
 
 .no-honeytokens {
-	padding: 1rem;
-	text-align: center;
-	font-size: 0.875rem;
-	color: #6b7280;
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #6b7280;
 }
 
 .loading-container,
 .error-container {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
 .loading-text {
-	font-size: 1.25rem;
-	font-weight: 600;
+  font-size: 1.25rem;
+  font-weight: 600;
 }
 
 .error-text {
-	font-size: 1.25rem;
-	font-weight: 600;
-	color: red;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: red;
 }
 
 .delete-button {
-	background-color: #ff4d4d;
-	color: white;
-	border: none;
-	padding: 5px 10px;
-	border-radius: 4px;
-	cursor: pointer;
-	font-size: 0.875rem;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
 }
 
 .delete-button:hover {
-	background-color: #ff1a1a;
+  background-color: #ff1a1a;
 }

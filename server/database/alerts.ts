@@ -1,3 +1,5 @@
+const sql = (strings: TemplateStringsArray, ...values: any[]) =>
+  String.raw(strings, ...values);
 import { v4 as uuidv4 } from 'uuid';
 import { get_all_honeytokens } from './honeytokens';
 import {
@@ -10,14 +12,14 @@ import {
 import { Globals } from '../globals';
 
 export async function init_alerts_table() {
-  await Globals.app.locals.db.exec(`
+  await Globals.app.locals.db.exec(sql`
     CREATE TABLE IF NOT EXISTS alerts (
       alert_id VARCHAR PRIMARY KEY,
       token_id VARCHAR,
       alert_epoch VARCHAR,
       accessed_by INTEGER,
       log TEXT,
-      FOREIGN KEY (token_id) REFERENCES honeytokens(token_id) ON DELETE CASCADE
+      FOREIGN KEY (token_id) REFERENCES honeytokens (token_id) ON DELETE CASCADE
     );
   `);
 }
@@ -32,15 +34,11 @@ export async function create_alert_to_token_id(
     await begin_transaction();
 
     await Globals.app.locals.db.run(
-      `
-      INSERT INTO alerts (
-        alert_id,
-        token_id,
-        alert_epoch,
-        accessed_by,
-        log
-      ) 
-      VALUES (?, ?, ?, ?, ?);
+      sql`
+        INSERT INTO
+          alerts (alert_id, token_id, alert_epoch, accessed_by, log)
+        VALUES
+          (?, ?, ?, ?, ?);
       `,
       [uuidv4(), token_id, alert_epoch, accessed_by, log],
     );
@@ -66,15 +64,11 @@ export async function create_alerts_to_token_id(
 
     for (const alert of alerts) {
       await Globals.app.locals.db.run(
-        `
-        INSERT INTO alerts (
-          alert_id,
-          token_id,
-          alert_epoch,
-          accessed_by,
-          log
-        ) 
-        VALUES (?, ?, ?, ?, ?);
+        sql`
+          INSERT INTO
+            alerts (alert_id, token_id, alert_epoch, accessed_by, log)
+          VALUES
+            (?, ?, ?, ?, ?);
         `,
         [
           uuidv4(),
@@ -95,20 +89,23 @@ export async function create_alerts_to_token_id(
 }
 
 export async function get_all_alerts() {
-  return await Globals.app.locals.db.all(
-    `SELECT alert_id, 
-      				  token_id, 
-      				  alert_epoch,
-      				  accessed_by, 
-      			 	  log 
-    	FROM alerts 
-       ORDER BY alert_epoch DESC`,
-  );
+  return await Globals.app.locals.db.all(sql`
+    SELECT
+      alert_id,
+      token_id,
+      alert_epoch,
+      accessed_by,
+      log
+    FROM
+      alerts
+    ORDER BY
+      alert_epoch DESC
+  `);
 }
 
 export async function get_all_alerts_join() {
-  return await Globals.app.locals.db.all(`
-    SELECT 
+  return await Globals.app.locals.db.all(sql`
+    SELECT
       alerts.alert_id,
       alerts.token_id,
       alerts.alert_epoch,
@@ -119,49 +116,65 @@ export async function get_all_alerts_join() {
       honeytokens.file_name AS file_name,
       agents.agent_ip AS agent_ip,
       agents.agent_port AS agent_port
-    FROM alerts
-    LEFT JOIN honeytokens ON alerts.token_id = honeytokens.token_id
-    LEFT JOIN agents ON honeytokens.agent_id = agents.agent_id
-    ORDER BY alerts.alert_epoch DESC
+    FROM
+      alerts
+      LEFT JOIN honeytokens ON alerts.token_id = honeytokens.token_id
+      LEFT JOIN agents ON honeytokens.agent_id = agents.agent_id
+    ORDER BY
+      alerts.alert_epoch DESC
   `);
 }
 
 export async function get_alert_by_alert_id(alert_id: String) {
   return await Globals.app.locals.db.get(
-    `SELECT alert_id,
-           		      token_id,
-           			  alert_epoch,
-           			  accessed_by,
-           			  log
-           FROM alerts
-    	 WHERE alert_id = ?;`,
+    sql`
+      SELECT
+        alert_id,
+        token_id,
+        alert_epoch,
+        accessed_by,
+        log
+      FROM
+        alerts
+      WHERE
+        alert_id = ?;
+    `,
     [alert_id],
   );
 }
 
 export async function get_alert_by_token_id(token_id: String) {
   return await Globals.app.locals.db.all(
-    `
-    SELECT alert_id,
-           		 token_id,
-           		 alert_epoch,
-          		 accessed_by,
-           		 log
-      FROM alerts
-     WHERE token_id = ?; `,
+    sql`
+      SELECT
+        alert_id,
+        token_id,
+        alert_epoch,
+        accessed_by,
+        log
+      FROM
+        alerts
+      WHERE
+        token_id = ?;
+    `,
     [token_id],
   );
 }
 
 export async function delete_all_alerts() {
-  await Globals.app.locals.db.run(`DELETE FROM alerts`);
+  await Globals.app.locals.db.run(sql` DELETE FROM alerts`);
 }
 
 export async function delete_alert_by_alert_id(alert_id: string) {
   try {
-    await Globals.app.locals.db.run(`DELETE FROM alerts WHERE alert_id = ?;`, [
-      alert_id,
-    ]);
+    await Globals.app.locals.db.run(
+      sql`
+        DELETE FROM alerts
+        WHERE
+          alert_id = ?;
+      `,
+      [alert_id],
+    );
   } catch (error) {
     console.error(`[-] Failed to delete alert with id ${alert_id}:`, error);
     throw error;
@@ -190,7 +203,12 @@ export async function dummy_populate_alerts() {
 
   for (const alert of alerts) {
     await Globals.app.locals.db.run(
-      `INSERT INTO alerts (alert_id, token_id, alert_epoch, accessed_by, log) VALUES (?, ?, ?, ?, ?)`,
+      sql`
+        INSERT INTO
+          alerts (alert_id, token_id, alert_epoch, accessed_by, log)
+        VALUES
+          (?, ?, ?, ?, ?)
+      `,
       [
         alert.alert_id,
         alert.token_id,

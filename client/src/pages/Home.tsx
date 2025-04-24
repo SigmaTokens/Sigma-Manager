@@ -1,27 +1,27 @@
-import { useEffect, useState } from 'react'
-import '../styles/Home.css'
+import { useEffect, useState } from 'react';
+import '../styles/Home.css';
 
 function Home() {
-  const [summary, setSummary] = useState<any>(null)
-  const [error, setError] = useState('')
+  const [summary, setSummary] = useState<any>(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetch('http://localhost:3000/api/home')
       .then((res) => {
-        if (!res.ok) throw new Error('Failed to fetch dashboard data')
-        return res.json()
+        if (!res.ok) throw new Error('Failed to fetch dashboard data');
+        return res.json();
       })
       .then((data) => {
-        setSummary(data)
+        setSummary(data);
       })
       .catch((err) => {
-        console.error(err)
-        setError('Failed to load dashboard data.')
-      })
-  }, [])
+        console.error(err);
+        setError('Failed to load dashboard data.');
+      });
+  }, []);
 
-  if (error) return <div>{error}</div>
-  if (!summary) return <div>Loading data...</div>
+  if (error) return <div>{error}</div>;
+  if (!summary) return <div>Loading data...</div>;
 
   return (
     <div className="home-container">
@@ -44,7 +44,7 @@ function Home() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Home
+export default Home;

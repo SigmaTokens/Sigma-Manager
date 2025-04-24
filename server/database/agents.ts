@@ -1,8 +1,10 @@
+const sql = (strings: TemplateStringsArray, ...values: any[]) =>
+  String.raw(strings, ...values);
 import { Globals } from '../globals';
 import { begin_transaction, commit, rollback } from './helpers';
 
 export async function init_agents_table() {
-  await Globals.app.locals.db.run(`
+  await Globals.app.locals.db.run(sql`
     CREATE TABLE IF NOT EXISTS agents (
       agent_id VARCHAR PRIMARY KEY,
       agent_name TEXT NOT NULL,
@@ -19,24 +21,38 @@ export async function insert_agent(
   port: number,
 ) {
   await Globals.app.locals.db.run(
-    `INSERT INTO agents (agent_id, agent_ip, agent_name, agent_port) VALUES (?, ?, ?, ?)`,
+    sql`
+      INSERT INTO
+        agents (agent_id, agent_ip, agent_name, agent_port)
+      VALUES
+        (?, ?, ?, ?)
+    `,
     [agent_id, ip, name, port],
   );
 }
 
 export async function get_all_agents() {
-  return await Globals.app.locals.db.all(`SELECT * FROM agents`);
+  return await Globals.app.locals.db.all(sql`
+    SELECT
+      *
+    FROM
+      agents
+  `);
 }
 
 export async function get_agent(agent_id: string) {
   return await Globals.app.locals.db.get(
-    `
-    SELECT  agent_id, 
-                  agent_name, 
-                  agent_ip, 
-                  agent_port
-      FROM  agents
-    WHERE  agent_id = ?;`,
+    sql`
+      SELECT
+        agent_id,
+        agent_name,
+        agent_ip,
+        agent_port
+      FROM
+        agents
+      WHERE
+        agent_id = ?;
+    `,
     [agent_id],
   );
 }
@@ -47,9 +63,14 @@ export async function delete_agent_by_id(agent_id: String) {
 
     //TODO: delete associated alerts and tokens
 
-    await Globals.app.locals.db.run(`DELETE FROM agents WHERE agent_id = ?`, [
-      agent_id,
-    ]);
+    await Globals.app.locals.db.run(
+      sql`
+        DELETE FROM agents
+        WHERE
+          agent_id = ?
+      `,
+      [agent_id],
+    );
 
     await commit();
   } catch (error) {

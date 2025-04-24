@@ -1,12 +1,12 @@
-import React from "react";
-import "../styles/HoneyTokenCreation.css";
+import React from 'react';
+import '../styles/HoneyTokenCreation.css';
 
 export function Button({
   children,
-  variant = "default",
+  variant = 'default',
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "default" | "outline" | "primary";
+  variant?: 'default' | 'outline' | 'primary';
 }) {
   return (
     <button className={`button-base button-${variant}`} {...props}>
@@ -22,7 +22,7 @@ export function Card({
   className?: string;
   children: React.ReactNode;
 }) {
-  return <div className={`card ${className || ""}`}>{children}</div>;
+  return <div className={`card ${className || ''}`}>{children}</div>;
 }
 
 export function CardContent({ children }: { children: React.ReactNode }) {
@@ -36,7 +36,7 @@ export function Checkbox({
   return (
     <input
       type="checkbox"
-      className={`checkbox ${className || ""}`}
+      className={`checkbox ${className || ''}`}
       {...props}
     />
   );
@@ -46,14 +46,14 @@ export function Input({
   className,
   ...props
 }: React.InputHTMLAttributes<HTMLInputElement>) {
-  return <input className={`input ${className || ""}`} {...props} />;
+  return <input className={`input ${className || ''}`} {...props} />;
 }
 
 export function Textarea({
   className,
   ...props
 }: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  return <textarea className={`textarea ${className || ""}`} {...props} />;
+  return <textarea className={`textarea ${className || ''}`} {...props} />;
 }
 
 export function Select({
@@ -62,7 +62,7 @@ export function Select({
   ...props
 }: React.SelectHTMLAttributes<HTMLSelectElement>) {
   return (
-    <select className={`select ${className || ""}`} {...props}>
+    <select className={`select ${className || ''}`} {...props}>
       {children}
     </select>
   );

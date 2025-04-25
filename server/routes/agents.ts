@@ -9,11 +9,14 @@ import {
 import { Globals } from '../globals';
 import { Constants } from '../constants';
 
-async function checkAgentStatus(ip: string): Promise<string> {
+async function checkAgentStatus(ip: string, port: string): Promise<string> {
   try {
-    const res = await ping.promise.probe(ip, { timeout: 2 });
-    return res.alive ? 'online' : 'offline';
-  } catch {
+    const response = await fetch('http://' + ip + ':' + port + '/status', {
+      signal: AbortSignal.timeout(500),
+    });
+    console.log(response.status);
+    return response.status == 200 ? 'online' : 'offline';
+  } catch (error) {
     return 'offline';
   }
 }
@@ -66,7 +69,7 @@ export function serveAgents() {
       const statusUpdates = await Promise.all(
         agents.map(async (agent: any) => ({
           agent_id: agent.agent_id,
-          status: await checkAgentStatus(agent.agent_ip),
+          status: await checkAgentStatus(agent.agent_ip, agent.agent_port),
         })),
       );
       res.json(statusUpdates);

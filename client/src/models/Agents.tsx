@@ -24,7 +24,7 @@ export async function addAgent(
   agentPort: number | undefined,
 ) {
   try {
-    const response = await fetch('http://localhost:3000/api/agents/text', {
+    const response = await fetch('http://localhost:3000/api/agents/add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

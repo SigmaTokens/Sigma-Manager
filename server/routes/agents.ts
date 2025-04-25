@@ -12,9 +12,8 @@ import { Constants } from '../constants';
 async function checkAgentStatus(ip: string, port: string): Promise<string> {
   try {
     const response = await fetch('http://' + ip + ':' + port + '/status', {
-      signal: AbortSignal.timeout(500),
+      signal: AbortSignal.timeout(300),
     });
-    console.log(response.status);
     return response.status == 200 ? 'online' : 'offline';
   } catch (error) {
     return 'offline';
@@ -35,7 +34,7 @@ export function serveAgents() {
     }
   });
 
-  router.post('/agents/text', async (req, res) => {
+  router.post('/agents/add', async (req, res) => {
     try {
       const { ip, name, port } = req.body;
 
@@ -48,7 +47,9 @@ export function serveAgents() {
 
       const agents = await get_all_agents();
 
-      const ipExists = agents.some((agent: any) => agent.agent_ip === ip);
+      const ipExists = agents.some(
+        (agent: any) => agent.agent_ip === ip && agent.agent_port === port,
+      );
 
       if (ipExists) {
         res.status(409).json({ error: 'Agent with this IP already exists' });

@@ -1,0 +1,12 @@
+export interface Alert {
+  alert_id: string;
+  token_id: string;
+  alert_epoch: number;
+  accessed_by: string;
+  log: string;
+  location: string;
+  file_name: string;
+  agent_ip: string;
+  agent_port: string;
+  grade: number;
+}

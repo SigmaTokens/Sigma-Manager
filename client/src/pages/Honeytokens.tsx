@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import '../styles/Honeytokens.css';
 import { getHoneytokens, deleteHoneytoken } from '../models/Honeytoken';
-
+import { IHoneytoken } from '../../../server/interfaces/honeytoken';
 function Honeytokens() {
   const [honeytokens, setHoneytokens] = useState([]);
 
@@ -44,7 +44,7 @@ function Honeytokens() {
           </thead>
           <tbody>
             {honeytokens.length > 0 ? (
-              honeytokens.map((honeytoken: any) => (
+              honeytokens.map((honeytoken: IHoneytoken) => (
                 <tr key={honeytoken.token_id}>
                   <td>{honeytoken.agent_id}</td>
                   <td>{honeytoken.token_id}</td>

@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import '../styles/Home.css';
+import { IDashboardSummary } from '../../../server/interfaces/summary'; // Adjust path as needed
 
 function Home() {
-  const [summary, setSummary] = useState<any>(null);
+  const [summary, setSummary] = useState<IDashboardSummary | null>(null);
   const [error, setError] = useState('');
 
   useEffect(() => {

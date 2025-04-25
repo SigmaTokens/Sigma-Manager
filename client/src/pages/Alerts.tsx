@@ -1,19 +1,7 @@
 import { useEffect, useState } from 'react';
 import '../styles/Alerts.css';
 import { getAlerts } from '../models/Alerts';
-
-interface Alert {
-  alert_id: string;
-  token_id: string;
-  alert_epoch: number;
-  accessed_by: string;
-  log: string;
-  location: string;
-  file_name: string;
-  agent_ip: string;
-  agent_port: string;
-  grade: number;
-}
+import { Alert } from '../../../server/interfaces/alert';
 
 function Alerts() {
   const [alerts, setAlerts] = useState<Alert[]>([]);
@@ -36,10 +24,6 @@ function Alerts() {
     fetchAlerts();
   }, []);
 
-  const formatDate = (epoch: number) => {
-    return new Date(epoch).toLocaleString();
-  };
-
   if (isLoading) return <div className="loading">Loading alerts...</div>;
   if (error) return <div className="error">{error}</div>;
 
@@ -52,7 +36,7 @@ function Alerts() {
             <tr>
               <th>Alert ID</th>
               <th>Token ID</th>
-              <th>Date</th>
+              {/* <th>Date</th> */}
               <th>Accessed By</th>
               <th>File</th>
               <th>Agent</th>
@@ -68,12 +52,11 @@ function Alerts() {
                   <tr key={alert.alert_id}>
                     <td>{alert.alert_id}</td>
                     <td>{alert.token_id}</td>
-                    <td>{formatDate(parseInt(alert.alert_epoch))}</td>
+                    {/* <td>{formatDate(alert.alert_epoch)}</td> */}
                     <td>{alert.accessed_by}</td>
                     <td>{`${alert.location}\\${alert.file_name}`}</td>
                     <td>{`${alert.agent_ip}:${alert.agent_port}`}</td>
                     <td>{alert.grade}</td>
-
                     {/* <td>{alert.log}</td> */}
                   </tr>
                 );

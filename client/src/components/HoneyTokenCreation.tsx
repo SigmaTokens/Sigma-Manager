@@ -12,8 +12,13 @@ import {
 import '../styles/HoneyTokenCreation.css';
 import { getAgents } from '../models/Agents';
 import { createHoneytokenText } from '../models/Honeytoken';
+import {
+  IAgent,
+  IHoneytokenType,
+  CreateHoneytokenFormProps,
+} from '../interfaces/honeytokens';
 
-function CreateHoneytokenForm({ types, onClose }: any) {
+function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
   const [quantity, setQuantity] = useState<number>(1);
   const [excludeAccess, setExcludeAccess] = useState<string>('');
   const [selectedType, setSelectedType] = useState<string>('');
@@ -25,7 +30,7 @@ function CreateHoneytokenForm({ types, onClose }: any) {
   const [fileName, setFileName] = useState<string>('');
   const [fileContent, setFileContent] = useState<string>('');
   const [agentID, setAgentID] = useState<string>('');
-  const [agents, setAgents] = useState<any[]>([]);
+  const [agents, setAgents] = useState<IAgent[]>([]);
 
   useEffect(() => {
     getAgents().then((data) => {

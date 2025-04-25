@@ -1,11 +1,17 @@
 import { useEffect, useState } from 'react';
 import '../styles/Agents.css';
 import { getAgents, deleteAgent } from '../models/Agents';
+import { IAgent, IAgentStatus } from '../../../server/interfaces/agent';
+import { MdDelete } from 'react-icons/fa';
+import { MdStop } from 'react-icons/ri';
+import { MdStart } from 'react-icons/md';
 
 function AgentsPage() {
-  const [agents, setAgents] = useState([]);
+  const [agents, setAgents] = useState<IAgent[]>([]);
   const [refreshCounter, setRefreshCounter] = useState(0);
-  const [statusUpdates, setStatusUpdates] = useState({});
+  const [statusUpdates, setStatusUpdates] = useState<Record<string, string>>(
+    {},
+  );
 
   useEffect(() => {
     const fetchAgents = async () => {
@@ -21,7 +27,7 @@ function AgentsPage() {
     fetchAgents();
   }, [refreshCounter]);
 
-  const handleDelete = async (agentId) => {
+  const handleDelete = async (agentId: string) => {
     try {
       await deleteAgent(agentId);
       setRefreshCounter((prev) => prev + 1);
@@ -33,9 +39,9 @@ function AgentsPage() {
   const refreshStatuses = async () => {
     try {
       const response = await fetch('http://localhost:3000/api/agents/status');
-      const data = await response.json();
+      const data: IAgentStatus[] = await response.json();
 
-      const newStatuses = {};
+      const newStatuses: Record<string, string> = {};
       data.forEach(({ agent_id, status }) => {
         newStatuses[agent_id] = status;
       });
@@ -84,6 +90,7 @@ function AgentsPage() {
                   {statusUpdates[agent.agent_id] || 'unknown'}
                 </td>
                 <td>
+                  <MdDelete />
                   <button
                     className="delete-button"
                     onClick={() => handleDelete(agent.agent_id)}

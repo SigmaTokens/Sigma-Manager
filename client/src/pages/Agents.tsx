@@ -22,7 +22,12 @@ function AgentsPage() {
   useEffect(() => {
     const fetchAgents = async () => {
       try {
-        const agentData = await getAgents();
+        let agentData = await getAgents();
+        agentData = agentData.map((agent: IAgent) => ({
+          ...agent,
+          isRunning: false,
+        }));
+
         setAgents(agentData);
         refreshStatuses();
       } catch (error) {
@@ -44,8 +49,12 @@ function AgentsPage() {
 
   const handleStart = async (agentId: string) => {
     try {
-      await startAgent(agentId);
-      refreshStatuses();
+      //await startAgent(agentId);
+      setAgents((prevAgents) =>
+        prevAgents.map((agent) =>
+          agent.agent_id === agentId ? { ...agent, isRunning: true } : agent,
+        ),
+      );
     } catch (error) {
       console.error('Failed to start agent:', error);
     }
@@ -53,8 +62,12 @@ function AgentsPage() {
 
   const handleStop = async (agentId: string) => {
     try {
-      await stopAgent(agentId);
-      refreshStatuses();
+      //await stopAgent(agentId);
+      setAgents((prevAgents) =>
+        prevAgents.map((agent) =>
+          agent.agent_id === agentId ? { ...agent, isRunning: false } : agent,
+        ),
+      );
     } catch (error) {
       console.error('Failed to stop agent:', error);
     }
@@ -115,26 +128,32 @@ function AgentsPage() {
                 </td>
                 <td>
                   <div className="action-icons">
-                    <FaPlay
-                      className={`action-icon ${hoveredIcon === `start-${agent.agent_id}` ? 'hovered' : ''}`}
-                      onClick={() => handleStart(agent.agent_id)}
-                      onMouseEnter={() =>
-                        setHoveredIcon(`start-${agent.agent_id}`)
-                      }
-                      onMouseLeave={() => setHoveredIcon(null)}
-                      title="Start Agent"
-                    />
-                    <FaStop
-                      className={`action-icon ${hoveredIcon === `stop-${agent.agent_id}` ? 'hovered' : ''}`}
-                      onClick={() => handleStop(agent.agent_id)}
-                      onMouseEnter={() =>
-                        setHoveredIcon(`stop-${agent.agent_id}`)
-                      }
-                      onMouseLeave={() => setHoveredIcon(null)}
-                      title="Stop Agent"
-                    />
+                    {statusUpdates[agent.agent_id] !== 'unknown' &&
+                      statusUpdates[agent.agent_id] !== 'offline' &&
+                      (agent.isRunning ? (
+                        <FaStop
+                          className={`action-icon stop ${hoveredIcon === `stop-${agent.agent_id}` ? 'hovered' : ''}`}
+                          onClick={() => handleStop(agent.agent_id)}
+                          onMouseEnter={() =>
+                            setHoveredIcon(`stop-${agent.agent_id}`)
+                          }
+                          onMouseLeave={() => setHoveredIcon(null)}
+                          title="Stop Agent"
+                        />
+                      ) : (
+                        <FaPlay
+                          className={`action-icon start ${hoveredIcon === `start-${agent.agent_id}` ? 'hovered' : ''}`}
+                          onClick={() => handleStart(agent.agent_id)}
+                          onMouseEnter={() =>
+                            setHoveredIcon(`start-${agent.agent_id}`)
+                          }
+                          onMouseLeave={() => setHoveredIcon(null)}
+                          title="Start Agent"
+                        />
+                      ))}
+
                     <FaTrash
-                      className={`action-icon ${hoveredIcon === `delete-${agent.agent_id}` ? 'hovered' : ''}`}
+                      className={`action-icon delete ${hoveredIcon === `delete-${agent.agent_id}` ? 'hovered' : ''}`}
                       onClick={() => handleDelete(agent.agent_id)}
                       onMouseEnter={() =>
                         setHoveredIcon(`delete-${agent.agent_id}`)

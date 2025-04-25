@@ -120,19 +120,16 @@
 }
 
 /* Specific icon colors */
-.action-icon:nth-child(1):hover {
-  /* Start */
+.action-icon.start:hover {
   color: #4caf50;
 }
 
-.action-icon:nth-child(2):hover {
-  /* Stop */
+.action-icon.stop:hover {
   color: #f44336;
 }
 
-.action-icon:nth-child(3):hover {
-  /* Delete */
-  color: #2d3748;
+.action-icon.delete:hover {
+  color: #0a0a0a;
 }
 
 /* Status indicators */

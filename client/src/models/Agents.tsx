@@ -51,33 +51,39 @@ export async function addAgent(
 
 export async function startAgent(agent_id: string) {
   try {
-    const response = await fetch(
-      `http://localhost:3000/api/agents/agent/${agent_id}`,
-      {
-        method: 'DELETE',
+    const response = await fetch(`http://localhost:3000/api/agents/start`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    );
+      body: JSON.stringify({
+        agent_id: agent_id,
+      }),
+    });
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
   } catch (err) {
-    console.error('Error deleting agent:', err);
+    console.error('Error starting agent:', err);
   }
 }
 
 export async function stopAgent(agent_id: string) {
   try {
-    const response = await fetch(
-      `http://localhost:3000/api/agents/agent/${agent_id}`,
-      {
-        method: 'DELETE',
+    const response = await fetch(`http://localhost:3000/api/agents/stop`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    );
+      body: JSON.stringify({
+        agent_id: agent_id,
+      }),
+    });
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
   } catch (err) {
-    console.error('Error deleting agent:', err);
+    console.error('Error stopping agent:', err);
   }
 }
 

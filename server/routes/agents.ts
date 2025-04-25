@@ -5,6 +5,8 @@ import {
   get_all_agents,
   insert_agent,
   delete_agent_by_id,
+  //start_agent_by_id,
+  //stop_agent_by_id,
 } from '../database/agents';
 import { Globals } from '../globals';
 import { Constants } from '../constants';
@@ -87,6 +89,28 @@ export function serveAgents() {
       res.json({ success: true });
     } catch (error) {
       console.error('[-] Failed to delete agent:', error);
+      res.status(500).json({ failure: error });
+    }
+  });
+
+  router.put('/agents/start', async (req, res) => {
+    const { agent_id } = req.body;
+    try {
+      //await start_agent_by_id(agent_id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('[-] Failed to start agent:', error);
+      res.status(500).json({ failure: error });
+    }
+  });
+
+  router.put('/agents/stop', async (req, res) => {
+    const { agent_id } = req.body;
+    try {
+      //await stop_agent_by_id(agent_id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('[-] Failed to stop agent:', error);
       res.status(500).json({ failure: error });
     }
   });

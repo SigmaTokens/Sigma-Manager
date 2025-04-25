@@ -9,3 +9,14 @@ export interface IAgentStatus {
   agent_id: string;
   status: 'online' | 'offline' | 'unknown';
 }
+
+export interface IHoneytokenType {
+  id: string;
+  name: string;
+}
+
+export interface CreateHoneytokenFormProps {
+  types: IHoneytokenType[];
+  agents: IAgent[];
+  onClose: () => void;
+}

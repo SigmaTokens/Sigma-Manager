@@ -1,10 +1,15 @@
 import { useEffect, useState } from 'react';
 import '../styles/Agents.css';
-import { getAgents, deleteAgent } from '../models/Agents';
+import {
+  getAgents,
+  deleteAgent,
+  startAgent,
+  stopAgent,
+} from '../models/Agents';
 import { IAgent, IAgentStatus } from '../../../server/interfaces/agent';
-import { MdDelete } from 'react-icons/fa';
-import { MdStop } from 'react-icons/ri';
-import { MdStart } from 'react-icons/md';
+import { FaTrash } from 'react-icons/fa';
+import { FaPlay } from 'react-icons/fa';
+import { FaStop } from 'react-icons/fa';
 
 function AgentsPage() {
   const [agents, setAgents] = useState<IAgent[]>([]);
@@ -12,6 +17,7 @@ function AgentsPage() {
   const [statusUpdates, setStatusUpdates] = useState<Record<string, string>>(
     {},
   );
+  const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchAgents = async () => {
@@ -33,6 +39,24 @@ function AgentsPage() {
       setRefreshCounter((prev) => prev + 1);
     } catch (error) {
       console.error('Failed to delete agent:', error);
+    }
+  };
+
+  const handleStart = async (agentId: string) => {
+    try {
+      await startAgent(agentId);
+      refreshStatuses();
+    } catch (error) {
+      console.error('Failed to start agent:', error);
+    }
+  };
+
+  const handleStop = async (agentId: string) => {
+    try {
+      await stopAgent(agentId);
+      refreshStatuses();
+    } catch (error) {
+      console.error('Failed to stop agent:', error);
     }
   };
 
@@ -90,13 +114,35 @@ function AgentsPage() {
                   {statusUpdates[agent.agent_id] || 'unknown'}
                 </td>
                 <td>
-                  <MdDelete />
-                  <button
-                    className="delete-button"
-                    onClick={() => handleDelete(agent.agent_id)}
-                  >
-                    Delete
-                  </button>
+                  <div className="action-icons">
+                    <FaPlay
+                      className={`action-icon ${hoveredIcon === `start-${agent.agent_id}` ? 'hovered' : ''}`}
+                      onClick={() => handleStart(agent.agent_id)}
+                      onMouseEnter={() =>
+                        setHoveredIcon(`start-${agent.agent_id}`)
+                      }
+                      onMouseLeave={() => setHoveredIcon(null)}
+                      title="Start Agent"
+                    />
+                    <FaStop
+                      className={`action-icon ${hoveredIcon === `stop-${agent.agent_id}` ? 'hovered' : ''}`}
+                      onClick={() => handleStop(agent.agent_id)}
+                      onMouseEnter={() =>
+                        setHoveredIcon(`stop-${agent.agent_id}`)
+                      }
+                      onMouseLeave={() => setHoveredIcon(null)}
+                      title="Stop Agent"
+                    />
+                    <FaTrash
+                      className={`action-icon ${hoveredIcon === `delete-${agent.agent_id}` ? 'hovered' : ''}`}
+                      onClick={() => handleDelete(agent.agent_id)}
+                      onMouseEnter={() =>
+                        setHoveredIcon(`delete-${agent.agent_id}`)
+                      }
+                      onMouseLeave={() => setHoveredIcon(null)}
+                      title="Delete Agent"
+                    />
+                  </div>
                 </td>
               </tr>
             ))}

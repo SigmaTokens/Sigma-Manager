@@ -107,6 +107,14 @@ select:focus {
   transform: scale(1.05);
 }
 
+.button:disabled {
+  background-color: #d1d5db;
+  color: #9ca3af;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
 .checkbox-container {
   display: flex;
   align-items: center;
@@ -129,4 +137,14 @@ select:focus {
   align-items: center;
   justify-content: center;
   z-index: 9999;
+}
+
+select:invalid {
+  color: #888;
+}
+
+.popup-content > p {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }

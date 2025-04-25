@@ -12,6 +12,7 @@ import {
 import '../styles/HoneyTokenCreation.css';
 import { getAgents } from '../models/Agents';
 import { createHoneytokenText } from '../models/Honeytoken';
+import TextHoneyToken from './TextHoneyToken';
 
 function CreateHoneytokenForm({ types, onClose }: any) {
   const [quantity, setQuantity] = useState<number>(1);
@@ -55,22 +56,21 @@ function CreateHoneytokenForm({ types, onClose }: any) {
 
             <p>
               <label>Type</label>
-              <Select
-                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                  setSelectedType(e.target.value)
-                }
+              <select
+                value={selectedType}
+                onChange={(e) => setSelectedType(e.target.value)}
+                style={{ color: selectedType === '' ? '#888' : 'black' }}
+                className="select-type"
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Honeytoken Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {types.map((type: any) => (
-                    <SelectItem key={type.id} value={type.id}>
-                      {type.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                <option value="" disabled hidden>
+                  Select Honeytoken Type
+                </option>
+                {types.map((type: any) => (
+                  <option key={type.id} value={type.id}>
+                    {type.name}
+                  </option>
+                ))}
+              </select>
             </p>
 
             {/* <p>
@@ -97,29 +97,16 @@ function CreateHoneytokenForm({ types, onClose }: any) {
               />
             </p>
 
-            <p>
-              <label>File Name</label>
-              <Input
-                type="text"
-                placeholder="Enter file name"
-                value={fileName}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setFileName(e.target.value)
-                }
+            {selectedType === 'text' && (
+              <TextHoneyToken
+                fileName={fileName}
+                setFileName={setFileName}
+                fileContent={fileContent}
+                setFileContent={setFileContent}
+                fileLocation={ComponentAddresses}
+                setFileLocation={setComponentAddresses}
               />
-            </p>
-
-            <p>
-              <label>File Content</label>
-              <Input
-                type="text"
-                placeholder="Enter the content of the file"
-                value={fileContent}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setFileContent(e.target.value)
-                }
-              />
-            </p>
+            )}
 
             <p>
               <label>Grade </label>
@@ -180,24 +167,6 @@ function CreateHoneytokenForm({ types, onClose }: any) {
                 <label>Spread Tokens Automatically</label>
               </div>
             </p> */}
-
-            {!spreadAuto && (selectedType || types.length < 2) && (
-              <p>
-                <label>File Location</label>
-                <div
-                  style={{ display: 'flex', gap: '8px', alignItems: 'center' }}
-                >
-                  <Input
-                    type="text"
-                    placeholder="Enter file path or click to choose"
-                    value={ComponentAddresses}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setComponentAddresses(e.target.value)
-                    }
-                  />
-                </div>
-              </p>
-            )}
           </div>
 
           <div className="button-container">
@@ -207,6 +176,7 @@ function CreateHoneytokenForm({ types, onClose }: any) {
 
             <button
               className="button button-primary"
+              disabled={selectedType === ''}
               onClick={async () => {
                 if (quantity === 1) {
                   try {

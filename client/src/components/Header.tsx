@@ -27,7 +27,7 @@ function Header() {
   const [showCreatePopup, setShowCreatePopup] = useState(false);
   const [showAddAgentPopup, setShowAddAgentPopup] = useState(false);
 
-  const honeytokenTypes = [{ id: '1', name: 'text file' }];
+  const honeytokenTypes = [{ id: 'text', name: 'text file' }];
   const agents = useAgents();
 
   return (

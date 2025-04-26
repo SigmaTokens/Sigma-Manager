@@ -2,15 +2,15 @@
   width: 80%;
   max-width: 900px;
   height: auto;
-  padding: 24px;
-  border-radius: 20px;
+  padding: 2rem;
+  border-radius: 1.5rem;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
   background-color: white;
   margin: auto;
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 1.5rem;
 }
 
 .popup-title {
@@ -23,14 +23,14 @@
 .popup-content {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px 40px;
-  padding: 0 12px;
+  gap: 1rem 2rem;
+  padding: 0 1rem;
 }
 
 .popup-item {
   display: flex;
   flex-direction: column;
-  padding: 0 8px;
+  padding: 0 0.5rem;
 }
 
 label {
@@ -44,9 +44,9 @@ input,
 textarea,
 select {
   width: 100%;
-  padding: 8px;
+  padding: 0.5rem;
   border: 1px solid #d1d5db;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   outline: none;
   transition: border-color 0.3s;
   font-size: 0.85rem;
@@ -60,8 +60,8 @@ select:focus {
 }
 
 .grade-subtitle {
-  margin-top: -4px;
-  margin-bottom: 4px;
+  margin-top: -0.5rem;
+  margin-bottom: 0.5rem;
   font-size: 0.8rem;
   color: #6b7280;
   font-style: italic;
@@ -70,12 +70,12 @@ select:focus {
 .button-container {
   display: flex;
   justify-content: space-between;
-  margin-top: 10px;
+  margin-top: 1rem;
 }
 
-.button {
-  padding: 8px 16px;
-  border-radius: 8px;
+.popup-button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
   font-weight: bold;
   cursor: pointer;
   transition:
@@ -84,30 +84,30 @@ select:focus {
   font-size: 0.85rem;
 }
 
-.button-outline {
+.popup-button-outline {
   background-color: white;
   border: 1px solid #d1d5db;
   color: #374151;
 }
 
-.button-outline:hover {
+.popup-button-outline:hover {
   background-color: #f3f4f6;
   color: #111827;
   transform: scale(1.05);
 }
 
-.button-primary {
+.popup-button-primary {
   background-color: #2563eb;
   border: none;
   color: white;
 }
 
-.button-primary:hover {
+.popup-button-primary:hover {
   background-color: #1d4ed8;
   transform: scale(1.05);
 }
 
-.button:disabled {
+.popup-button:disabled {
   background-color: #d1d5db;
   color: #9ca3af;
   cursor: not-allowed;
@@ -118,12 +118,12 @@ select:focus {
 .checkbox-container {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.5rem;
 }
 
 .checkbox {
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
 }
 
 .overlay {
@@ -136,6 +136,7 @@ select:focus {
   display: flex;
   align-items: center;
   justify-content: center;
+ 
   z-index: 9999;
 }
 
@@ -147,4 +148,56 @@ select:invalid {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+@media (max-width: 768px) {
+  .popup-card {
+    width: 90%;
+    padding: 1rem;
+  }
+
+  .popup-content {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .popup-item {
+    padding: 0;
+  }
+
+  .button-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .popup-button {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .popup-card {
+    width: 95%;
+    padding: 0.5rem;
+  }
+
+  .popup-content {
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
+  }
+
+  .popup-item {
+    padding: 0;
+  }
+
+  .button-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .popup-button {
+    width: 100%;
+    margin-bottom: 0.2rem;
+  }
 }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/Alerts.css';
-import { getAlerts } from '../models/Alerts';
+import { getAlerts, archiveAlert } from '../models/Alerts';
 
 interface Alert {
   alert_id: string;
@@ -38,7 +38,7 @@ function Alerts() {
     };
 
     fetchAlerts();
-  }, []);
+  }, [isLoading]);
 
   useEffect(() => {
     if (archiveFilterBy === '') {
@@ -110,7 +110,18 @@ function Alerts() {
                   <td>{`${alert.location}\\${alert.file_name}`}</td>
                   <td>{`${alert.agent_ip}:${alert.agent_port}`}</td>
                   <td>{alert.grade}</td>
-                  <td>{alert.archive ? 'archive' : 'active'}</td>
+                  <td>{alert.archive ? '' : 
+                    <button
+                        className="button button-primary"
+                        onClick={async () => {
+                          if(await archiveAlert(alert.alert_id, true)) {
+                            setIsLoading(true);
+                          }
+                        }}
+                      >
+                      Archive
+                      </button> }
+                  </td>
                 </tr>
               ))
             ) : (

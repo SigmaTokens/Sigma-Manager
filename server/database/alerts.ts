@@ -212,3 +212,15 @@ export async function dummy_populate_alerts() {
     );
   }
 }
+
+export async function set_archive_by_alert_id(alert_id: string, archive: boolean) {
+  try {
+    await Globals.app.locals.db.run(
+      `UPDATE alerts SET archive = ? WHERE alert_id = ?;`,
+      [archive, alert_id],
+    );
+  } catch (error) {
+    console.error(`[-] Failed to set alert with id ${alert_id}:`, error);
+    throw error;
+  }
+}

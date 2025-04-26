@@ -14,7 +14,6 @@ export function serveAlerts() {
   router.post('/alerts', async (req, res) => {
     try {
       const { token_id, alert_epoch, accessed_by, log } = req.body;
-
       const result = await create_alert_to_token_id(
         token_id,
         alert_epoch,

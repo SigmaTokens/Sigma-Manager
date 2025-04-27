@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../styles/Alerts.css';
-import { getAlerts } from '../models/Alerts';
+import { getAlerts, archiveAlert } from '../models/Alerts';
 
 interface Alert {
   alert_id: string;
@@ -8,6 +8,7 @@ interface Alert {
   alert_epoch: number;
   accessed_by: string;
   log: string;
+  archive: boolean;
   location: string;
   file_name: string;
   agent_ip: string;
@@ -17,14 +18,17 @@ interface Alert {
 
 function Alerts() {
   const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [filteredAlerts, setFilteredAlerts] = useState<Alert[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [archiveFilterBy, setArchive] = useState<string>('');
 
   useEffect(() => {
     const fetchAlerts = async () => {
       try {
         const data = await getAlerts();
         setAlerts(data);
+        setFilteredAlerts(data); // Initialize filtered alerts
       } catch (err) {
         setError('Failed to load alerts');
         console.error(err);
@@ -34,7 +38,26 @@ function Alerts() {
     };
 
     fetchAlerts();
-  }, []);
+  }, [isLoading]);
+
+  useEffect(() => {
+    if (archiveFilterBy === '') {
+      setFilteredAlerts(alerts);
+    } else {
+      const filterValue = parseInt(archiveFilterBy);
+      setFilteredAlerts(
+        alerts.filter((alert) =>
+          filterValue === 2 ? true : filterValue === 0 ? alert.archive : !alert.archive,
+        ),
+      );
+    }
+  }, [archiveFilterBy, alerts]);
+
+  const archiveTypes = [
+    { id: 0, name: 'archive' },
+    { id: 1, name: 'active' },
+    { id: 2, name: 'all' },
+  ];
 
   const formatDate = (epoch: number) => {
     return new Date(epoch).toLocaleString();
@@ -57,30 +80,53 @@ function Alerts() {
               <th>File</th>
               <th>Agent</th>
               <th>Grade</th>
-              {/* <th>Log</th> */}
+              <th>
+                <select
+                  value={archiveFilterBy}
+                  onChange={(e) => setArchive(e.target.value)}
+                  style={{ color: archiveFilterBy === '' ? '#888' : 'black' }}
+                  className="select-type"
+                >
+                  <option value="" disabled hidden>
+                    Filter by Archive
+                  </option>
+                  {archiveTypes.map((type: any) => (
+                    <option key={type.id} value={type.id}>
+                      {type.name}
+                    </option>
+                  ))}
+                </select>
+              </th>
             </tr>
           </thead>
           <tbody>
-            {alerts.length > 0 ? (
-              alerts.map((alert) => {
-                console.log(alert);
-                return (
-                  <tr key={alert.alert_id}>
-                    <td>{alert.alert_id}</td>
-                    <td>{alert.token_id}</td>
-                    <td>{formatDate(parseInt(alert.alert_epoch))}</td>
-                    <td>{alert.accessed_by}</td>
-                    <td>{`${alert.location}\\${alert.file_name}`}</td>
-                    <td>{`${alert.agent_ip}:${alert.agent_port}`}</td>
-                    <td>{alert.grade}</td>
-
-                    {/* <td>{alert.log}</td> */}
-                  </tr>
-                );
-              })
+            {filteredAlerts.length > 0 ? (
+              filteredAlerts.map((alert) => (
+                <tr key={alert.alert_id}>
+                  <td>{alert.alert_id}</td>
+                  <td>{alert.token_id}</td>
+                  <td>{formatDate(parseInt(alert.alert_epoch))}</td>
+                  <td>{alert.accessed_by}</td>
+                  <td>{`${alert.location}\\${alert.file_name}`}</td>
+                  <td>{`${alert.agent_ip}:${alert.agent_port}`}</td>
+                  <td>{alert.grade}</td>
+                  <td>{alert.archive ? '' : 
+                    <button
+                        className="button button-primary"
+                        onClick={async () => {
+                          if(await archiveAlert(alert.alert_id, true)) {
+                            setIsLoading(true);
+                          }
+                        }}
+                      >
+                      Archive
+                      </button> }
+                  </td>
+                </tr>
+              ))
             ) : (
               <tr>
-                <td colSpan={7} className="no-alerts">
+                <td colSpan={8} className="no-alerts">
                   No alerts found
                 </td>
               </tr>

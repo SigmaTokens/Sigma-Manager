@@ -122,7 +122,7 @@ function Alerts() {
               ))
             ) : (
               <tr>
-                <td colSpan={8} className="no-alerts">
+                <td colSpan={7} className="no-alerts">
                   No alerts found
                 </td>
               </tr>

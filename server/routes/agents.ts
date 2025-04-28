@@ -3,10 +3,9 @@ import { v4 as uuidv4 } from 'uuid';
 import ping from 'ping';
 import {
   get_all_agents,
+  get_agent,
   insert_agent,
   delete_agent_by_id,
-  //start_agent_by_id,
-  //stop_agent_by_id,
 } from '../database/agents';
 import { Globals } from '../globals';
 import { Constants } from '../constants';
@@ -96,8 +95,20 @@ export function serveAgents() {
   router.put('/agents/start', async (req, res) => {
     const { agent_id } = req.body;
     try {
-      //await start_agent_by_id(agent_id);
-      res.json({ success: true });
+      const agent = await get_agent(agent_id);
+
+      const response_from_agent = await fetch(
+        'http://' +
+          agent.agent_ip +
+          ':' +
+          agent.agent_port +
+          '/api/monitor/start',
+        {
+          method: 'GET',
+        },
+      );
+      if (response_from_agent) res.status(200).json({ success: 'started' });
+      return;
     } catch (error) {
       console.error('[-] Failed to start agent:', error);
       res.status(500).json({ failure: error });
@@ -107,8 +118,20 @@ export function serveAgents() {
   router.put('/agents/stop', async (req, res) => {
     const { agent_id } = req.body;
     try {
-      //await stop_agent_by_id(agent_id);
-      res.json({ success: true });
+      const agent = await get_agent(agent_id);
+
+      const response_from_agent = await fetch(
+        'http://' +
+          agent.agent_ip +
+          ':' +
+          agent.agent_port +
+          '/api/monitor/stop',
+        {
+          method: 'GET',
+        },
+      );
+      if (response_from_agent) res.status(200).json({ success: 'stopped' });
+      return;
     } catch (error) {
       console.error('[-] Failed to stop agent:', error);
       res.status(500).json({ failure: error });

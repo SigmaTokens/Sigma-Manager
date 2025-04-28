@@ -49,7 +49,7 @@ function AgentsPage() {
 
   const handleStart = async (agentId: string) => {
     try {
-      //await startAgent(agentId);
+      await startAgent(agentId);
       setAgents((prevAgents) =>
         prevAgents.map((agent) =>
           agent.agent_id === agentId ? { ...agent, isRunning: true } : agent,
@@ -62,7 +62,7 @@ function AgentsPage() {
 
   const handleStop = async (agentId: string) => {
     try {
-      //await stopAgent(agentId);
+      await stopAgent(agentId);
       setAgents((prevAgents) =>
         prevAgents.map((agent) =>
           agent.agent_id === agentId ? { ...agent, isRunning: false } : agent,

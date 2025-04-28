@@ -19,6 +19,7 @@ export async function init_alerts_table() {
       alert_epoch VARCHAR,
       accessed_by INTEGER,
       log TEXT,
+      archive BOOLEAN DEFAULT 0,
       FOREIGN KEY (token_id) REFERENCES honeytokens (token_id) ON DELETE CASCADE
     );
   `);
@@ -29,6 +30,7 @@ export async function create_alert_to_token_id(
   alert_epoch: number,
   accessed_by: string,
   log: string,
+  archive: boolean = false,
 ) {
   try {
     await begin_transaction();
@@ -36,11 +38,18 @@ export async function create_alert_to_token_id(
     await Globals.app.locals.db.run(
       sql`
         INSERT INTO
-          alerts (alert_id, token_id, alert_epoch, accessed_by, log)
+          alerts (
+            alert_id,
+            token_id,
+            alert_epoch,
+            accessed_by,
+            log,
+            archive
+          )
         VALUES
-          (?, ?, ?, ?, ?);
+          (?, ?, ?, ?, ?, ?);
       `,
-      [uuidv4(), token_id, alert_epoch, accessed_by, log],
+      [uuidv4(), token_id, alert_epoch, accessed_by, log, archive],
     );
 
     await commit();
@@ -57,6 +66,7 @@ export async function create_alerts_to_token_id(
     alert_epoch: number;
     accessed_by: string;
     log: string;
+    archive: boolean;
   }>,
 ) {
   try {
@@ -66,9 +76,16 @@ export async function create_alerts_to_token_id(
       await Globals.app.locals.db.run(
         sql`
           INSERT INTO
-            alerts (alert_id, token_id, alert_epoch, accessed_by, log)
+            alerts (
+              alert_id,
+              token_id,
+              alert_epoch,
+              accessed_by,
+              log,
+              archive
+            )
           VALUES
-            (?, ?, ?, ?, ?);
+            (?, ?, ?, ?, ?, ?);
         `,
         [
           uuidv4(),
@@ -76,6 +93,7 @@ export async function create_alerts_to_token_id(
           alert.alert_epoch,
           alert.accessed_by,
           alert.log,
+          alert.archive,
         ],
       );
     }
@@ -111,6 +129,7 @@ export async function get_all_alerts_join() {
       alerts.alert_epoch,
       alerts.accessed_by,
       alerts.log,
+      alerts.archive,
       honeytokens.grade AS grade,
       honeytokens.location AS location,
       honeytokens.file_name AS file_name,
@@ -181,6 +200,21 @@ export async function delete_alert_by_alert_id(alert_id: string) {
   }
 }
 
+export async function set_archive_by_alert_id(
+  alert_id: string,
+  archive: boolean,
+) {
+  try {
+    await Globals.app.locals.db.run(
+      `UPDATE alerts SET archive = ? WHERE alert_id = ?;`,
+      [archive, alert_id],
+    );
+  } catch (error) {
+    console.error(`[-] Failed to set alert with id ${alert_id}:`, error);
+    throw error;
+  }
+}
+
 export async function dummy_populate_alerts() {
   await delete_all_alerts();
 
@@ -198,6 +232,7 @@ export async function dummy_populate_alerts() {
       alert_epoch: get_random_date().getTime(),
       accessed_by: get_random_ip(),
       log: `Suspicious activity detected on token ${i + 1}`,
+      archive: false,
     });
   }
 
@@ -205,9 +240,16 @@ export async function dummy_populate_alerts() {
     await Globals.app.locals.db.run(
       sql`
         INSERT INTO
-          alerts (alert_id, token_id, alert_epoch, accessed_by, log)
+          alerts (
+            alert_id,
+            token_id,
+            alert_epoch,
+            accessed_by,
+            log,
+            archive
+          )
         VALUES
-          (?, ?, ?, ?, ?)
+          (?, ?, ?, ?, ?, ?);
       `,
       [
         alert.alert_id,
@@ -215,6 +257,7 @@ export async function dummy_populate_alerts() {
         alert.alert_epoch,
         alert.accessed_by,
         alert.log,
+        alert.archive,
       ],
     );
   }

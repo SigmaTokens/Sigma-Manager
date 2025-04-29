@@ -17,6 +17,7 @@
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "is-elevated": "^4.0.0",
+    "kysely": "^0.28.2",
     "sigmatokens": "file:..",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",

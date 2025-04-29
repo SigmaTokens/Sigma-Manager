@@ -1,20 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import '../styles/Alerts.css';
 import { getAlerts, archiveAlert } from '../models/Alerts';
-
-interface Alert {
-  alert_id: string;
-  token_id: string;
-  alert_epoch: number;
-  accessed_by: string;
-  log: string;
-  archive: boolean;
-  location: string;
-  file_name: string;
-  agent_ip: string;
-  agent_port: string;
-  grade: number;
-}
+import { Alert } from '../../../server/interfaces/alert';
 
 function Alerts() {
   const [alerts, setAlerts] = useState<Alert[]>([]);
@@ -28,7 +15,7 @@ function Alerts() {
       try {
         const data = await getAlerts();
         setAlerts(data);
-        setFilteredAlerts(data); // Initialize filtered alerts
+        setFilteredAlerts(data);
       } catch (err) {
         setError('Failed to load alerts');
         console.error(err);
@@ -47,7 +34,11 @@ function Alerts() {
       const filterValue = parseInt(archiveFilterBy);
       setFilteredAlerts(
         alerts.filter((alert) =>
-          filterValue === 2 ? true : filterValue === 0 ? alert.archive : !alert.archive,
+          filterValue === 2
+            ? true
+            : filterValue === 0
+              ? alert.archive
+              : !alert.archive,
         ),
       );
     }
@@ -90,13 +81,14 @@ function Alerts() {
                   <option value="" disabled hidden>
                     Filter by Archive
                   </option>
-                  {archiveTypes.map((type: any) => (
+                  {archiveTypes.map((type) => (
                     <option key={type.id} value={type.id}>
                       {type.name}
                     </option>
                   ))}
                 </select>
               </th>
+              {/* <th>Log</th> */}
             </tr>
           </thead>
           <tbody>
@@ -110,17 +102,21 @@ function Alerts() {
                   <td>{`${alert.location}\\${alert.file_name}`}</td>
                   <td>{`${alert.agent_ip}:${alert.agent_port}`}</td>
                   <td>{alert.grade}</td>
-                  <td>{alert.archive ? '' : 
-                    <button
+                  <td>
+                    {alert.archive ? (
+                      ''
+                    ) : (
+                      <button
                         className="button button-primary"
                         onClick={async () => {
-                          if(await archiveAlert(alert.alert_id, true)) {
+                          if (await archiveAlert(alert.alert_id, true)) {
                             setIsLoading(true);
                           }
                         }}
                       >
-                      Archive
-                      </button> }
+                        Archive
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))

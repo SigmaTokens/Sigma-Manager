@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   get_all_honeytokens,
   get_honeytoken_by_token_id,
+  get_honeytokens_by_agent_id,
   get_honeytokens_by_type_id,
   get_honeytokens_by_group_id,
   delete_honeytoken_by_id,
@@ -10,7 +11,7 @@ import {
   insert_honeytoken,
 } from '../database/honeytokens';
 import { Globals } from '../globals';
-import { get_agent } from '../database/agents';
+import { get_agent_by_id, get_agent_by_uri } from '../database/agents';
 import { v4 as uuidv4 } from 'uuid';
 
 export function serveHoneytokens() {
@@ -41,7 +42,8 @@ export function serveHoneytokens() {
         agent_id,
       } = req.body;
 
-      const agent = await get_agent(agent_id);
+      const agent = await get_agent_by_id(agent_id);
+      console.log('dfsdfsd');
 
       const token_id = uuidv4();
       const group_id = uuidv4();
@@ -59,6 +61,8 @@ export function serveHoneytokens() {
         notes,
         data,
       );
+
+      console.log('aaaa');
 
       const response_from_agent = await fetch(
         'http://' +
@@ -82,9 +86,11 @@ export function serveHoneytokens() {
           }),
         },
       );
+
+      console.log('wtf');
       res.status(200).json({ success: 'nice' });
     } catch (error) {
-      console.error('error');
+      console.error({ failure: error });
       res.status(500).json({ failure: error });
     }
   });
@@ -97,6 +103,41 @@ export function serveHoneytokens() {
     } catch (error) {
       console.error('[-] Failed to fetch honeytoken by token_id:', error);
       res.status(500).json({ failure: error });
+    }
+  });
+
+  router.post('/honeytokens/agent', async (req, res) => {
+    const { agent_id, agent_ip, agent_port } = req.body;
+    try {
+      if (!agent_id && (!agent_ip || !agent_port)) {
+        console.error('[-] missing params');
+        res.status(607).json({ failure: 'missing params' });
+        return;
+      }
+
+      let targetAgentId = agent_id;
+
+      if (!targetAgentId) {
+        console.log('agent ip: ', agent_ip);
+        console.log('agent port: ', agent_port);
+        const agents = await Globals.app.locals.db.all(`SELECT * FROM agents`);
+        console.log('Current agents in DB:', agents);
+        const agent = await get_agent_by_uri(agent_ip, agent_port);
+        if (!agent) {
+          console.error('[-] agent not found');
+          res.status(666).json({ failure: 'agent not found' });
+          return;
+        }
+        targetAgentId = agent.agent_id;
+      }
+
+      const honeytokens = await get_honeytokens_by_agent_id(targetAgentId);
+      res.status(200).json(honeytokens || []);
+      return;
+    } catch (error) {
+      console.error('[-] Failed to fetch honeytokens by agent_id:', error);
+      res.status(444).json({ error: 'Internal server error' });
+      return;
     }
   });
 

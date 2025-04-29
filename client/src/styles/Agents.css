@@ -96,3 +96,52 @@
 .agents-refresh-statuses-button:hover {
   background-color: #0056b3;
 }
+
+/* Action Icons */
+.action-icons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.action-icon {
+  font-size: 1.2rem;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-icon.hovered {
+  transform: scale(1.2);
+}
+
+.action-icon:hover {
+  opacity: 0.8;
+}
+
+/* Specific icon colors */
+.action-icon.start:hover {
+  color: #4caf50;
+}
+
+.action-icon.stop:hover {
+  color: #f44336;
+}
+
+.action-icon.delete:hover {
+  color: #0a0a0a;
+}
+
+/* Status indicators */
+.agents-status-active {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.agents-status-inactive {
+  color: #f44336;
+}
+
+.agents-status-unknown {
+  color: #ffc107;
+}

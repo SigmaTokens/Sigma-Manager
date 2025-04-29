@@ -120,7 +120,11 @@ function setup_prettier_config(rootDir) {
     "singleQuote": true,
     "trailingComma": "all",
     "tabWidth": 2,
-    "semi": true
+    "semi": true,
+    "plugins": ["prettier-plugin-embed", "prettier-plugin-sql"],
+    "embeddedSqlTags": ["sql"],
+    "language": "sqlite",
+    "keywordCase": "upper"
   }`;
 
   const prettierIgnore = `node_modules
@@ -153,9 +157,6 @@ function install_deps() {
   try {
     console.log('[+] Updating deps for root~~~');
     execSync('npm install', { stdio: 'inherit' });
-
-    console.log('[+] Updating deps for database~~~');
-    execSync('npm install --prefix server/database', { stdio: 'inherit' });
 
     console.log('[+] Updating deps for client~~~');
     execSync('npm install --prefix client', { stdio: 'inherit' });

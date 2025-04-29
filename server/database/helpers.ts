@@ -1,3 +1,5 @@
+const sql = (strings: TemplateStringsArray, ...values: any[]) =>
+  String.raw(strings, ...values);
 import { init_alerts_table } from './alerts';
 import { init_honeytokens_table } from './honeytokens';
 import { init_types_table } from './types';
@@ -7,7 +9,15 @@ import { Globals } from '../globals';
 
 export async function is_table_exists(table_name: string) {
   const result = await Globals.app.locals.db.get(
-    `SELECT name FROM sqlite_master WHERE type='table' AND name=?`,
+    sql`
+      SELECT
+        name
+      FROM
+        sqlite_master
+      WHERE
+        type = 'table'
+        AND name = ?
+    `,
     [table_name],
   );
   if (process.env.MODE === 'dev')
@@ -45,7 +55,12 @@ export async function init_tables() {
 
 export async function print_table(table_name: string) {
   try {
-    const rows = await Globals.app.locals.db.all(`SELECT * FROM ${table_name}`);
+    const rows = await Globals.app.locals.db.all(sql`
+      SELECT
+        *
+      FROM
+        ${table_name}
+    `);
     if (process.env.MODE === 'dev')
       console.log(
         `[+] Table '${table_name}' data (${rows.length} rows):`,

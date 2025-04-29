@@ -1,7 +1,9 @@
+const sql = (strings: TemplateStringsArray, ...values: any[]) =>
+  String.raw(strings, ...values);
 import { Globals } from '../globals';
 
 export async function init_types_table() {
-  await Globals.app.locals.db.exec(`
+  await Globals.app.locals.db.exec(sql`
     CREATE TABLE IF NOT EXISTS types (
       type_id INTEGER PRIMARY KEY AUTOINCREMENT,
       type_name VARCHAR NOT NULL,
@@ -11,7 +13,12 @@ export async function init_types_table() {
 }
 
 export async function get_all_types() {
-  return await Globals.app.locals.db.all(`SELECT type_id FROM types`);
+  return await Globals.app.locals.db.all(sql`
+    SELECT
+      type_id
+    FROM
+      types
+  `);
 }
 
 export async function populate_types_table() {
@@ -38,7 +45,12 @@ export async function populate_types_table() {
 
   for (const type of types) {
     await Globals.app.locals.db.run(
-      `INSERT OR REPLACE INTO types (type_id, type_name, description) VALUES (?, ?, ?)`,
+      sql`
+        INSERT OR REPLACE INTO
+          types (type_id, type_name, description)
+        VALUES
+          (?, ?, ?)
+      `,
       [type.type_id, type.type_name, type.description],
     );
   }

@@ -3,7 +3,8 @@ import { v4 as uuidv4 } from 'uuid';
 import ping from 'ping';
 import {
   get_all_agents,
-  get_agent,
+  get_agent_by_id,
+  get_agent_by_uri,
   insert_agent,
   delete_agent_by_id,
 } from '../database/agents';
@@ -65,7 +66,40 @@ export function serveAgents() {
     }
   });
 
-  router.get('/agents/status', async (req, res) => {
+  router.get('/agents/agent/:agent_id', async (req, res) => {
+    const { agent_id } = req.params;
+    try {
+      const agent = await get_agent_by_id(agent_id);
+      res.json(agent);
+    } catch (error) {
+      console.error('[-] Failed to get agent:', error);
+      res.status(500).json({ failure: error });
+    }
+  });
+
+  router.post('/agents/agent', async (req, res) => {
+    const { agent_ip, agent_port } = req.body;
+    try {
+      const agent = await get_agent_by_uri(agent_ip, agent_port);
+      res.json(agent);
+    } catch (error) {
+      console.error('[-] Failed to get agent:', error);
+      res.status(500).json({ failure: error });
+    }
+  });
+
+  router.delete('/agents/agent/:agent_id', async (req, res) => {
+    const { agent_id } = req.params;
+    try {
+      await delete_agent_by_id(agent_id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('[-] Failed to delete agent:', error);
+      res.status(500).json({ failure: error });
+    }
+  });
+
+  router.get('/agents/active_status', async (req, res) => {
     try {
       const agents = await get_all_agents();
       const statusUpdates = await Promise.all(
@@ -81,21 +115,10 @@ export function serveAgents() {
     }
   });
 
-  router.delete('/agents/agent/:agent_id', async (req, res) => {
-    const { agent_id } = req.params;
-    try {
-      await delete_agent_by_id(agent_id);
-      res.json({ success: true });
-    } catch (error) {
-      console.error('[-] Failed to delete agent:', error);
-      res.status(500).json({ failure: error });
-    }
-  });
-
-  router.put('/agents/monitor', async (req, res) => {
+  router.put('/agents/monitor_status', async (req, res) => {
     const { agent_id } = req.body;
     try {
-      const agent = await get_agent(agent_id);
+      const agent = await get_agent_by_id(agent_id);
 
       const response_from_agent = await fetch(
         'http://' +
@@ -122,7 +145,7 @@ export function serveAgents() {
   router.put('/agents/start', async (req, res) => {
     const { agent_id } = req.body;
     try {
-      const agent = await get_agent(agent_id);
+      const agent = await get_agent_by_id(agent_id);
 
       const response_from_agent = await fetch(
         'http://' +
@@ -134,9 +157,13 @@ export function serveAgents() {
           method: 'GET',
         },
       );
-      if (response_from_agent.ok || response_from_agent.status === 200)
+      if (response_from_agent.ok || response_from_agent.status === 200) {
+        console.log('started');
         res.status(200).json({ success: 'started' });
-      return;
+        return;
+      }
+
+      console.log({ response_from_agent });
     } catch (error) {
       console.error('[-] Failed to start agent:', error);
       res.status(500).json({ failure: error });
@@ -146,7 +173,7 @@ export function serveAgents() {
   router.put('/agents/stop', async (req, res) => {
     const { agent_id } = req.body;
     try {
-      const agent = await get_agent(agent_id);
+      const agent = await get_agent_by_id(agent_id);
 
       const response_from_agent = await fetch(
         'http://' +

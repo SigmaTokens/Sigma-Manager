@@ -58,8 +58,9 @@ function AgentsPage() {
 
   const refreshStatuses = async () => {
     try {
+      console.log('wtffffffffffffffff');
       const data: IAgentStatus[] = await areAgentsConnected();
-
+      console.log(data);
       const newStatuses: Record<string, string> = {};
       data.forEach(({ agent_id, status }) => {
         newStatuses[agent_id] = status;
@@ -100,7 +101,7 @@ function AgentsPage() {
     };
 
     fetchAgents();
-  }, [refreshCounter, agents]);
+  }, [refreshCounter]);
 
   return (
     <div className="agents-container">

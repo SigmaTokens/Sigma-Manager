@@ -67,6 +67,29 @@ export async function get_honeytoken_by_token_id(token_id: String) {
   );
 }
 
+export async function get_honeytokens_by_agent_id(agent_id: String) {
+  return await Globals.app.locals.db.all(
+    sql`
+      SELECT
+        token_id,
+        group_id,
+        type_id,
+        grade,
+        creation_date,
+        expire_date,
+        location,
+        file_name,
+        data,
+        notes
+      FROM
+        honeytokens
+      WHERE
+        agent_id = ?;
+    `,
+    [agent_id],
+  );
+}
+
 export async function get_honeytokens_by_type_id(type_id: String) {
   return await Globals.app.locals.db.all(
     sql`

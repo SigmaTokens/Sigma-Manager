@@ -40,7 +40,7 @@ export async function get_all_agents() {
   `);
 }
 
-export async function get_agent(agent_id: string) {
+export async function get_agent_by_id(agent_id: string) {
   return await Globals.app.locals.db.get(
     sql`
       SELECT
@@ -54,6 +54,24 @@ export async function get_agent(agent_id: string) {
         agent_id = ?;
     `,
     [agent_id],
+  );
+}
+
+export async function get_agent_by_uri(agent_ip: string, agent_port: number) {
+  return await Globals.app.locals.db.get(
+    sql`
+      SELECT
+        agent_id,
+        agent_name,
+        agent_ip,
+        agent_port
+      FROM
+        agents
+      WHERE
+        agent_ip = ?
+        AND agent_port = ?
+    `,
+    [agent_ip, agent_port],
   );
 }
 

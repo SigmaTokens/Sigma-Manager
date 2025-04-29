@@ -84,21 +84,26 @@ export async function stopAgent(agent_id: string) {
 }
 
 export async function areAgentsConnected() {
-  const response = await fetch('http://localhost:3000/api/agents/status');
+  const response = await fetch(
+    'http://localhost:3000/api/agents/active_status',
+  );
   return await response.json();
 }
 
 export async function isAgentMonitoring(agent_id: string): Promise<boolean> {
   try {
-    const response = await fetch(`http://localhost:3000/api/agents/monitor`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      `http://localhost:3000/api/agents/monitor_status`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          agent_id: agent_id,
+        }),
       },
-      body: JSON.stringify({
-        agent_id: agent_id,
-      }),
-    });
+    );
     if (response.ok || response.status === 200) {
       console.log('agent is monitoring');
       return true;

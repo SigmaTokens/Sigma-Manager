@@ -1,7 +1,7 @@
 export interface Alert {
   alert_id: string;
   token_id: string;
-  alert_epoch: number;
+  alert_epoch: string;
   accessed_by: string;
   log: string;
   archive: boolean;

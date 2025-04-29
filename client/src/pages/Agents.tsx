@@ -5,11 +5,11 @@ import {
   deleteAgent,
   startAgent,
   stopAgent,
+  isAgentMonitoring,
+  areAgentsConnected,
 } from '../models/Agents';
 import { IAgent, IAgentStatus } from '../../../server/interfaces/agent';
-import { FaTrash } from 'react-icons/fa';
-import { FaPlay } from 'react-icons/fa';
-import { FaStop } from 'react-icons/fa';
+import { FaTrash, FaPlay, FaStop } from 'react-icons/fa';
 
 function AgentsPage() {
   const [agents, setAgents] = useState<IAgent[]>([]);
@@ -18,25 +18,6 @@ function AgentsPage() {
     {},
   );
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchAgents = async () => {
-      try {
-        let agentData = await getAgents();
-        agentData = agentData.map((agent: IAgent) => ({
-          ...agent,
-          isRunning: false,
-        }));
-
-        setAgents(agentData);
-        refreshStatuses();
-      } catch (error) {
-        console.error('Failed to fetch agents:', error);
-      }
-    };
-
-    fetchAgents();
-  }, [refreshCounter]);
 
   const handleDelete = async (agentId: string) => {
     try {
@@ -52,7 +33,7 @@ function AgentsPage() {
       await startAgent(agentId);
       setAgents((prevAgents) =>
         prevAgents.map((agent) =>
-          agent.agent_id === agentId ? { ...agent, isRunning: true } : agent,
+          agent.agent_id === agentId ? { ...agent, isMonitoring: true } : agent,
         ),
       );
     } catch (error) {
@@ -65,7 +46,9 @@ function AgentsPage() {
       await stopAgent(agentId);
       setAgents((prevAgents) =>
         prevAgents.map((agent) =>
-          agent.agent_id === agentId ? { ...agent, isRunning: false } : agent,
+          agent.agent_id === agentId
+            ? { ...agent, isMonitoring: false }
+            : agent,
         ),
       );
     } catch (error) {
@@ -75,19 +58,49 @@ function AgentsPage() {
 
   const refreshStatuses = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/agents/status');
-      const data: IAgentStatus[] = await response.json();
+      const data: IAgentStatus[] = await areAgentsConnected();
 
       const newStatuses: Record<string, string> = {};
       data.forEach(({ agent_id, status }) => {
         newStatuses[agent_id] = status;
       });
 
-      setStatusUpdates((prev) => ({ ...prev, ...newStatuses }));
+      setStatusUpdates(newStatuses);
     } catch (error) {
       console.error('Failed to refresh statuses:', error);
     }
   };
+
+  useEffect(() => {
+    const fetchAgents = async () => {
+      try {
+        const agentData = await getAgents();
+
+        const agentDataWithRunningStatus = await Promise.all(
+          agentData.map(async (agent: IAgent) => {
+            try {
+              const isMonitoring = await isAgentMonitoring(agent.agent_id);
+
+              return { ...agent, isMonitoring: isMonitoring };
+            } catch (err) {
+              console.error(
+                `Failed to check monitoring for agent ${agent.agent_id}:`,
+                err,
+              );
+              return { ...agent, isMonitoring: false };
+            }
+          }),
+        );
+
+        setAgents(agentDataWithRunningStatus);
+        await refreshStatuses();
+      } catch (error) {
+        console.error('Failed to fetch agents:', error);
+      }
+    };
+
+    fetchAgents();
+  }, [refreshCounter, agents]);
 
   return (
     <div className="agents-container">
@@ -96,7 +109,7 @@ function AgentsPage() {
       <div className="agents-refresh-button-wrapper">
         <button
           className="agents-refresh-statuses-button"
-          onClick={refreshStatuses}
+          onClick={() => setRefreshCounter((prev) => prev + 1)}
         >
           Refresh Statuses
         </button>
@@ -130,7 +143,7 @@ function AgentsPage() {
                   <div className="action-icons">
                     {statusUpdates[agent.agent_id] !== 'unknown' &&
                       statusUpdates[agent.agent_id] !== 'offline' &&
-                      (agent.isRunning ? (
+                      (agent.isMonitoring ? (
                         <FaStop
                           className={`action-icon stop ${hoveredIcon === `stop-${agent.agent_id}` ? 'hovered' : ''}`}
                           onClick={() => handleStop(agent.agent_id)}
@@ -151,7 +164,6 @@ function AgentsPage() {
                           title="Start Agent"
                         />
                       ))}
-
                     <FaTrash
                       className={`action-icon delete ${hoveredIcon === `delete-${agent.agent_id}` ? 'hovered' : ''}`}
                       onClick={() => handleDelete(agent.agent_id)}

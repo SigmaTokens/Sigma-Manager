@@ -66,7 +66,7 @@ function Alerts() {
             <tr>
               <th>Alert ID</th>
               <th>Token ID</th>
-              {/* <th>Date</th> */}
+              <th>Date</th>
               <th>Accessed By</th>
               <th>File</th>
               <th>Agent</th>
@@ -97,7 +97,7 @@ function Alerts() {
                 <tr key={alert.alert_id}>
                   <td>{alert.alert_id}</td>
                   <td>{alert.token_id}</td>
-                  <td>{formatDate(parseInt(alert.alert_epoch.toFixed()))}</td>
+                  <td>{formatDate(parseInt(alert.alert_epoch))}</td>
                   <td>{alert.accessed_by}</td>
                   <td>{`${alert.location}\\${alert.file_name}`}</td>
                   <td>{`${alert.agent_ip}:${alert.agent_port}`}</td>
@@ -122,7 +122,7 @@ function Alerts() {
               ))
             ) : (
               <tr>
-                <td colSpan={7} className="no-alerts">
+                <td colSpan={8} className="no-alerts">
                   No alerts found
                 </td>
               </tr>

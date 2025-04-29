@@ -7,14 +7,12 @@ export async function getAgents() {
     if (!response.ok) {
       const errorText = await response.text();
       console.error('Error:', errorText);
-      alert('Failed to fetch agents.');
     } else {
       const data = await response.json();
       return data;
     }
   } catch (err) {
     console.error('Request failed:', err);
-    alert('Something went wrong while fetching agents.');
   }
 }
 
@@ -39,13 +37,11 @@ export async function addAgent(
     if (!response.ok) {
       const errorText = await response.text();
       console.error('Error:', errorText);
-      alert('Failed to add agent.');
     } else {
       console.log('Agent added successfully!');
     }
   } catch (err) {
     console.error('Request failed:', err);
-    alert('Something went wrong while adding the agent.');
   }
 }
 
@@ -84,6 +80,34 @@ export async function stopAgent(agent_id: string) {
     }
   } catch (err) {
     console.error('Error stopping agent:', err);
+  }
+}
+
+export async function areAgentsConnected() {
+  const response = await fetch('http://localhost:3000/api/agents/status');
+  return await response.json();
+}
+
+export async function isAgentMonitoring(agent_id: string): Promise<boolean> {
+  try {
+    const response = await fetch(`http://localhost:3000/api/agents/monitor`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        agent_id: agent_id,
+      }),
+    });
+    if (response.ok || response.status === 200) {
+      console.log('agent is monitoring');
+      return true;
+    }
+    console.log('agent is not monitoring');
+    return false;
+  } catch (err) {
+    console.error('Error stopping agent:', err);
+    return false;
   }
 }
 

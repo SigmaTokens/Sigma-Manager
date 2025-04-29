@@ -3,7 +3,7 @@ export interface IAgent {
   agent_name: string;
   agent_ip: string;
   agent_port: number | string;
-  isRunning: boolean;
+  isMonitoring: boolean;
 }
 
 export interface IAgentStatus {

@@ -92,6 +92,33 @@ export function serveAgents() {
     }
   });
 
+  router.put('/agents/monitor', async (req, res) => {
+    const { agent_id } = req.body;
+    try {
+      const agent = await get_agent(agent_id);
+
+      const response_from_agent = await fetch(
+        'http://' +
+          agent.agent_ip +
+          ':' +
+          agent.agent_port +
+          '/api/monitor/status',
+        {
+          method: 'GET',
+        },
+      );
+      if (response_from_agent.ok && response_from_agent.status === 200) {
+        res.status(200).json({ success: 'monitoring' });
+        return;
+      }
+      res.status(201).json({ success: 'not monitoring' });
+      return;
+    } catch (error) {
+      console.error('[-] Failed to check monitoring status', error);
+      res.status(500).json({ failure: error });
+    }
+  });
+
   router.put('/agents/start', async (req, res) => {
     const { agent_id } = req.body;
     try {
@@ -107,7 +134,8 @@ export function serveAgents() {
           method: 'GET',
         },
       );
-      if (response_from_agent) res.status(200).json({ success: 'started' });
+      if (response_from_agent.ok || response_from_agent.status === 200)
+        res.status(200).json({ success: 'started' });
       return;
     } catch (error) {
       console.error('[-] Failed to start agent:', error);
@@ -130,7 +158,13 @@ export function serveAgents() {
           method: 'GET',
         },
       );
-      if (response_from_agent) res.status(200).json({ success: 'stopped' });
+      if (response_from_agent.ok && response_from_agent.status === 200) {
+        console.log('stopped!');
+        res.status(200).json({ success: 'stopped' });
+        return;
+      }
+      console.log('nothing to stop!');
+      res.status(201).json({ success: 'nothing to stop' });
       return;
     } catch (error) {
       console.error('[-] Failed to stop agent:', error);

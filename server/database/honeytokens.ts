@@ -1,4 +1,5 @@
-import { sql } from 'kysely';
+const sql = (strings: TemplateStringsArray, ...values: any[]) =>
+  String.raw(strings, ...values);
 import { v4 as uuidv4 } from 'uuid';
 import { get_all_types } from './types';
 import { begin_transaction, commit, rollback } from './helpers';

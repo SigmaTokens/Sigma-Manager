@@ -87,7 +87,6 @@ export function serveHoneytokens() {
         },
       );
 
-      console.log('wtf');
       res.status(200).json({ success: 'nice' });
     } catch (error) {
       console.error({ failure: error });

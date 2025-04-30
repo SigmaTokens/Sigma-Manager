@@ -74,12 +74,16 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
           <div className="instruction2">1. {getOsInstructions(os)}</div>
 
           <div className="script-section">
-            <label>Script:</label>
+            <label>2. Run the next script:</label>
             <textarea
               className="script-box"
               readOnly
               value={generateScript(os)}
             />
+          </div>
+
+          <div className="instruction3">
+            3. Go to Agents page and confirm the new agent there
           </div>
 
           <div className="button-container">

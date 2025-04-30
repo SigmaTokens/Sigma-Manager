@@ -67,6 +67,22 @@ function AddAgentPopup({ onClose }: AddAgentPopupProps) {
               value={generateScript(os)}
             />
           </div>
+
+          <div className="button-container">
+            <button className="button button-outline" onClick={onClose}>
+              Cancel
+            </button>
+
+            <button
+              className="button button-primary"
+              onClick={async () => {
+                //await addAgent(agentIP, agentName, agentPort);
+                onClose();
+              }}
+            >
+              Save as new agent
+            </button>
+          </div>
         </Card>
       </div>
     </div>

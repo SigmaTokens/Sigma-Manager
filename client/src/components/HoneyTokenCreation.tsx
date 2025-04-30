@@ -194,13 +194,11 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                       fileContent,
                       agentID,
                     );
-                    console.log(response);
                     if (!response.ok) {
                       const errorText = await response.text();
                       console.error('Error:', errorText);
                       alert('Failed to create honeytoken.');
                     } else {
-                      console.log('Honeytoken created successfully!');
                       onClose();
                     }
                   } catch (err) {

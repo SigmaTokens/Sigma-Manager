@@ -158,7 +158,6 @@ export function serveAgents() {
         },
       );
       if (response_from_agent.ok || response_from_agent.status === 200) {
-        console.log('started');
         res.status(200).json({ success: 'started' });
         return;
       }
@@ -186,11 +185,9 @@ export function serveAgents() {
         },
       );
       if (response_from_agent.ok && response_from_agent.status === 200) {
-        console.log('stopped!');
         res.status(200).json({ success: 'stopped' });
         return;
       }
-      console.log('nothing to stop!');
       res.status(201).json({ success: 'nothing to stop' });
       return;
     } catch (error) {

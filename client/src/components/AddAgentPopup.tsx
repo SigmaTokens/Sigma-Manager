@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Card, Input } from './popup';
+import { Card } from './popup';
+import { getServerAddress } from '../models/General';
 import '../styles/AddAgentPopup.css';
-import { addAgent } from '../models/Agents';
 
 interface AddAgentPopupProps {
   onClose: () => void;
@@ -38,6 +38,9 @@ function AddAgentPopup({ onClose }: AddAgentPopupProps) {
 
   useEffect(() => {
     //Todo: load the ip & port of the running server
+    getServerAddress().then(() => {
+      console.log('sababa');
+    });
   }, []);
 
   return (
@@ -78,5 +81,3 @@ function AddAgentPopup({ onClose }: AddAgentPopupProps) {
     </div>
   );
 }
-
-export default AddAgentPopup;

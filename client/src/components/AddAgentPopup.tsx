@@ -76,6 +76,9 @@ function AddAgentPopup({ onClose }: AddAgentPopupProps) {
             <button
               className="button button-primary"
               onClick={async () => {
+                // TODO: set uuid for the agent and send it to the server for creation.
+                //             when agent copies and pastes the script in his os it will send
+                //             a request to the manager using this uuid
                 //await addAgent(agentIP, agentName, agentPort);
                 onClose();
               }}

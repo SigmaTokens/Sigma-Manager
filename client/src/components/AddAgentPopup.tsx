@@ -7,6 +7,11 @@ interface AddAgentPopupProps {
   onClose: () => void;
 }
 
+interface ServerAddress {
+  ip: string;
+  port: number;
+}
+
 function generateScript(os: string): string {
   switch (os) {
     case 'Windows':
@@ -23,7 +28,7 @@ function generateScript(os: string): string {
 function getOsInstructions(os: string): string {
   switch (os) {
     case 'Windows':
-      return 'some windows instruction';
+      return `some windows instruction`;
     case 'Linux':
       return 'some linux instruction';
     case 'MacOS':
@@ -33,13 +38,14 @@ function getOsInstructions(os: string): string {
   }
 }
 
-function AddAgentPopup({ onClose }: AddAgentPopupProps) {
+export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
   const [os, setOs] = useState<'Windows' | 'Linux' | 'MacOS'>('Windows');
+  const [serverAddress, setServerAddress] = useState<ServerAddress>();
 
   useEffect(() => {
     //Todo: load the ip & port of the running server
-    getServerAddress().then(() => {
-      console.log('sababa');
+    getServerAddress().then((address) => {
+      setServerAddress(address);
     });
   }, []);
 
@@ -60,7 +66,12 @@ function AddAgentPopup({ onClose }: AddAgentPopupProps) {
             ))}
           </div>
 
-          <div className="instruction">{getOsInstructions(os)}</div>
+          <div className="instruction1">
+            To connect a new/existing agent to server: {serverAddress?.ip}:
+            {serverAddress?.port} please follow the next steps:
+          </div>
+          <br />
+          <div className="instruction2">1. {getOsInstructions(os)}</div>
 
           <div className="script-section">
             <label>Script:</label>

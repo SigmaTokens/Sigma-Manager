@@ -42,7 +42,7 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
 
   return (
     <div className="overlay" onClick={onClose}>
-      <div className="popup-card" onClick={(e) => e.stopPropagation()}>
+      <div className="popup-card-token" onClick={(e) => e.stopPropagation()}>
         <Card>
           <h2 className="popup-title">Create Honeytoken</h2>
 

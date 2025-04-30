@@ -1,36 +1,16 @@
-.popup-card {
-  width: 80%;
-  max-width: 900px;
-  height: auto;
+.overlay {
+  border: 2px blue solid;
+}
+
+.popup-card-token {
+  border: 2px red solid;
+  background-color: #fff;
+  border-radius: 12px;
   padding: 24px;
-  border-radius: 20px;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-  background-color: white;
-  margin: auto;
+  width: 50%;
+  max-width: 90vw;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.popup-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #1f2937;
-  text-align: center;
-}
-
-.popup-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px 40px;
-  padding: 0 12px;
-}
-
-.popup-item {
-  display: flex;
-  flex-direction: column;
-  padding: 0 8px;
 }
 
 label {
@@ -52,25 +32,13 @@ select {
   font-size: 0.85rem;
 }
 
-input:focus,
-textarea:focus,
-select:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-}
-
+/*  Under "Grade" text */
 .grade-subtitle {
   margin-top: -4px;
   margin-bottom: 4px;
   font-size: 0.8rem;
   color: #6b7280;
   font-style: italic;
-}
-
-.button-container {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
 }
 
 .button {
@@ -124,19 +92,6 @@ select:focus {
 .checkbox {
   width: 16px;
   height: 16px;
-}
-
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.75);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
 }
 
 select:invalid {

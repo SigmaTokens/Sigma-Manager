@@ -53,68 +53,68 @@ export async function deleteHoneytoken(token_id: string) {
   }
 }
 
-export async function startMonitorOnHoneytoken(agent_id: string) {
+export async function startMonitorOnHoneytoken(token_id: string) {
   try {
-    const response = await fetch(`http://localhost:3000/api/agents/start`, {
+    const response = await fetch(`http://localhost:3000/api/honeytoken/start`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        agent_id: agent_id,
+        token_id: token_id,
       }),
     });
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
   } catch (err) {
-    console.error('Error starting agent:', err);
+    console.error('Error starting monitor:', err);
   }
 }
 
-export async function stopMonitorOnHoneytoken(agent_id: string) {
+export async function stopMonitorOnHoneytoken(token_id: string) {
   try {
-    const response = await fetch(`http://localhost:3000/api/agents/stop`, {
+    const response = await fetch(`http://localhost:3000/api/honeytoken/stop`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        agent_id: agent_id,
+        token_id: token_id,
       }),
     });
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
   } catch (err) {
-    console.error('Error stopping agent:', err);
+    console.error('Error stopping monitor:', err);
   }
 }
 
 export async function isHoneytokenMonitored(
-  agent_id: string,
+  token_id: string,
 ): Promise<boolean> {
   try {
     const response = await fetch(
-      `http://localhost:3000/api/agents/monitor_status`,
+      `http://localhost:3000/api/honeytoken/monitor_status`,
       {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          agent_id: agent_id,
+          token_id: token_id,
         }),
       },
     );
     if (response.ok || response.status === 200) {
-      console.log('agent is monitoring');
+      console.log('honeytoken is monitored');
       return true;
     }
-    console.log('agent is not monitoring');
+    console.log('honeytoken is not monitored');
     return false;
   } catch (err) {
-    console.error('Error stopping agent:', err);
+    console.error('Error checking if honeytoken is monitored:', err);
     return false;
   }
 }

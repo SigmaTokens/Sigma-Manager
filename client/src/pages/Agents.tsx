@@ -58,7 +58,6 @@ function AgentsPage() {
 
   const refreshStatuses = async () => {
     try {
-      console.log('wtffffffffffffffff');
       const data: IAgentStatus[] = await areAgentsConnected();
       console.log(data);
       const newStatuses: Record<string, string> = {};

@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import '../styles/Honeytokens.css';
 import { getHoneytokens, deleteHoneytoken } from '../models/Honeytoken';
 import { IHoneytoken } from '../../../server/interfaces/honeytoken';
+import { FaTrash, FaPlay, FaStop } from 'react-icons/fa';
+
 function Honeytokens() {
   const [honeytokens, setHoneytokens] = useState([]);
 

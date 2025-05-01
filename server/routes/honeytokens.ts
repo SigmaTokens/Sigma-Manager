@@ -43,7 +43,6 @@ export function serveHoneytokens() {
       } = req.body;
 
       const agent = await get_agent_by_id(agent_id);
-      console.log('dfsdfsd');
 
       const token_id = uuidv4();
       const group_id = uuidv4();
@@ -61,8 +60,6 @@ export function serveHoneytokens() {
         notes,
         data,
       );
-
-      console.log('aaaa');
 
       const response_from_agent = await fetch(
         'http://' +
@@ -87,7 +84,6 @@ export function serveHoneytokens() {
         },
       );
 
-      console.log('wtf');
       res.status(200).json({ success: 'nice' });
     } catch (error) {
       console.error({ failure: error });

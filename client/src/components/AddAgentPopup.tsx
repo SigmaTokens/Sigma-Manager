@@ -12,10 +12,27 @@ interface ServerAddress {
   port: number;
 }
 
-function generateScript(os: string): string {
+function generateScript(
+  os: string,
+  manager_ip: string | undefined,
+  manager_port: number | undefined,
+): string {
   switch (os) {
     case 'Windows':
-      return 'some windows script';
+      return `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+
+git clone https://github.com/SigmaTokens/Sigma-Agent.git
+
+Set-Location Sigma-Agent
+
+@"
+MANAGER_IP=${manager_ip}
+MANAGER_PORT=${manager_port}
+"@ | Out-File .env -Encoding utf8
+
+npm install
+
+npm run start-prod`;
     case 'Linux':
       return 'some linux script';
     case 'MacOS':
@@ -28,7 +45,7 @@ function generateScript(os: string): string {
 function getOsInstructions(os: string): string {
   switch (os) {
     case 'Windows':
-      return `some windows instruction`;
+      return `Please open powershell as administrator and change desired install directory using 'cd'`;
     case 'Linux':
       return 'some linux instruction';
     case 'MacOS':
@@ -43,7 +60,6 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
   const [serverAddress, setServerAddress] = useState<ServerAddress>();
 
   useEffect(() => {
-    //Todo: load the ip & port of the running server
     getServerAddress().then((address) => {
       setServerAddress(address);
     });
@@ -71,19 +87,29 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
             {serverAddress?.port} please follow the next steps:
           </div>
           <br />
-          <div className="instruction2">1. {getOsInstructions(os)}</div>
+
+          <div className="instruction2">
+            1. Make sure latest{' '}
+            <a href="https://nodejs.org/en/download">node.js</a> and{' '}
+            <a href="https://git-scm.com/downloads">git</a> versions installed
+            on your system.
+          </div>
+          <br />
+          <div className="instruction2">2. {getOsInstructions(os)}</div>
 
           <div className="script-section">
-            <label>2. Run the next script:</label>
+            <p>
+              3. Run the next script (copy and paste it to the powershell cmd):
+            </p>
             <textarea
               className="script-box"
               readOnly
-              value={generateScript(os)}
+              value={generateScript(os, serverAddress?.ip, serverAddress?.port)}
             />
           </div>
 
           <div className="instruction3">
-            3. Go to Agents page and confirm the new agent there
+            4. Go to Agents page and confirm the new agent there
           </div>
 
           <div className="button-container">

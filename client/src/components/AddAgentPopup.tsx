@@ -107,7 +107,7 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
               value={generateScript(os, serverAddress?.ip, serverAddress?.port)}
             />
           </div>
-
+          <br />
           <div className="instruction3">
             4. Go to Agents page and confirm the new agent there
           </div>

@@ -33,8 +33,6 @@ MANAGER_PORT=${manager_port}
 AGENT_NAME=${agentName ? agentName : 'NEW AGENT'}
 "@ | Out-File .env -Encoding utf8
 
-npm install
-
 npm run start-prod`;
     case 'Linux':
       return 'some linux script';

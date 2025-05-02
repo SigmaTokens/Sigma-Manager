@@ -8,6 +8,7 @@ import {
   insert_agent,
   delete_agent_by_id,
   update_agent,
+  verify_agent_by_id,
 } from '../database/agents';
 import { Globals } from '../globals';
 import { Constants } from '../constants';
@@ -38,10 +39,13 @@ export function serveAgents() {
   });
 
   router.post('/agents/add', async (req, res) => {
+    console.log('yues!');
     try {
+      console.log(req.body);
       const { id, ip, name, port } = req.body;
 
       if (!ip || !name || !port || !id) {
+        console.log('error!');
         res
           .status(400)
           .json({ error: 'Missing required fields (id ,ip, name, port)' });
@@ -56,8 +60,10 @@ export function serveAgents() {
       );
 
       if (agent_id_exists) {
+        console.log('hjelp1');
         await update_agent(id, ip, name, parseInt(port));
       } else {
+        console.log('hjelp2');
         await insert_agent(id, ip, name, parseInt(port));
       }
       res.sendStatus(200);
@@ -113,6 +119,18 @@ export function serveAgents() {
     } catch (err) {
       console.error('[-] Failed to update agent statuses:', err);
       res.status(500).json({ error: 'Status update failed' });
+    }
+  });
+
+  router.get('/agents/verify/:agent_id', async (req, res) => {
+    console.log('help');
+    try {
+      const { agent_id } = req.params;
+
+      await verify_agent_by_id(agent_id);
+      res.json({ success: true });
+    } catch (err) {
+      console.error(Constants.TEXT_RED_COLOR, 'Error: ', err);
     }
   });
 

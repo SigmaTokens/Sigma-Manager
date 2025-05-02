@@ -27,10 +27,6 @@ git clone https://github.com/SigmaTokens/Sigma-Agent.git
 
 Set-Location Sigma-Agent
 
-git pull
-
-git checkout st-148
-
 @"
 MANAGER_IP=${manager_ip}
 MANAGER_PORT=${manager_port}

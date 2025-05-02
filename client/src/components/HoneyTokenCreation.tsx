@@ -42,7 +42,7 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
 
   return (
     <div className="overlay" onClick={onClose}>
-      <div className="popup-card" onClick={(e) => e.stopPropagation()}>
+      <div className="popup-card-token" onClick={(e) => e.stopPropagation()}>
         <Card>
           <h2 className="popup-title">Create Honeytoken</h2>
 
@@ -194,13 +194,11 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                       fileContent,
                       agentID,
                     );
-                    console.log(response);
                     if (!response.ok) {
                       const errorText = await response.text();
                       console.error('Error:', errorText);
                       alert('Failed to create honeytoken.');
                     } else {
-                      console.log('Honeytoken created successfully!');
                       onClose();
                     }
                   } catch (err) {

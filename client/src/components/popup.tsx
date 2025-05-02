@@ -1,5 +1,4 @@
 import React from 'react';
-import '../styles/HoneyTokenCreation.css';
 
 export function Button({
   children,
@@ -22,7 +21,7 @@ export function Card({
   className?: string;
   children: React.ReactNode;
 }) {
-  return <div className={`card ${className || ''}`}>{children}</div>;
+  return <div className={`card`}>{children}</div>;
 }
 
 export function CardContent({ children }: { children: React.ReactNode }) {

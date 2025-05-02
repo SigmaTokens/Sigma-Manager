@@ -7,7 +7,7 @@ export async function createHoneytokenText(
   fileContent: string,
   agentID: string,
 ) {
-  return await fetch('http://localhost:3000/api/honeytoken/text', {
+  return await fetch('http://localhost:3000/api/honeytokens/text', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -55,15 +55,18 @@ export async function deleteHoneytoken(token_id: string) {
 
 export async function startMonitorOnHoneytoken(token_id: string) {
   try {
-    const response = await fetch(`http://localhost:3000/api/honeytoken/start`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      `http://localhost:3000/api/honeytokens/start`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          token_id: token_id,
+        }),
       },
-      body: JSON.stringify({
-        token_id: token_id,
-      }),
-    });
+    );
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -74,7 +77,7 @@ export async function startMonitorOnHoneytoken(token_id: string) {
 
 export async function stopMonitorOnHoneytoken(token_id: string) {
   try {
-    const response = await fetch(`http://localhost:3000/api/honeytoken/stop`, {
+    const response = await fetch(`http://localhost:3000/api/honeytokens/stop`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -96,7 +99,7 @@ export async function isHoneytokenMonitored(
 ): Promise<boolean> {
   try {
     const response = await fetch(
-      `http://localhost:3000/api/honeytoken/monitor_status`,
+      `http://localhost:3000/api/honeytokens/monitor_status`,
       {
         method: 'PUT',
         headers: {
@@ -107,7 +110,7 @@ export async function isHoneytokenMonitored(
         }),
       },
     );
-    if (response.ok || response.status === 200) {
+    if (response.ok && response.status === 200) {
       console.log('honeytoken is monitored');
       return true;
     }

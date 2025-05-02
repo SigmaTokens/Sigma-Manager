@@ -27,7 +27,7 @@ export function serveHoneytokens() {
     }
   });
 
-  router.post('/honeytoken/text', async (req, res) => {
+  router.post('/honeytokens/text', async (req, res) => {
     try {
       console.log(req.body);
 
@@ -162,6 +162,27 @@ export function serveHoneytokens() {
   router.delete('/honeytokens/token/:token_id', async (req, res) => {
     const { token_id } = req.params;
     try {
+      //remove
+
+      const token = await get_honeytoken_by_token_id(token_id);
+
+      const agent = await get_agent_by_id(token.agent_id);
+
+      const response_from_agent = await fetch(
+        'http://' +
+          agent.agent_ip +
+          ':' +
+          agent.agent_port +
+          '/api/honeytoken/remove',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            token_id: token_id,
+          }),
+        },
+      );
+
       await delete_honeytoken_by_id(token_id);
       res.json({ success: true });
     } catch (error) {
@@ -188,6 +209,121 @@ export function serveHoneytokens() {
       res.json({ success: true });
     } catch (error) {
       console.error('[-] Failed to delete honeytokens:', error);
+      res.status(500).json({ failure: error });
+    }
+  });
+
+  router.put('/honeytokens/monitor_status', async (req, res) => {
+    const { token_id } = req.body;
+    try {
+      const token = await get_honeytoken_by_token_id(token_id);
+
+      const agent = await get_agent_by_id(token.agent_id);
+
+      console.log('JOKER monitor_status:', token);
+      console.log('JOKER monitor_status:', agent);
+
+      const response_from_agent = await fetch(
+        'http://' +
+          agent.agent_ip +
+          ':' +
+          agent.agent_port +
+          '/api/honeytoken/status',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            token_id: token_id,
+          }),
+        },
+      );
+      if (response_from_agent.ok && response_from_agent.status === 200) {
+        console.log('monitoring honeytoken');
+        res.status(200).json({ success: 'monitoring honeytoken' });
+        return;
+      }
+      console.log('not monitoring honeytoken');
+      res.status(201).json({ success: 'not monitoring honeytoken' });
+      return;
+    } catch (error) {
+      console.error(
+        '[-] Failed to check monitoring status for honeytoken',
+        error,
+      );
+      res.status(500).json({ failure: error });
+    }
+  });
+
+  router.put('/honeytokens/start', async (req, res) => {
+    const { token_id } = req.body;
+    try {
+      const token = await get_honeytoken_by_token_id(token_id);
+
+      const agent = await get_agent_by_id(token.agent_id);
+
+      console.log('JOKER start:', token);
+      console.log('JOKER start:', agent);
+
+      const response_from_agent = await fetch(
+        'http://' +
+          agent.agent_ip +
+          ':' +
+          agent.agent_port +
+          '/api/honeytoken/start',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            token_id: token_id,
+          }),
+        },
+      );
+      if (response_from_agent.ok || response_from_agent.status === 200) {
+        console.log('started monitor on honeytoken');
+        res.status(200).json({ success: 'started monitor on honeytoken' });
+        return;
+      }
+
+      console.log({ response_from_agent });
+    } catch (error) {
+      console.error('[-] Failed to start monitor on honeytoken:', error);
+      res.status(500).json({ failure: error });
+    }
+  });
+
+  router.put('/honeytokens/stop', async (req, res) => {
+    const { token_id } = req.body;
+    try {
+      const token = await get_honeytoken_by_token_id(token_id);
+      const agent = await get_agent_by_id(token.agent_id);
+
+      console.log('JOKER stop:', token);
+      console.log('JOKER stop:', agent);
+
+      const response_from_agent = await fetch(
+        'http://' +
+          agent.agent_ip +
+          ':' +
+          agent.agent_port +
+          '/api/honeytoken/stop',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            token_id: token_id,
+          }),
+        },
+      );
+      if (response_from_agent.ok && response_from_agent.status === 200) {
+        console.log('stopped monitor on honeytoken!');
+        res.status(200).json({ success: 'stopped monitor on honeytoken' });
+        return;
+      }
+      console.log('nothing to stop!');
+      res.status(201).json({ success: 'nothing to stop' });
+      return;
+    } catch (error) {
+      console.error('[-] Failed to stop honeytoken:', error);
       res.status(500).json({ failure: error });
     }
   });

@@ -104,7 +104,7 @@ export async function isAgentMonitoring(agent_id: string): Promise<boolean> {
         }),
       },
     );
-    if (response.ok || response.status === 200) {
+    if (response.ok && response.status === 200) {
       console.log('agent is monitoring');
       return true;
     }

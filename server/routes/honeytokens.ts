@@ -29,8 +29,6 @@ export function serveHoneytokens() {
 
   router.post('/honeytokens/text', async (req, res) => {
     try {
-      console.log(req.body);
-
       const {
         type,
         file_name,

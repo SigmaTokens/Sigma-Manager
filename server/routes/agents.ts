@@ -7,6 +7,8 @@ import {
   get_agent_by_uri,
   insert_agent,
   delete_agent_by_id,
+  update_agent,
+  verify_agent_by_id,
 } from '../database/agents';
 import { Globals } from '../globals';
 import { Constants } from '../constants';
@@ -38,27 +40,27 @@ export function serveAgents() {
 
   router.post('/agents/add', async (req, res) => {
     try {
-      const { ip, name, port } = req.body;
+      const { id, ip, name, port } = req.body;
 
-      if (!ip || !name || !port) {
+      if (!ip || !name || !port || !id) {
         res
           .status(400)
-          .json({ error: 'Missing required fields (ip, name, port)' });
+          .json({ error: 'Missing required fields (id ,ip, name, port)' });
         return;
       }
 
       const agents = await get_all_agents();
 
-      const ipExists = agents.some(
-        (agent: any) => agent.agent_ip === ip && agent.agent_port === port,
+      //TODO: change this to a query instead ...
+      const agent_id_exists = agents.some(
+        (agent: any) => agent.agent_id === id,
       );
 
-      if (ipExists) {
-        res.status(409).json({ error: 'Agent with this IP already exists' });
-        return;
+      if (agent_id_exists) {
+        await update_agent(id, ip, name, parseInt(port));
+      } else {
+        await insert_agent(id, ip, name, parseInt(port));
       }
-
-      await insert_agent(uuidv4(), ip, name, parseInt(port));
       res.sendStatus(200);
     } catch (error: any) {
       console.error(Constants.TEXT_RED_COLOR, error);
@@ -115,6 +117,17 @@ export function serveAgents() {
     }
   });
 
+  router.get('/agents/verify/:agent_id', async (req, res) => {
+    try {
+      const { agent_id } = req.params;
+
+      await verify_agent_by_id(agent_id);
+      res.json({ success: true });
+    } catch (err) {
+      console.error(Constants.TEXT_RED_COLOR, 'Error: ', err);
+    }
+  });
+
   router.put('/agents/monitor_status', async (req, res) => {
     const { agent_id } = req.body;
     try {
@@ -158,12 +171,9 @@ export function serveAgents() {
         },
       );
       if (response_from_agent.ok || response_from_agent.status === 200) {
-        console.log('started');
         res.status(200).json({ success: 'started' });
         return;
       }
-
-      console.log({ response_from_agent });
     } catch (error) {
       console.error('[-] Failed to start agent:', error);
       res.status(500).json({ failure: error });
@@ -186,11 +196,9 @@ export function serveAgents() {
         },
       );
       if (response_from_agent.ok && response_from_agent.status === 200) {
-        console.log('stopped!');
         res.status(200).json({ success: 'stopped' });
         return;
       }
-      console.log('nothing to stop!');
       res.status(201).json({ success: 'nothing to stop' });
       return;
     } catch (error) {

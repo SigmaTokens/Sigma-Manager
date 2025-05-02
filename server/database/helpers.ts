@@ -98,7 +98,6 @@ export function get_random_date() {
   const randomTime =
     start.getTime() + Math.random() * (end.getTime() - start.getTime());
   const date = new Date(randomTime);
-  console.log(date);
   return date;
 }
 

@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import '../styles/Alerts.css';
 import { getAlerts, archiveAlert } from '../models/Alerts';
 import { Alert } from '../../../server/interfaces/alert';
+import { Button } from '../components/popup';
+import AlertDetailsPopup from '../components/AlertDetailsPopup';
 
 function Alerts() {
   const [alerts, setAlerts] = useState<Alert[]>([]);
@@ -9,6 +11,7 @@ function Alerts() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [archiveFilterBy, setArchive] = useState<string>('');
+  const [selectedAlert, setSelectedAlert] = useState<any>(null);
 
   useEffect(() => {
     const fetchAlerts = async () => {
@@ -50,6 +53,14 @@ function Alerts() {
     { id: 2, name: 'all' },
   ];
 
+  const handleMoreDetails = (alert: any) => {
+    setSelectedAlert(alert);
+  };
+
+  const handleClosePopup = () => {
+    setSelectedAlert(null);
+  };
+
   const formatDate = (epoch: number) => {
     return new Date(epoch).toLocaleString();
   };
@@ -71,6 +82,7 @@ function Alerts() {
               <th>File</th>
               <th>Agent</th>
               <th>Grade</th>
+              <th>Details</th>
               <th>
                 <select
                   value={archiveFilterBy}
@@ -103,6 +115,11 @@ function Alerts() {
                   <td>{`${alert.agent_ip}:${alert.agent_port}`}</td>
                   <td>{alert.grade}</td>
                   <td>
+                    <Button onClick={() => handleMoreDetails(alert)}>
+                      More Details
+                    </Button>
+                  </td>
+                  <td>
                     {alert.archive ? (
                       ''
                     ) : (
@@ -122,7 +139,7 @@ function Alerts() {
               ))
             ) : (
               <tr>
-                <td colSpan={8} className="no-alerts">
+                <td colSpan={9} className="no-alerts">
                   No alerts found
                 </td>
               </tr>
@@ -130,6 +147,9 @@ function Alerts() {
           </tbody>
         </table>
       </div>
+      {selectedAlert && (
+        <AlertDetailsPopup alert={selectedAlert} onClose={handleClosePopup} />
+      )}
     </div>
   );
 }

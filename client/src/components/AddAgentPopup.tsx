@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Card } from './popup';
 import { getServerAddress } from '../models/General';
 import '../styles/AddAgentPopup.css';
+import { useAsyncError } from 'react-router-dom';
 
 interface AddAgentPopupProps {
   onClose: () => void;
@@ -16,6 +17,7 @@ function generateScript(
   os: string,
   manager_ip: string | undefined,
   manager_port: number | undefined,
+  agentName: string,
 ): string {
   switch (os) {
     case 'Windows':
@@ -28,6 +30,7 @@ Set-Location Sigma-Agent
 @"
 MANAGER_IP=${manager_ip}
 MANAGER_PORT=${manager_port}
+AGENT_NAME=${agentName ? agentName : 'NEW AGENT'}
 "@ | Out-File .env -Encoding utf8
 
 npm install
@@ -58,6 +61,7 @@ function getOsInstructions(os: string): string {
 export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
   const [os, setOs] = useState<'Windows' | 'Linux' | 'MacOS'>('Windows');
   const [serverAddress, setServerAddress] = useState<ServerAddress>();
+  const [agentName, setAgentName] = useState<string>('');
 
   useEffect(() => {
     getServerAddress().then((address) => {
@@ -82,34 +86,50 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
             ))}
           </div>
 
-          <div className="instruction1">
+          <div className="instruction0">
             To connect a new/existing agent to server: {serverAddress?.ip}:
             {serverAddress?.port} please follow the next steps:
           </div>
           <br />
-
+          <div className="instruction1">
+            1. Please name the new agent:
+            <input
+              id="agentName"
+              type="text"
+              value={agentName}
+              onChange={(e) => setAgentName(e.target.value)}
+              placeholder="Enter agent name"
+              className="agent-input"
+            />
+          </div>
+          <br />
           <div className="instruction2">
-            1. Make sure latest{' '}
+            2. Make sure latest{' '}
             <a href="https://nodejs.org/en/download">node.js</a> and{' '}
             <a href="https://git-scm.com/downloads">git</a> versions installed
             on your system.
           </div>
           <br />
-          <div className="instruction2">2. {getOsInstructions(os)}</div>
+          <div className="instruction3">3. {getOsInstructions(os)}</div>
 
           <div className="script-section">
             <p>
-              3. Run the next script (copy and paste it to the powershell cmd):
+              4. Run the next script (copy and paste it to the powershell cmd):
             </p>
             <textarea
               className="script-box"
               readOnly
-              value={generateScript(os, serverAddress?.ip, serverAddress?.port)}
+              value={generateScript(
+                os,
+                serverAddress?.ip,
+                serverAddress?.port,
+                agentName,
+              )}
             />
           </div>
           <br />
-          <div className="instruction3">
-            4. Go to Agents page and confirm the new agent there
+          <div className="instruction5">
+            5. Go to Agents page and confirm the new agent there
           </div>
 
           <div className="button-container">

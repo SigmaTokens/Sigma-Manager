@@ -11,6 +11,19 @@
   z-index: 9999;
 }
 
+.instruction1 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.agent-input {
+  flex: 1; /* take up remaining space */
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
 .tabs {
   display: flex;
   justify-content: center;

@@ -122,6 +122,7 @@ function AgentsPage() {
               <th>IP</th>
               <th>Port</th>
               <th>ID</th>
+              <th>Validated</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
@@ -133,6 +134,7 @@ function AgentsPage() {
                 <td>{agent.agent_ip}</td>
                 <td>{agent.agent_port}</td>
                 <td>{agent.agent_id}</td>
+                <td>{agent.validated}</td>
                 <td
                   className={`agents-status-${statusUpdates[agent.agent_id] || 'unknown'}`}
                 >

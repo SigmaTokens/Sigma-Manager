@@ -9,7 +9,8 @@ export async function init_agents_table() {
       agent_id VARCHAR PRIMARY KEY,
       agent_name TEXT NOT NULL,
       agent_ip TEXT NOT NULL,
-      agent_port INTEGER NOT NULL
+      agent_port INTEGER NOT NULL,
+      validated INTEGER DEFAULT 0
     );
   `);
 }
@@ -31,6 +32,26 @@ export async function insert_agent(
   );
 }
 
+export async function update_agent(
+  agent_id: string,
+  ip: string,
+  name: string,
+  port: number,
+) {
+  await Globals.app.locals.db.run(
+    sql`
+      UPDATE agents
+      SET
+        agent_ip = ?,
+        agent_name = ?,
+        agent_port = ?
+      WHERE
+        agent_id = ?
+    `,
+    [ip, name, port, agent_id],
+  );
+}
+
 export async function get_all_agents() {
   return await Globals.app.locals.db.all(sql`
     SELECT
@@ -47,7 +68,8 @@ export async function get_agent_by_id(agent_id: string) {
         agent_id,
         agent_name,
         agent_ip,
-        agent_port
+        agent_port,
+        validated
       FROM
         agents
       WHERE
@@ -64,7 +86,8 @@ export async function get_agent_by_uri(agent_ip: string, agent_port: number) {
         agent_id,
         agent_name,
         agent_ip,
-        agent_port
+        agent_port,
+        validated
       FROM
         agents
       WHERE

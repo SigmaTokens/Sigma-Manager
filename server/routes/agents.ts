@@ -7,6 +7,7 @@ import {
   get_agent_by_uri,
   insert_agent,
   delete_agent_by_id,
+  update_agent,
 } from '../database/agents';
 import { Globals } from '../globals';
 import { Constants } from '../constants';
@@ -38,27 +39,27 @@ export function serveAgents() {
 
   router.post('/agents/add', async (req, res) => {
     try {
-      const { ip, name, port } = req.body;
+      const { id, ip, name, port } = req.body;
 
-      if (!ip || !name || !port) {
+      if (!ip || !name || !port || !id) {
         res
           .status(400)
-          .json({ error: 'Missing required fields (ip, name, port)' });
+          .json({ error: 'Missing required fields (id ,ip, name, port)' });
         return;
       }
 
       const agents = await get_all_agents();
 
-      const ipExists = agents.some(
-        (agent: any) => agent.agent_ip === ip && agent.agent_port === port,
+      //TODO: change this to a query instead ...
+      const agent_id_exists = agents.some(
+        (agent: any) => agent.agent_id === id,
       );
 
-      if (ipExists) {
-        res.status(409).json({ error: 'Agent with this IP already exists' });
-        return;
+      if (agent_id_exists) {
+        await update_agent(id, ip, name, parseInt(port));
+      } else {
+        await insert_agent(id, ip, name, parseInt(port));
       }
-
-      await insert_agent(uuidv4(), ip, name, parseInt(port));
       res.sendStatus(200);
     } catch (error: any) {
       console.error(Constants.TEXT_RED_COLOR, error);

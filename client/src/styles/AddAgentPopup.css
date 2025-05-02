@@ -56,7 +56,6 @@
 }
 
 .popup-card-agent {
-  border: 2px blueviolet solid;
   background-color: #fff;
   border-radius: 12px;
   padding: 24px;
@@ -126,4 +125,52 @@ input[type='number']::-webkit-outer-spin-button {
 input[type='number'] {
   -moz-appearance: textfield;
   appearance: textfield;
+}
+
+.script-with-button {
+  position: relative;
+}
+.copy-icon {
+  color: gray;
+  position: absolute;
+  top: 0.5rem;
+  right: 1px;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.copy-icon:hover {
+  color: black;
+  font-size: 1.3rem;
+}
+
+.toast {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  z-index: 10;
+  animation: fadeInOut 1s ease-in-out forwards;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
 }

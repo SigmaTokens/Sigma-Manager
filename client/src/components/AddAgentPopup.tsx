@@ -3,6 +3,7 @@ import { Card } from './popup';
 import { getServerAddress } from '../models/General';
 import '../styles/AddAgentPopup.css';
 import { useAsyncError } from 'react-router-dom';
+import { FaClipboard } from 'react-icons/fa';
 
 interface AddAgentPopupProps {
   onClose: () => void;
@@ -56,16 +57,37 @@ function getOsInstructions(os: string): string {
   }
 }
 
+function copyToClipboard(script: string, setShowToast: any) {
+  navigator.clipboard.writeText(script).then(() => {
+    setShowToast(true);
+    setTimeout(() => {
+      setShowToast(false);
+    }, 1000);
+  });
+}
+
 export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
   const [os, setOs] = useState<'Windows' | 'Linux' | 'MacOS'>('Windows');
   const [serverAddress, setServerAddress] = useState<ServerAddress>();
   const [agentName, setAgentName] = useState<string>('');
+  const [script, setScript] = useState<string>('');
+  const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
     getServerAddress().then((address) => {
       setServerAddress(address);
     });
   }, []);
+
+  useEffect(() => {
+    const newScript = generateScript(
+      os,
+      serverAddress?.ip,
+      serverAddress?.port,
+      agentName,
+    );
+    setScript(newScript);
+  }, [os, agentName]);
 
   return (
     <div className="overlay" onClick={onClose}>
@@ -114,16 +136,16 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
             <p>
               4. Run the next script (copy and paste it to the powershell cmd):
             </p>
-            <textarea
-              className="script-box"
-              readOnly
-              value={generateScript(
-                os,
-                serverAddress?.ip,
-                serverAddress?.port,
-                agentName,
-              )}
-            />
+            <div className="script-with-button">
+              <textarea className="script-box" readOnly value={script} />
+              {showToast && <div className="toast">Copied!</div>}
+              <FaClipboard
+                className="copy-icon"
+                onClick={() => {
+                  copyToClipboard(script, setShowToast);
+                }}
+              />
+            </div>
           </div>
           <br />
           <div className="instruction5">

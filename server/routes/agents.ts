@@ -39,13 +39,10 @@ export function serveAgents() {
   });
 
   router.post('/agents/add', async (req, res) => {
-    console.log('yues!');
     try {
-      console.log(req.body);
       const { id, ip, name, port } = req.body;
 
       if (!ip || !name || !port || !id) {
-        console.log('error!');
         res
           .status(400)
           .json({ error: 'Missing required fields (id ,ip, name, port)' });
@@ -60,10 +57,8 @@ export function serveAgents() {
       );
 
       if (agent_id_exists) {
-        console.log('hjelp1');
         await update_agent(id, ip, name, parseInt(port));
       } else {
-        console.log('hjelp2');
         await insert_agent(id, ip, name, parseInt(port));
       }
       res.sendStatus(200);
@@ -123,7 +118,6 @@ export function serveAgents() {
   });
 
   router.get('/agents/verify/:agent_id', async (req, res) => {
-    console.log('help');
     try {
       const { agent_id } = req.params;
 
@@ -180,8 +174,6 @@ export function serveAgents() {
         res.status(200).json({ success: 'started' });
         return;
       }
-
-      console.log({ response_from_agent });
     } catch (error) {
       console.error('[-] Failed to start agent:', error);
       res.status(500).json({ failure: error });

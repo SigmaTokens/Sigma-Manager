@@ -27,13 +27,15 @@ git clone https://github.com/SigmaTokens/Sigma-Agent.git
 
 Set-Location Sigma-Agent
 
+git pull
+
+git checkout st-148
+
 @"
 MANAGER_IP=${manager_ip}
 MANAGER_PORT=${manager_port}
 AGENT_NAME=${agentName ? agentName : 'NEW AGENT'}
 "@ | Out-File .env -Encoding utf8
-
-npm install
 
 npm run start-prod`;
     case 'Linux':

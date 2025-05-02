@@ -52,6 +52,19 @@ export async function update_agent(
   );
 }
 
+export async function verify_agent_by_id(agent_id: string) {
+  await Globals.app.locals.db.run(
+    sql`
+      UPDATE agents
+      SET
+        validated = 1
+      WHERE
+        agent_id = ?
+    `,
+    [agent_id],
+  );
+}
+
 export async function get_all_agents() {
   return await Globals.app.locals.db.all(sql`
     SELECT
@@ -98,7 +111,7 @@ export async function get_agent_by_uri(agent_ip: string, agent_port: number) {
   );
 }
 
-export async function delete_agent_by_id(agent_id: String) {
+export async function delete_agent_by_id(agent_id: string) {
   try {
     await begin_transaction();
 

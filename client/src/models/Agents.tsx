@@ -1,3 +1,5 @@
+import { IAgent, IAgentStatus } from '../../../server/interfaces/agent';
+
 export async function getAgents() {
   try {
     const response = await fetch('http://localhost:3000/api/agents', {
@@ -129,5 +131,64 @@ export async function deleteAgent(agent_id: string) {
     }
   } catch (err) {
     console.error('Error deleting agent:', err);
+  }
+}
+
+export async function verifyAgent(
+  agent_id: string,
+  setAgents: any,
+  setStatusUpdates: any,
+) {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/agents/verify/${agent_id}`,
+      {
+        method: 'GET',
+      },
+    );
+    fetchAgents(setAgents, setStatusUpdates);
+  } catch (err) {
+    console.error('Error verifying agent: ', err);
+  }
+}
+
+export async function refreshStatuses(setStatusUpdates: any) {
+  try {
+    const data: IAgentStatus[] = await areAgentsConnected();
+    const newStatuses: Record<string, string> = {};
+    data.forEach(({ agent_id, status }) => {
+      newStatuses[agent_id] = status;
+    });
+
+    setStatusUpdates(newStatuses);
+  } catch (error) {
+    console.error('Failed to refresh statuses:', error);
+  }
+}
+
+export async function fetchAgents(setAgents: any, setStatusUpdates: any) {
+  try {
+    const agentData = await getAgents();
+
+    const agentDataWithRunningStatus = await Promise.all(
+      agentData.map(async (agent: IAgent) => {
+        try {
+          const isMonitoring = await isAgentMonitoring(agent.agent_id);
+
+          return { ...agent, isMonitoring: isMonitoring };
+        } catch (err) {
+          console.error(
+            `Failed to check monitoring for agent ${agent.agent_id}:`,
+            err,
+          );
+          return { ...agent, isMonitoring: false };
+        }
+      }),
+    );
+
+    setAgents(agentDataWithRunningStatus);
+    await refreshStatuses(setStatusUpdates);
+  } catch (error) {
+    console.error('Failed to fetch agents:', error);
   }
 }

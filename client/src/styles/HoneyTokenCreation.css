@@ -1,9 +1,4 @@
-.overlay {
-  border: 2px blue solid;
-}
-
 .popup-card-token {
-  border: 2px red solid;
   background-color: #fff;
   border-radius: 12px;
   padding: 24px;

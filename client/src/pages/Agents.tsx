@@ -1,16 +1,13 @@
 import { useEffect, useState } from 'react';
 import '../styles/Agents.css';
 import {
-  getAgents,
   deleteAgent,
   verifyAgent,
   startAgent,
   stopAgent,
-  isAgentMonitoring,
-  areAgentsConnected,
   fetchAgents,
 } from '../models/Agents';
-import { IAgent, IAgentStatus } from '../../../server/interfaces/agent';
+import { IAgent } from '../../../server/interfaces/agent';
 import { FaTrash, FaPlay, FaStop, FaCheckSquare } from 'react-icons/fa';
 
 function AgentsPage() {

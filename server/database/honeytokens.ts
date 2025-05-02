@@ -49,6 +49,7 @@ export async function get_honeytoken_by_token_id(token_id: String) {
     sql`
       SELECT
         token_id,
+        agent_id,
         group_id,
         type_id,
         grade,

@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react';
 import '../styles/Agents.css';
 import {
-  getAgents,
   deleteAgent,
+  verifyAgent,
   startAgent,
   stopAgent,
-  isAgentMonitoring,
-  areAgentsConnected,
+  fetchAgents,
 } from '../models/Agents';
-import { IAgent, IAgentStatus } from '../../../server/interfaces/agent';
-import { FaTrash, FaPlay, FaStop } from 'react-icons/fa';
+import { IAgent } from '../../../server/interfaces/agent';
+import { FaTrash, FaPlay, FaStop, FaCheckSquare } from 'react-icons/fa';
 
 function AgentsPage() {
   const [agents, setAgents] = useState<IAgent[]>([]);
@@ -56,51 +55,8 @@ function AgentsPage() {
     }
   };
 
-  const refreshStatuses = async () => {
-    try {
-      console.log('wtffffffffffffffff');
-      const data: IAgentStatus[] = await areAgentsConnected();
-      console.log(data);
-      const newStatuses: Record<string, string> = {};
-      data.forEach(({ agent_id, status }) => {
-        newStatuses[agent_id] = status;
-      });
-
-      setStatusUpdates(newStatuses);
-    } catch (error) {
-      console.error('Failed to refresh statuses:', error);
-    }
-  };
-
   useEffect(() => {
-    const fetchAgents = async () => {
-      try {
-        const agentData = await getAgents();
-
-        const agentDataWithRunningStatus = await Promise.all(
-          agentData.map(async (agent: IAgent) => {
-            try {
-              const isMonitoring = await isAgentMonitoring(agent.agent_id);
-
-              return { ...agent, isMonitoring: isMonitoring };
-            } catch (err) {
-              console.error(
-                `Failed to check monitoring for agent ${agent.agent_id}:`,
-                err,
-              );
-              return { ...agent, isMonitoring: false };
-            }
-          }),
-        );
-
-        setAgents(agentDataWithRunningStatus);
-        await refreshStatuses();
-      } catch (error) {
-        console.error('Failed to fetch agents:', error);
-      }
-    };
-
-    fetchAgents();
+    fetchAgents(setAgents, setStatusUpdates);
   }, [refreshCounter]);
 
   return (
@@ -124,6 +80,7 @@ function AgentsPage() {
               <th>IP</th>
               <th>Port</th>
               <th>ID</th>
+              <th>Validated</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
@@ -135,6 +92,7 @@ function AgentsPage() {
                 <td>{agent.agent_ip}</td>
                 <td>{agent.agent_port}</td>
                 <td>{agent.agent_id}</td>
+                <td>{agent.validated == 0 ? 'no' : 'yes'}</td>
                 <td
                   className={`agents-status-${statusUpdates[agent.agent_id] || 'unknown'}`}
                 >
@@ -174,6 +132,25 @@ function AgentsPage() {
                       onMouseLeave={() => setHoveredIcon(null)}
                       title="Delete Agent"
                     />
+                    {agent.validated == 0 ? (
+                      <FaCheckSquare
+                        className={`action-icon verify ${hoveredIcon === `verify-${agent.agent_id}` ? 'hovered' : ''}`}
+                        onClick={() =>
+                          verifyAgent(
+                            agent.agent_id,
+                            setAgents,
+                            setStatusUpdates,
+                          )
+                        }
+                        onMouseEnter={() =>
+                          setHoveredIcon(`verify-${agent.agent_id}`)
+                        }
+                        onMouseLeave={() => setHoveredIcon(null)}
+                        title="Verify Agent"
+                      />
+                    ) : (
+                      <></>
+                    )}
                   </div>
                 </td>
               </tr>

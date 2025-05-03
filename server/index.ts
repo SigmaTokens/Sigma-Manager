@@ -7,6 +7,7 @@ import { startDatabase } from './database/database';
 import { Globals } from './globals';
 import { serveAgents } from './routes/agents';
 import { serveHome } from './routes/home';
+import { serveGeneral } from './routes/general';
 main();
 
 function main(): void {
@@ -23,13 +24,14 @@ function main(): void {
     .then((database) => {
       console.log('[+] Database connection initialized:', app.locals.db);
 
+      serveGeneral();
       serveHome();
       serveHoneytokens();
       serveAlerts();
       serveAgents();
       serveClient();
 
-      app.listen(port, () => {
+      Globals.server = app.listen(port, () => {
         console.log(`[+] Server running on port ${port}`);
       });
     })

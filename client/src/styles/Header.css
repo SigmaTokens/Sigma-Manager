@@ -9,7 +9,7 @@
 .header nav {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Add justify-content to make the nav items evenly spaced */
+  justify-content: flex-start; /* Change to flex-start to make the nav items go from left to right */
 }
 
 .header ul {
@@ -49,9 +49,11 @@
 
 @media (max-width: 768px) {
   .header nav {
-    flex-direction: column; /
+    flex-direction: column; /* Change to column to make the nav items stack on smaller screens */
+  }
   .header ul {
     flex-direction: column;
+  }
   .header ul li {
     margin-right: 0; 
   }

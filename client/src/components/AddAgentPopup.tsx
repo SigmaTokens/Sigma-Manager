@@ -29,9 +29,9 @@ function generateScript(
   agentName: string,
 ): string {
   // Define the base repository URL - ensure this is correct for your agent
-  const AGENT_REPO_URL = "https://github.com/SigmaTokens/Sigma-Manager.git";
+  const AGENT_REPO_URL = 'https://github.com/SigmaTokens/Sigma-Manager.git';
   // Define the directory name for the agent software
-  const AGENT_DIR = "agent-software";
+  const AGENT_DIR = 'agent-software';
   // !!! IMPORTANT !!!
   // Define the actual command to run your agent after installation.
   // You need to find this command in the Sigma-Manager repository's documentation (e.g., README.md).
@@ -66,29 +66,33 @@ npm run start-prod-linux`;
 
     case 'MacOS':
       // macOS script based on the previous bash script, with '!' escaped for zsh compatibility
+      // The shebang line #!/bin/bash is standard and should be interpreted by the terminal,
+      // but escaping the '!' within commands is necessary for zsh.
       return `#!/bin/bash
 
-# This script connects an agent to the specified server on macOS.
+# This script connects an agent to the specified server on macOS. - by shaked
+#!/bin/bash
+
 
 # --- Configuration ---
-SERVER_ADDRESS="${manager_ip}:${manager_port}" # Use the dynamic server address
-AGENT_REPO_URL="${AGENT_REPO_URL}"
-AGENT_DIR="${AGENT_DIR}"
-AGENT_RUN_COMMAND="${AGENT_RUN_COMMAND}" # Use the defined run command
+SERVER_ADDRESS="10.100.102.3:3000" # Use the dynamic server address
+AGENT_REPO_URL="https://github.com/SigmaTokens/Sigma-Manager.git"
+AGENT_DIR="agent-software"
+AGENT_RUN_COMMAND="node dist/index.js --server 10.100.102.3:3000 --name NEW AGENT" # Use the defined run command
 
 # --- Script Execution ---
 
 echo "Starting agent connection process for macOS..."
 
 # Check if Git is installed (escaped '!' for zsh compatibility)
-if \\! command -v git &> /dev/null
+if \! command -v git &> /dev/null
 then
     echo "Error: Git is not installed. Please install Git and try again."
     exit 1
 fi
 
 # Check if Node.js is installed (escaped '!' for zsh compatibility)
-if \\! command -v node &> /dev/null
+if \! command -v node &> /dev/null
 then
     echo "Error: Node.js is not installed. Please install Node.js and try again."
     exit 1
@@ -116,6 +120,17 @@ echo "Running agent and connecting to $SERVER_ADDRESS..."
 eval "$AGENT_RUN_COMMAND"
 
 echo "Agent script finished."
+
+# --- Workaround Instructions (if pasting directly fails in zsh) ---
+# If you encounter a "zsh: event not found: /bin/bash" error when pasting directly,
+# you can try saving the script to a file and running it:
+# 1. Copy the entire script content.
+# 2. Open a text editor and paste the script.
+# 3. Save the file with a .sh extension (e.g., connect_agent.sh).
+# 4. Open Terminal and navigate to the directory where you saved the file using 'cd'.
+# 5. Make the script executable: chmod +x connect_agent.sh
+# 6. Run the script: ./connect_agent.sh
+
 `;
     default:
       return 'os not supported yet';

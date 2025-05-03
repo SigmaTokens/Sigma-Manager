@@ -110,7 +110,7 @@
 }
 
 .archive-icon {
-  font-size: 2.25rem;
+  font-size: 1.5rem;
   color: #f0ad4e;
   transition: color 0.2s;
 }
@@ -120,7 +120,7 @@
 }
 
 .unarchive-icon {
-  font-size: 2.25rem;
+  font-size: 1.5rem;
   color: #5cb85c;
   transition: color 0.2s;
 }
@@ -219,4 +219,31 @@
     width: 100%;
     border-radius: 0;
   }
+}
+
+.details-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.details-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.details-icon {
+  font-size: 1rem;
+  color: #6b7280;
+  transition: all 0.2s;
+}
+
+.details-button:hover .details-icon {
+  color: #3b82f6;
+  transform: scale(1.1);
 }

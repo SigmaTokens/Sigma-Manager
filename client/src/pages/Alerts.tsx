@@ -1,9 +1,10 @@
 import { GiCardboardBoxClosed, GiCardboardBox } from 'react-icons/gi';
-import { FiChevronDown, FiChevronRight } from 'react-icons/fi';
+import { FiChevronDown, FiChevronRight, FiInfo } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
 import '../styles/Alerts.css';
 import { getAlerts, archiveAlert } from '../models/Alerts';
 import { Alert } from '../../../server/interfaces/alert';
+import AlertDetailsPopup from '../components/AlertDetailsPopup';
 
 function Alerts() {
   const [alerts, setAlerts] = useState<Alert[]>([]);
@@ -12,6 +13,7 @@ function Alerts() {
   const [error, setError] = useState('');
   const [archiveFilter, setArchiveFilter] = useState<number>(2);
   const [expandedDetails, setExpandedDetails] = useState<string | null>(null);
+  const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
 
   useEffect(() => {
     const fetchAlerts = async () => {
@@ -64,6 +66,14 @@ function Alerts() {
 
   const toggleDetails = (alertId: string) => {
     setExpandedDetails(expandedDetails === alertId ? null : alertId);
+  };
+
+  const handleMoreDetails = (alert: Alert) => {
+    setSelectedAlert(alert);
+  };
+
+  const handleClosePopup = () => {
+    setSelectedAlert(null);
   };
 
   if (isLoading) return <div className="loading">Loading alerts...</div>;
@@ -201,21 +211,30 @@ function Alerts() {
                     </button>
                   </td>
                   <td className="details-cell">
-                    <button
-                      className="details-button"
-                      onClick={() => toggleDetails(alert.alert_id)}
-                      title={
-                        expandedDetails === alert.alert_id
-                          ? 'Collapse details'
-                          : 'Expand details'
-                      }
-                    >
-                      {expandedDetails === alert.alert_id ? (
-                        <FiChevronDown className="details-icon" />
-                      ) : (
-                        <FiChevronRight className="details-icon" />
-                      )}
-                    </button>
+                    <div className="details-actions">
+                      <button
+                        className="details-button"
+                        onClick={() => toggleDetails(alert.alert_id)}
+                        title={
+                          expandedDetails === alert.alert_id
+                            ? 'Collapse details'
+                            : 'Expand details'
+                        }
+                      >
+                        {expandedDetails === alert.alert_id ? (
+                          <FiChevronDown className="details-icon" />
+                        ) : (
+                          <FiChevronRight className="details-icon" />
+                        )}
+                      </button>
+                      <button
+                        className="details-button"
+                        onClick={() => handleMoreDetails(alert)}
+                        title="More details"
+                      >
+                        <FiInfo className="details-icon" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))
@@ -229,6 +248,9 @@ function Alerts() {
           </tbody>
         </table>
       </div>
+      {selectedAlert && (
+        <AlertDetailsPopup alert={selectedAlert} onClose={handleClosePopup} />
+      )}
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { GiCardboardBoxClosed, GiCardboardBox } from 'react-icons/gi';
 import { useEffect, useState } from 'react';
 import '../styles/Alerts.css';
 import { getAlerts, archiveAlert } from '../models/Alerts';
@@ -8,7 +9,7 @@ function Alerts() {
   const [filteredAlerts, setFilteredAlerts] = useState<Alert[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
-  const [archiveFilterBy, setArchive] = useState<string>('');
+  const [archiveFilter, setArchiveFilter] = useState<number>(2);
 
   useEffect(() => {
     const fetchAlerts = async () => {
@@ -28,30 +29,35 @@ function Alerts() {
   }, [isLoading]);
 
   useEffect(() => {
-    if (archiveFilterBy === '') {
-      setFilteredAlerts(alerts);
-    } else {
-      const filterValue = parseInt(archiveFilterBy);
-      setFilteredAlerts(
-        alerts.filter((alert) =>
-          filterValue === 2
-            ? true
-            : filterValue === 0
-              ? alert.archive
-              : !alert.archive,
-        ),
-      );
-    }
-  }, [archiveFilterBy, alerts]);
+    const filtered = alerts.filter((alert) => {
+      if (archiveFilter === 2) return true;
+      if (archiveFilter === 1) return !alert.archive;
+      return alert.archive;
+    });
+    setFilteredAlerts(filtered);
+  }, [archiveFilter, alerts]);
 
   const archiveTypes = [
-    { id: 0, name: 'archive' },
-    { id: 1, name: 'active' },
-    { id: 2, name: 'all' },
+    { id: 2, name: 'All' },
+    { id: 1, name: 'Unarchive' },
+    { id: 0, name: 'Archive' },
   ];
 
   const formatDate = (epoch: number) => {
     return new Date(epoch).toLocaleString();
+  };
+
+  const handleArchiveToggle = async (
+    alertId: string,
+    currentArchiveStatus: boolean,
+  ) => {
+    try {
+      if (await archiveAlert(alertId, !currentArchiveStatus)) {
+        setIsLoading(true);
+      }
+    } catch (err) {
+      console.error('Failed to update archive status:', err);
+    }
   };
 
   if (isLoading) return <div className="loading">Loading alerts...</div>;
@@ -71,16 +77,12 @@ function Alerts() {
               <th>File</th>
               <th>Agent</th>
               <th>Grade</th>
-              <th>
+              <th className="filter-header">
                 <select
-                  value={archiveFilterBy}
-                  onChange={(e) => setArchive(e.target.value)}
-                  style={{ color: archiveFilterBy === '' ? '#888' : 'black' }}
-                  className="select-type"
+                  value={archiveFilter}
+                  onChange={(e) => setArchiveFilter(Number(e.target.value))}
+                  className="filter-select"
                 >
-                  <option value="" disabled hidden>
-                    Filter by Archive
-                  </option>
                   {archiveTypes.map((type) => (
                     <option key={type.id} value={type.id}>
                       {type.name}
@@ -88,7 +90,6 @@ function Alerts() {
                   ))}
                 </select>
               </th>
-              {/* <th>Log</th> */}
             </tr>
           </thead>
           <tbody>
@@ -99,24 +100,25 @@ function Alerts() {
                   <td>{alert.token_id}</td>
                   <td>{formatDate(parseInt(alert.alert_epoch))}</td>
                   <td>{alert.accessed_by}</td>
-                  <td>{`${alert.location}\\${alert.file_name}`}</td>
+                  <td title={`${alert.location}\\${alert.file_name}`}>
+                    {alert.file_name}
+                  </td>
                   <td>{`${alert.agent_ip}:${alert.agent_port}`}</td>
                   <td>{alert.grade}</td>
                   <td>
-                    {alert.archive ? (
-                      ''
-                    ) : (
-                      <button
-                        className="button button-primary"
-                        onClick={async () => {
-                          if (await archiveAlert(alert.alert_id, true)) {
-                            setIsLoading(true);
-                          }
-                        }}
-                      >
-                        Archive
-                      </button>
-                    )}
+                    <button
+                      className="icon-button"
+                      onClick={() =>
+                        handleArchiveToggle(alert.alert_id, alert.archive)
+                      }
+                      title={alert.archive ? 'Unarchive' : 'Archive'}
+                    >
+                      {alert.archive ? (
+                        <GiCardboardBox className="unarchive-icon" />
+                      ) : (
+                        <GiCardboardBoxClosed className="archive-icon" />
+                      )}
+                    </button>
                   </td>
                 </tr>
               ))

@@ -28,6 +28,9 @@ git clone https://github.com/SigmaTokens/Sigma-Agent.git
 
 Set-Location Sigma-Agent
 
+git pull
+git checkout daniel001
+
 @"
 MANAGER_IP=${manager_ip}
 MANAGER_PORT=${manager_port}
@@ -37,21 +40,15 @@ AGENT_NAME=${agentName ? agentName : 'NEW AGENT'}
 npm run start-prod`;
 
     case 'Linux':
+      return `git clone https://github.com/SigmaTokens/Sigma-Agent.git && \\
+cd Sigma-Agent && \\
+git pull && \\
+git checkout daniel001 && \\
+printf "MANAGER_IP=${manager_ip}\\nMANAGER_PORT=${manager_port}\\nAGENT_NAME=${agentName || 'NEW AGENT'}\\n" | tee .env > /dev/null && \\
+npm run start-prod-linux`;
+
     case 'MacOS':
-      return `#!/usr/bin/env bash
-set -e
-
-git clone https://github.com/SigmaTokens/Sigma-Agent.git
-cd Sigma-Agent
-
-cat <<EOF > .env
-MANAGER_IP=${manager_ip}
-MANAGER_PORT=${manager_port}
-AGENT_NAME=${agentName ? agentName : 'NEW AGENT'}
-EOF
-
-npm run start-prod`;
-
+      return 'some macos script';
     default:
       return 'os not supported yet';
   }
@@ -100,7 +97,7 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
       agentName,
     );
     setScript(newScript);
-  }, [os, agentName]);
+  }, [os, agentName, serverAddress]);
 
   return (
     <div className="overlay" onClick={onClose}>

@@ -39,7 +39,7 @@ function Alerts() {
 
   const archiveTypes = [
     { id: 2, name: 'All' },
-    { id: 1, name: 'Unarchive' },
+    { id: 1, name: 'Unarchived' },
     { id: 0, name: 'Archive' },
   ];
 
@@ -111,7 +111,7 @@ function Alerts() {
                       onClick={() =>
                         handleArchiveToggle(alert.alert_id, alert.archive)
                       }
-                      title={alert.archive ? 'Unarchive' : 'Archive'}
+                      title={alert.archive ? 'Unarchived' : 'Archive'}
                     >
                       {alert.archive ? (
                         <GiCardboardBox className="unarchive-icon" />

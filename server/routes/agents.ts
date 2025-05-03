@@ -110,7 +110,7 @@ export function serveAgents() {
           status: await checkAgentStatus(agent.agent_ip, agent.agent_port),
         })),
       );
-      res.json(statusUpdates);
+      res.status(200).json(statusUpdates);
     } catch (err) {
       console.error('[-] Failed to update agent statuses:', err);
       res.status(500).json({ error: 'Status update failed' });
@@ -140,6 +140,7 @@ export function serveAgents() {
           agent.agent_port +
           '/api/monitor/status',
         {
+          signal: AbortSignal.timeout(300),
           method: 'GET',
         },
       );

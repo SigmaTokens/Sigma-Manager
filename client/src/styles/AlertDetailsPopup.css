@@ -1,0 +1,173 @@
+/* Base Popup Styles */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+
+.popup-card {
+  width: 80%;
+  max-width: 800px;
+  max-height: 90vh;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Header Styles */
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.popup-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+  padding: 0 8px;
+}
+
+.close-button:hover {
+  color: #333;
+}
+
+/* Content Area */
+.popup-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+/* Details Grid Layout */
+.details-group {
+  margin-bottom: 20px;
+}
+
+.group-title {
+  font-size: 1.1rem;
+  color: #444;
+  margin: 0 0 12px 0;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 10px 15px;
+  margin-left: 10px;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #555;
+  word-break: keep-all;
+}
+
+.detail-value {
+  color: #333;
+  word-break: break-word;
+}
+
+/* Full-width Log Section */
+.full-width-group {
+  margin-top: 25px;
+  width: 200%;
+}
+
+.full-width-value {
+  width: 100%;
+  margin-left: -24px;
+  margin-right: -24px;
+  padding: 16px 24px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.full-width-value pre {
+  margin: 0;
+  font-family: 'Courier New', monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: auto;
+  max-height: 200px;
+  line-height: 1.4;
+}
+
+/* Footer Styles */
+.popup-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 20px;
+  margin-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.button-primary {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+.button-primary:hover {
+  background-color: #2563eb;
+}
+
+/* Scrollbar Styles */
+.popup-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.popup-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.popup-content::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.popup-content::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}
+
+.full-width-value::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.full-width-value::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}

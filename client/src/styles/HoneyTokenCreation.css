@@ -54,13 +54,7 @@ select {
   font-size: 0.85rem;
 }
 
-input:focus,
-textarea:focus,
-select:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-}
-
+/*  Under "Grade" text */
 .grade-subtitle {
   margin-top: -0.5rem;
   margin-bottom: 0.5rem;
@@ -75,9 +69,9 @@ select:focus {
   margin-top: 1rem;
 }
 
-.popup-button {
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
+.button {
+  padding: 8px 16px;
+  border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
   transition:
@@ -109,7 +103,7 @@ select:focus {
   transform: scale(1.05);
 }
 
-.popup-button:disabled {
+.button:disabled {
   background-color: #d1d5db;
   color: #9ca3af;
   cursor: not-allowed;
@@ -134,11 +128,10 @@ select:focus {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.75);
+ background-color: rgba(0, 0, 0, 0.75);
   display: flex;
   align-items: center;
   justify-content: center;
- 
   z-index: 9999;
 }
 
@@ -172,7 +165,7 @@ select:invalid {
     align-items: center;
   }
 
-  .popup-button {
+  .button {
     width: 100%;
     margin-bottom: 0.5rem;
   }
@@ -198,8 +191,9 @@ select:invalid {
     align-items: center;
   }
 
-  .popup-button {
+  .button {
     width: 100%;
     margin-bottom: 0.2rem;
   }
 }
+

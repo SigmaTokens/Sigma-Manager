@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   Card,
   Input,
-  Checkbox,
+  //Checkbox,
   Select,
   SelectTrigger,
   SelectValue,
@@ -13,12 +13,17 @@ import '../styles/HoneyTokenCreation.css';
 import { getAgents } from '../models/Agents';
 import { createHoneytokenText } from '../models/Honeytoken';
 import TextHoneyToken from './TextHoneyToken';
+import {
+  IAgent,
+  IHoneytokenType,
+  CreateHoneytokenFormProps,
+} from '../../../server/interfaces/agent';
 
-function CreateHoneytokenForm({ types, onClose }: any) {
+function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
   const [quantity, setQuantity] = useState<number>(1);
-  const [excludeAccess, setExcludeAccess] = useState<string>('');
+  //const [excludeAccess, setExcludeAccess] = useState<string>('');
   const [selectedType, setSelectedType] = useState<string>('');
-  const [spreadAuto, setSpreadAuto] = useState<boolean>(false);
+  const [spreadAuto /*,setSpreadAuto*/] = useState<boolean>(false);
   const [notes, setNotes] = useState<string>('');
   const [ComponentAddresses, setComponentAddresses] = useState<string>('');
   const [expirationDate, setExpirationDate] = useState<string>('');
@@ -26,7 +31,7 @@ function CreateHoneytokenForm({ types, onClose }: any) {
   const [fileName, setFileName] = useState<string>('');
   const [fileContent, setFileContent] = useState<string>('');
   const [agentID, setAgentID] = useState<string>('');
-  const [agents, setAgents] = useState<any[]>([]);
+  const [agents, setAgents] = useState<IAgent[]>([]);
 
   useEffect(() => {
     getAgents().then((data) => {
@@ -37,7 +42,7 @@ function CreateHoneytokenForm({ types, onClose }: any) {
 
   return (
     <div className="overlay" onClick={onClose}>
-      <div className="popup-card" onClick={(e) => e.stopPropagation()}>
+      <div className="popup-card-token" onClick={(e) => e.stopPropagation()}>
         <Card>
           <h2 className="popup-title">Create Honeytoken</h2>
 
@@ -65,7 +70,7 @@ function CreateHoneytokenForm({ types, onClose }: any) {
                 <option value="" disabled hidden>
                   Select Honeytoken Type
                 </option>
-                {types.map((type: any) => (
+                {types.map((type: IHoneytokenType) => (
                   <option key={type.id} value={type.id}>
                     {type.name}
                   </option>
@@ -189,13 +194,11 @@ function CreateHoneytokenForm({ types, onClose }: any) {
                       fileContent,
                       agentID,
                     );
-                    console.log(response);
                     if (!response.ok) {
                       const errorText = await response.text();
                       console.error('Error:', errorText);
                       alert('Failed to create honeytoken.');
                     } else {
-                      console.log('Honeytoken created successfully!');
                       onClose();
                     }
                   } catch (err) {

@@ -1,145 +1,224 @@
-/* Default styles */
-
 .honeytokens-container {
-	/* No changes made to this section */
-	padding: 1.5rem;
-	background-color: #f9fafb;
-	min-height: 100vh;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
+  padding: 1.5rem;
+  background-color: #f9fafb;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.honeytokens-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+}
+
+.table-container {
+  background-color: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  width: 100%;
+  max-width: 72rem;
+}
+
+.honeytokens-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #e5e7eb;
+  table-layout: fixed;
+}
+
+.honeytokens-table th,
+.honeytokens-table td {
+  padding: 0.75rem;
+  text-align: center;
+  border: 1px solid #e5e7eb;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.honeytokens-table th:nth-child(1),
+.honeytokens-table td:nth-child(1) {
+  width: 120px;
+}
+.honeytokens-table th:nth-child(2),
+.honeytokens-table td:nth-child(2) {
+  width: 140px;
+}
+.honeytokens-table th:nth-child(11),
+.honeytokens-table td:nth-child(11) {
+  width: 100px;
+}
+.honeytokens-table th:nth-child(12),
+.honeytokens-table td:nth-child(12) {
+  width: 100px;
+}
+
+.honeytokens-table th {
+  background-color: #f9fafb;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: uppercase;
+}
+
+.honeytokens-table td {
+  font-size: 0.875rem;
+  color: #1f2937;
+}
+
+.action-icons {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.action-icon {
+  cursor: pointer;
+  font-size: 14px;
+  color: #6b7280;
+  transition: all 0.2s ease;
+}
+
+.action-icon:hover {
+  transform: scale(1.1);
+}
+
+.action-icon.start:hover {
+  color:.action-icon.start:hover {
+  color: #10b981;
+}
+
+.action-icon.stop:hover {
+  color: #ef4444;
+}
+
+.action-icon.delete:hover {
+  color: #ef4444;
+}
+
+.honeytoken-status-monitored {
+  color: #10b981;
+  font-weight: 500;
+  background-color: #ecfdf5;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  display: inline-block;
+}
+
+.honeytoken-status-not-monitored {
+  color: #ef4444;
+  font-weight: 500;
+  background-color: #fef2f2;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  display: inline-block;
+}
+
+.honeytokens-table tbody tr {
+  background-color: white;
+  transition: background-color 0.2s;
+}
+
+.honeytokens-table tbody tr:hover {
+  background-color: #f3f4f6;
+}
+
+.no-honeytokens {
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.honeytokens-refresh-button-wrapper {
+  margin-bottom: 1rem;
+  width: 100%;
+  max-width: 72rem;
+  display: flex;
+  justify-content: center;
+}
+
+.honeytokens-refresh-button {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+}
+
+.honeytokens-refresh-button:hover {
+  background-color: #2563eb;
+}
+
+.delete-button {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.delete-button:hover {
+  background-color: #ff1a1a;
+  transition: background-color 0.2s;
+}
+
+@media (max-width: 768px) {
+  .honeytokens-container {
+    padding: 1rem;
   }
-  
+
   .honeytokens-title {
-	/* No changes made to this section */
-	font-size: 1.875rem;
-	font-weight: 700;
-	color: #1f2937;
-	margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
   }
-  
-  .honeytokens-table-container {
-	/* No changes made to this section */
-	background-color: white;
-	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-	border-radius: 0.5rem;
-	overflow: hidden;
-	width: 100%;
-	max-width: 72rem;
+
+  .table-container {
+    width: 100%;
+    max-width: none;
   }
-  
+
   .honeytokens-table {
-	/* No changes made to this section */
-	width: 100%;
-	border-collapse: collapse;
-	border: 1px solid #e5e7eb;
+    font-size: 0.75rem;
   }
-  
+
   .honeytokens-table th,
   .honeytokens-table td {
-	/* No changes made to this section */
-	padding: 0.75rem;
-	text-align: center;
-	border: 1px solid #e5e7eb;
+    padding: 0.5rem;
   }
-  
-  .honeytokens-table th {
-	/* No changes made to this section */
-	background-color: #f9fafb;
-	font-size: 0.75rem;
-	font-weight: 500;
-	color: #6b7280;
-	text-transform: uppercase;
+}
+
+@media (max-width: 480px) {
+  .honeytokens-container {
+    padding: 0.5rem;
   }
-  
+
+  .honeytokens-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .table-container {
+    width: 100%;
+    max-width: none;
+  }
+
+  .honeytokens-table {
+    font-size: 0.5rem;
+  }
+
+  .honeytokens-table th,
   .honeytokens-table td {
-	/* No changes made to this section */
-	font-size: 0.875rem;
-	color: #1f2937;
+    padding: 0.25rem;
   }
-  
-  .honeytokens-table tbody tr {
-	/* No changes made to this section */
-	background-color: white;
-	transition: background-color 0.2s;
-  }
-  
-  .honeytokens-table tbody tr:hover {
-	/* Added transition property to make hover effect smoother */
-	background-color: #f3f4f6;
-	transition: background-color 0.2s;
-  }
-  
-  .no-honeytokens {
-	/* No changes made to this section */
-	padding: 1rem;
-	text-align: center;
-	font-size: 0.875rem;
-	color: #6b7280;
-  }
-  
-  .loading-container,
-  .error-container {
-	/* No changes made to this section */
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	height: 100vh;
-  }
-  
-  .loading-text {
-	/* No changes made to this section */
-	font-size: 1.25rem;
-	font-weight: 600;
-  }
-  
-  .error-text {
-	/* No changes made to this section */
-	font-size: 1.25rem;
-	font-weight: 600;
-	color: red;
-  }
-  
-  .delete-button {
-	/* No changes made to this section */
-	background-color: #ff4d4d;
-	color: white;
-	border: none;
-	padding: 0.5rem 1rem;
-	border-radius: 0.5rem;
-	cursor: pointer;
-	font-size: 0.875rem;
-  }
-  
-  .delete-button:hover {
-	/* Added transition property to make hover effect smoother */
-	background-color: #ff1a1a;
-	transition: background-color 0.2s;
-  }
-  
-  @media (max-width: 768px) {
-	/* Updated media query to make layout more responsive on smaller screens */
-	.honeytokens-container {
-	  padding: 1rem;
-	}
-  
-	.honeytokens-title {
-	  font-size: 1.5rem;
-	  margin-bottom: 1rem;
-	}
-  
-	.honeytokens-table-container {
-	  width: 100%;
-	  max-width: none;
-	}
-  
-	.honeytokens-table {
-	  font-size: 0.75rem;
-	}
-  
-	.honeytokens-table th,
-	.honeytokens-table td {
-	  padding: 0.5rem;
-	}
-  }
-  
+}
+

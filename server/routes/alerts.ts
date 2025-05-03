@@ -5,6 +5,7 @@ import {
   get_alert_by_alert_id,
   get_alert_by_token_id,
   delete_alert_by_alert_id,
+  set_archive_by_alert_id,
 } from '../database/alerts';
 import { Globals } from '../globals';
 
@@ -14,7 +15,6 @@ export function serveAlerts() {
   router.post('/alerts', async (req, res) => {
     try {
       const { token_id, alert_epoch, accessed_by, log } = req.body;
-
       const result = await create_alert_to_token_id(
         token_id,
         alert_epoch,
@@ -68,6 +68,18 @@ export function serveAlerts() {
       res.json({ success: true });
     } catch (error) {
       console.error('[-] Failed to delete alert:', error);
+      res.status(500).json({ failure: error });
+    }
+  });
+
+  router.post('/alerts/archive/:alert_id', async (req, res) => {
+    try {
+      const { alert_id } = req.params;
+      const { archive } = req.body;
+      await set_archive_by_alert_id(alert_id, archive);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('[-] Failed to set archive status:', error);
       res.status(500).json({ failure: error });
     }
   });

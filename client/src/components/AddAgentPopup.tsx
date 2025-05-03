@@ -44,9 +44,8 @@ npm run start-prod`;
 cd Sigma-Agent && \\
 git pull && \\
 git checkout daniel001 && \\
-npm install && \\
-printf "MANAGER_IP=${manager_ip}\\nMANAGER_PORT=${manager_port}\\nAGENT_NAME=${agentName || 'NEW AGENT'}\\n" > .env && \\
-sudo npm run start-prod`;
+printf "MANAGER_IP=${manager_ip}\\nMANAGER_PORT=${manager_port}\\nAGENT_NAME=${agentName || 'NEW AGENT'}\\n" | tee .env > /dev/null && \\
+npm run start-prod-linux`;
 
     case 'MacOS':
       return 'some macos script';

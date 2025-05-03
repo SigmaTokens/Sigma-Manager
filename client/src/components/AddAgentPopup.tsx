@@ -71,7 +71,7 @@ npm run start-prod-linux`;
       return `#!/bin/bash
 
 # This script connects an agent to the specified server on macOS. - by shaked
-#!/bin/bash
+
 
 
 # --- Configuration ---

@@ -151,11 +151,13 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                   <SelectValue placeholder="Select Agent IP" />
                 </SelectTrigger>
                 <SelectContent>
-                  {agents.map((agent) => (
-                    <SelectItem key={agent.agent_id} value={agent.agent_id}>
-                      {agent.agent_ip}:{agent.agent_port} | {agent.agent_name}
-                    </SelectItem>
-                  ))}
+                  {agents
+                    .filter((agent: IAgent) => agent.validated)
+                    .map((agent: IAgent) => (
+                      <SelectItem key={agent.agent_id} value={agent.agent_id}>
+                        {agent.agent_ip}:{agent.agent_port} | {agent.agent_name}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </p>

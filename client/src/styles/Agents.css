@@ -1,4 +1,3 @@
-/* Default styles */
 .agents-container {
   padding: 1.5rem;
   background-color: #f9fafb;
@@ -6,6 +5,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .agents-title {
@@ -13,6 +14,8 @@
   font-weight: 700;
   color: #1f2937;
   margin-bottom: 1.5rem;
+  word-break: break-all;
+  overflow-wrap: break-word;
 }
 
 .table-container {
@@ -21,57 +24,79 @@
   border-radius: 0.5rem;
   overflow: hidden;
   width: 100%;
-  max-width: 72rem;
+  max-width: 100%;
+  padding: 1rem;
 }
 
-/* Media query for medium screens (e.g., tablets) */
-@media (max-width: 1024px) {
-  .agents-container {
-    padding: 1rem;
-  }
-  .agents-title {
-    font-size: 1.5rem;
-  }
-  .table-container {
-    max-width: 100%;
-  }
+.agents-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #e5e7eb;
 }
 
-/* Media query for small screens (e.g., mobile devices) */
-@media (max-width: 768px) {
-  .agents-container {
-    padding: 0.5rem;
-  }
-  .agents-title {
-    font-size: 1.25rem;
-  }
-  .table-container {
-    max-width: 100%;
-    overflow-x: auto;
-  }
-  .agents-table {
-    font-size: 0.75rem;
-  }
-  .agents-refresh-button-wrapper {
-    text-align: center;
-  }
+.agents-table th,
+.agents-table td {
+  padding: 0.75rem;
+  text-align: center;
+  border: 1px solid #e5e7eb;
+  word-break: break-all;
+  overflow-wrap: break-word;
 }
 
-/* Media query for extra small screens (e.g., small mobile devices) */
-@media (max-width: 480px) {
-  .agents-container {
-    padding: 0.25rem;
-  }
-  .agents-title {
-    font-size: 1rem;
-  }
-  .table-container {
-    max-width: 100%;
-    overflow-x: auto;
-  }
-  .agents-table {
-    font-size: 0.5rem;
-  }
+.agents-table th {
+  background-color: #f9fafb;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: uppercase;
+}
+
+.agents-table td {
+  font-size: 0.875rem;
+  color: #1f2937;
+}
+
+.agents-table tbody tr {
+  background-color: white;
+  transition: background-color 0.2s;
+}
+
+.agents-table tbody tr:hover {
+  background-color: #f3f4f6;
+}
+
+.agents-status-online {
+  color: green;
+  font-weight: bold;
+}
+
+.agents-status-offline {
+  color: red;
+  font-weight: bold;
+}
+
+.agents-status-unknown {
+  color: gray;
+  font-weight: bold;
+}
+
+.agents-refresh-button-wrapper {
+  margin-bottom: 1rem;
+  text-align: right;
+}
+
+.agents-refresh-statuses-button {
+  background-color: #007bff;
+  color: white;
+  padding: 8px 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.agents-refresh-statuses-button:hover {
+  background-color: #0056b3;
 }
 
 /* Action Icons */
@@ -121,4 +146,51 @@
 
 .agents-status-unknown {
   color: #ffc107;
+}
+
+/* Media query for medium screens (e.g., tablets) */
+@media (max-width: 1024px) {
+  .agents-container {
+    padding: 1rem;
+  }
+  .agents-title {
+    font-size: 1.5rem;
+  }
+  .table-container {
+    padding: 0.5rem;
+  }
+}
+/* Media query for small screens (e.g., mobile devices) */
+@media (max-width: 768px) {
+  .agents-container {
+    padding: 0.5rem;
+  }
+  .agents-title {
+    font-size: 1.25rem;
+  }
+  .table-container {
+    padding: 0.25rem;
+  }
+  .agents-table {
+    font-size: 0.75rem;
+  }
+  .agents-refresh-button-wrapper {
+    text-align: center;
+  }
+}
+
+/* Media query for extra small screens (e.g., small mobile devices) */
+@media (max-width: 480px) {
+  .agents-container {
+    padding: 0.25rem;
+  }
+  .agents-title {
+    font-size: 1rem;
+  }
+  .table-container {
+    padding: 0.1rem;
+  }
+  .agents-table {
+    font-size: 0.5rem;
+  }
 }

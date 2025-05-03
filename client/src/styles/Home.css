@@ -1,39 +1,62 @@
-/* Default styles */
-
 .home-container {
   padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .kpi-cards {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.5rem;
-  margin-top: 1.5rem;
+  gap: 2rem;
+  margin-top: 2rem;
+  justify-content: center;
 }
 
-.kpi-card-container {
+.kpi-card {
   padding: 1rem 1.5rem;
   background-color: #f5f5f5;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   font-weight: bold;
   font-size: 1.1rem;
   min-width: 200px;
   max-width: 300px;
+  overflow-wrap: break-word;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.kpi-card-container:hover {
-  background-color: #e5e5e5;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-@media (max-width: 768px) {
-  .kpi-cards {
-    flex-direction: column;
-    align-items: center;
+/* Media query for medium screens (e.g., tablets) */
+@media (max-width: 1024px) {
+  .home-container {
+    padding: 1.5rem;
   }
+  .kpi-card {
+    min-width: 150px;
+    max-width: 250px;
+  }
+}
 
-  .kpi-card-container {
-    margin-bottom: 1.5rem;
+/* Media query for small screens (e.g., mobile devices) */
+@media (max-width: 768px) {
+  .home-container {
+    padding: 1rem;
+  }
+  .kpi-card {
+    min-width: 100px;
+    max-width: 200px;
+    font-size: 1rem;
+  }
+}
+
+/* Media query for extra small screens (e.g., small mobile devices) */
+@media (max-width: 480px) {
+  .home-container {
+    padding: 0.5rem;
+  }
+  .kpi-card {
+    min-width: 50px;
+    max-width: 150px;
+    font-size: 0.9rem;
   }
 }

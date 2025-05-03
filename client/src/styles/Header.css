@@ -3,11 +3,13 @@
 .header {
   background-color: #282c34;
   padding: 10px;
+  position: relative; /* Add position relative to make the nav absolute */
 }
 
 .header nav {
   display: flex;
   align-items: center;
+  justify-content: space-between; /* Add justify-content to make the nav items evenly spaced */
 }
 
 .header ul {
@@ -15,6 +17,7 @@
   display: flex;
   margin: 0;
   padding: 0;
+  flex-wrap: wrap; /* Add flex-wrap to make the nav items wrap to the next line on smaller screens */
 }
 
 .header .logo {
@@ -41,3 +44,105 @@
   color: white;
   cursor: pointer;
 }
+
+/* smaller screens */
+
+@media (max-width: 768px) {
+  .header nav {
+    flex-direction: column; /
+  .header ul {
+    flex-direction: column;
+  .header ul li {
+    margin-right: 0; 
+  }
+  .header ul li a {
+    padding: 10px; 
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 5px;
+  }
+  .header .logo {
+    height: 30px;
+  }
+  .header ul li a {
+    padding: 5px;
+}
+
+/* Add a hamburger menu for smaller screens */
+
+.header .hamburger {
+  display: none;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.header .hamburger span {
+  display: block;
+  width: 25px;
+  height: 3px;
+  background-color: white;
+  margin-bottom: 5px;
+}
+
+@media (max-width: 768px) {
+  .header .hamburger {
+    display: block;
+  }
+}
+
+/* Add a responsive navigation menu that appears when the hamburger menu is clicked */
+
+.header .responsive-nav {
+  display: none;
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background-color: #282c34;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.header .responsive-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.header .responsive-nav ul li {
+  margin-bottom: 10px;
+}
+
+.header .responsive-nav ul li a {
+  text-decoration: none;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  font-weight: 600;
+  font-family: Arial, sans-serif;
+}
+
+.header .responsive-nav ul li a:hover {
+  background-color: #61dafb;
+  color: white;
+  cursor: pointer;
+}
+
+<script>
+  const hamburger = document.querySelector('.hamburger');
+  const responsiveNav = document.querySelector('.responsive-nav');
+
+  hamburger.addEventListener('click', () => {
+    responsiveNav.style.display = 'block';
+  });
+
+  document.addEventListener('click', (e) => {
+    if (e.target !== hamburger && e.target !== responsiveNav) {
+      responsiveNav.style.display = 'none';
+    }
+  });
+</script>

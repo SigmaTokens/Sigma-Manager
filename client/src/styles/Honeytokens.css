@@ -88,7 +88,6 @@
 }
 
 .action-icon.start:hover {
-  color:.action-icon.start:hover {
   color: #10b981;
 }
 
@@ -156,69 +155,3 @@
 .honeytokens-refresh-button:hover {
   background-color: #2563eb;
 }
-
-.delete-button {
-  background-color: #ff4d4d;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  font-size: 0.875rem;
-}
-
-.delete-button:hover {
-  background-color: #ff1a1a;
-  transition: background-color 0.2s;
-}
-
-@media (max-width: 768px) {
-  .honeytokens-container {
-    padding: 1rem;
-  }
-
-  .honeytokens-title {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .table-container {
-    width: 100%;
-    max-width: none;
-  }
-
-  .honeytokens-table {
-    font-size: 0.75rem;
-  }
-
-  .honeytokens-table th,
-  .honeytokens-table td {
-    padding: 0.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .honeytokens-container {
-    padding: 0.5rem;
-  }
-
-  .honeytokens-title {
-    font-size: 1.25rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .table-container {
-    width: 100%;
-    max-width: none;
-  }
-
-  .honeytokens-table {
-    font-size: 0.5rem;
-  }
-
-  .honeytokens-table th,
-  .honeytokens-table td {
-    padding: 0.25rem;
-  }
-}
-

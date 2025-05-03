@@ -11,73 +11,30 @@
   z-index: 9999;
 }
 
-.instruction1 {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.agent-input {
-  flex: 1; /* take up remaining space */
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.tabs {
-  display: flex;
-  justify-content: center;
-  gap: 70px;
-  margin: 20px 0px 40px 0px;
-}
-
-.tab {
-  cursor: pointer;
-  font-weight: bold;
-  padding-bottom: 2px;
-}
-
-.tab.active {
-  border-bottom: 2px solid black;
-}
-
-.script-section {
-  margin-top: 20px;
-  padding-right: 25px;
-}
-
-.script-box {
-  width: 100%;
-  height: 230px;
-  font-family: monospace;
-  padding: 10px;
-  border: 1px solid black;
-  resize: none;
-}
-
 .popup-card-agent {
   background-color: #fff;
   border-radius: 12px;
-  padding: 24px;
-  width: 30%;
+  padding: 2em;
   max-width: 90vw;
+  max-height: 80vh;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   position: relative;
+  overflow-y: auto;
 }
 
 .popup-title {
   font-size: 1.5rem;
   font-weight: bold;
-  margin-bottom: 24px;
+  margin-bottom: 1em;
   text-align: center;
 }
 
 .popup-content {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  column-gap: 20px;
-  row-gap: 16px;
-  margin-bottom: 24px;
+  column-gap: 1em;
+  row-gap: 1em;
+  margin-bottom: 1em;
 }
 
 .popup-content p {
@@ -86,91 +43,72 @@
   margin: 0;
 }
 
-.popup-content p:nth-child(3) {
-  grid-column: 1 / 3;
-  justify-self: center;
-  width: 50%;
-}
-
 .button-container {
   display: flex;
   justify-content: space-between;
-  margin-top: 10px;
+  margin-top: 1em;
 }
 
 .button {
-  padding: 8px 16px;
+  padding: 0.5em 1em;
   border: none;
-  border-radius: 8px;
+  border-radius: 0.5em;
   cursor: pointer;
   font-weight: bold;
 }
 
-.button-outline {
-  background-color: transparent;
-  border: 2px solid #ccc;
-  color: #333;
-}
-
-.button-primary {
-  background-color: #007bff;
-  color: white;
-}
-
-input[type='number']::-webkit-inner-spin-button,
-input[type='number']::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-input[type='number'] {
-  -moz-appearance: textfield;
-  appearance: textfield;
-}
-
-.script-with-button {
-  position: relative;
-}
-.copy-icon {
-  color: gray;
-  position: absolute;
-  top: 0.5rem;
-  right: 1px;
-  cursor: pointer;
-  font-size: 1.2rem;
-}
-
-.copy-icon:hover {
-  color: black;
-  font-size: 1.3rem;
-}
-
-.toast {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  z-index: 10;
-  animation: fadeInOut 1s ease-in-out forwards;
-}
-
-@keyframes fadeInOut {
-  0% {
-    opacity: 0;
-    transform: translateY(-10px);
+@media (max-width: 768px) {
+  .popup-content {
+    grid-template-columns: 1fr;
   }
-  10% {
-    opacity: 1;
-    transform: translateY(0);
+  .script-box {
+    height: 15em;
   }
-  80% {
-    opacity: 1;
+}
+
+@media (max-width: 480px) {
+  .popup-card-agent {
+    padding: 1em;
   }
-  100% {
-    opacity: 0;
-    transform: translateY(-10px);
+  .script-box {
+    height: 10em;
+  }
+  .tabs {
+    flex-direction: column;
+    gap: 0.5em;
+  }
+  .tab {
+    padding-bottom: 0.5em;
+  }
+  .button-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  .button {
+    width: 100%;
+    margin-bottom: 0.5em;
+  }
+}
+
+@media (max-width: 320px) {
+  .popup-card-agent {
+    padding: 0.5em;
+  }
+  .script-box {
+    height: 8em;
+  }
+  .tabs {
+    gap: 0.2em;
+  }
+  .tab {
+    padding-bottom: 0.2em;
+  }
+  .button-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  .button {
+    width: 100%;
+    margin-bottom: 0.2em;
   }
 }

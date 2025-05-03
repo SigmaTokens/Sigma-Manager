@@ -1,38 +1,11 @@
-/* Default styles */
-
-.popup-card {
-  width: 80%;
-  max-width: 900px;
-  height: auto;
-  padding: 2rem;
-  border-radius: 1.5rem;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-  background-color: white;
-  margin: auto;
+.popup-card-token {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  width: 50%;
+  max-width: 90vw;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.popup-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #1f2937;
-  text-align: center;
-}
-
-.popup-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem 2rem;
-  padding: 0 1rem;
-}
-
-.popup-item {
-  display: flex;
-  flex-direction: column;
-  padding: 0 0.5rem;
 }
 
 label {
@@ -46,9 +19,9 @@ input,
 textarea,
 select {
   width: 100%;
-  padding: 0.5rem;
+  padding: 8px;
   border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
+  border-radius: 8px;
   outline: none;
   transition: border-color 0.3s;
   font-size: 0.85rem;
@@ -56,17 +29,11 @@ select {
 
 /*  Under "Grade" text */
 .grade-subtitle {
-  margin-top: -0.5rem;
-  margin-bottom: 0.5rem;
+  margin-top: -4px;
+  margin-bottom: 4px;
   font-size: 0.8rem;
   color: #6b7280;
   font-style: italic;
-}
-
-.button-container {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 1rem;
 }
 
 .button {
@@ -80,25 +47,25 @@ select {
   font-size: 0.85rem;
 }
 
-.popup-button-outline {
+.button-outline {
   background-color: white;
   border: 1px solid #d1d5db;
   color: #374151;
 }
 
-.popup-button-outline:hover {
+.button-outline:hover {
   background-color: #f3f4f6;
   color: #111827;
   transform: scale(1.05);
 }
 
-.popup-button-primary {
+.button-primary {
   background-color: #2563eb;
   border: none;
   color: white;
 }
 
-.popup-button-primary:hover {
+.button-primary:hover {
   background-color: #1d4ed8;
   transform: scale(1.05);
 }
@@ -114,25 +81,12 @@ select {
 .checkbox-container {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 6px;
 }
 
 .checkbox {
-  width: 1rem;
-  height: 1rem;
-}
-
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
- background-color: rgba(0, 0, 0, 0.75);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
+  width: 16px;
+  height: 16px;
 }
 
 select:invalid {
@@ -144,56 +98,3 @@ select:invalid {
   flex-direction: column;
   justify-content: space-between;
 }
-
-@media (max-width: 768px) {
-  .popup-card {
-    width: 90%;
-    padding: 1rem;
-  }
-
-  .popup-content {
-    grid-template-columns: 1fr;
-    gap: 0.5rem;
-  }
-
-  .popup-item {
-    padding: 0;
-  }
-
-  .button-container {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .button {
-    width: 100%;
-    margin-bottom: 0.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .popup-card {
-    width: 95%;
-    padding: 0.5rem;
-  }
-
-  .popup-content {
-    grid-template-columns: 1fr;
-    gap: 0.2rem;
-  }
-
-  .popup-item {
-    padding: 0;
-  }
-
-  .button-container {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .button {
-    width: 100%;
-    margin-bottom: 0.2rem;
-  }
-}
-

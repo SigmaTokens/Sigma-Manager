@@ -35,10 +35,23 @@ AGENT_NAME=${agentName ? agentName : 'NEW AGENT'}
 "@ | Out-File .env -Encoding utf8
 
 npm run start-prod`;
+
     case 'Linux':
-      return 'some linux script';
     case 'MacOS':
-      return 'some macos script';
+      return `#!/usr/bin/env bash
+set -e
+
+git clone https://github.com/SigmaTokens/Sigma-Agent.git
+cd Sigma-Agent
+
+cat <<EOF > .env
+MANAGER_IP=${manager_ip}
+MANAGER_PORT=${manager_port}
+AGENT_NAME=${agentName ? agentName : 'NEW AGENT'}
+EOF
+
+npm run start-prod`;
+
     default:
       return 'os not supported yet';
   }
@@ -49,9 +62,9 @@ function getOsInstructions(os: string): string {
     case 'Windows':
       return `Please open powershell as administrator and change desired install directory using 'cd'`;
     case 'Linux':
-      return 'some linux instruction';
+      return `Please open your terminal and change to the desired install directory using 'cd'.`;
     case 'MacOS':
-      return 'some macos instruction';
+      return `Please open Terminal (Applications → Utilities → Terminal) and change to the desired install directory using 'cd'.`;
     default:
       return 'os not supported yet';
   }

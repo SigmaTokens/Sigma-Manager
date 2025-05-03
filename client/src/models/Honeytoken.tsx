@@ -7,7 +7,7 @@ export async function createHoneytokenText(
   fileContent: string,
   agentID: string,
 ) {
-  return await fetch('http://localhost:3000/api/honeytoken/text', {
+  return await fetch('http://localhost:3000/api/honeytokens/text', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -50,5 +50,74 @@ export async function deleteHoneytoken(token_id: string) {
     }
   } catch (err) {
     console.error('Error deleting honeytoken:', err);
+  }
+}
+
+export async function startMonitorOnHoneytoken(token_id: string) {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/honeytokens/start`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          token_id: token_id,
+        }),
+      },
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+  } catch (err) {
+    console.error('Error starting monitor:', err);
+  }
+}
+
+export async function stopMonitorOnHoneytoken(token_id: string) {
+  try {
+    const response = await fetch(`http://localhost:3000/api/honeytokens/stop`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        token_id: token_id,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+  } catch (err) {
+    console.error('Error stopping monitor:', err);
+  }
+}
+
+export async function isHoneytokenMonitored(
+  token_id: string,
+): Promise<boolean> {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/honeytokens/monitor_status`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          token_id: token_id,
+        }),
+      },
+    );
+    if (response.ok && response.status === 200) {
+      console.log('honeytoken is monitored');
+      return true;
+    }
+    console.log('honeytoken is not monitored');
+    return false;
+  } catch (err) {
+    console.error('Error checking if honeytoken is monitored:', err);
+    return false;
   }
 }

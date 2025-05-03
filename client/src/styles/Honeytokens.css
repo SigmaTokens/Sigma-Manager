@@ -18,7 +18,7 @@
   background-color: white;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   border-radius: 0.5rem;
-  overflow: hidden;
+  overflow-x: auto;
   width: 100%;
   max-width: 72rem;
 }
@@ -27,6 +27,7 @@
   width: 100%;
   border-collapse: collapse;
   border: 1px solid #e5e7eb;
+  table-layout: fixed;
 }
 
 .honeytokens-table th,
@@ -34,6 +35,26 @@
   padding: 0.75rem;
   text-align: center;
   border: 1px solid #e5e7eb;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.honeytokens-table th:nth-child(1),
+.honeytokens-table td:nth-child(1) {
+  width: 120px;
+}
+.honeytokens-table th:nth-child(2),
+.honeytokens-table td:nth-child(2) {
+  width: 140px;
+}
+.honeytokens-table th:nth-child(11),
+.honeytokens-table td:nth-child(11) {
+  width: 100px;
+}
+.honeytokens-table th:nth-child(12),
+.honeytokens-table td:nth-child(12) {
+  width: 100px;
 }
 
 .honeytokens-table th {
@@ -47,6 +68,53 @@
 .honeytokens-table td {
   font-size: 0.875rem;
   color: #1f2937;
+}
+
+.action-icons {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.action-icon {
+  cursor: pointer;
+  font-size: 14px;
+  color: #6b7280;
+  transition: all 0.2s ease;
+}
+
+.action-icon:hover {
+  transform: scale(1.1);
+}
+
+.action-icon.start:hover {
+  color: #10b981;
+}
+
+.action-icon.stop:hover {
+  color: #ef4444;
+}
+
+.action-icon.delete:hover {
+  color: #ef4444;
+}
+
+.honeytoken-status-monitored {
+  color: #10b981;
+  font-weight: 500;
+  background-color: #ecfdf5;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  display: inline-block;
+}
+
+.honeytoken-status-not-monitored {
+  color: #ef4444;
+  font-weight: 500;
+  background-color: #fef2f2;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  display: inline-block;
 }
 
 .honeytokens-table tbody tr {
@@ -65,35 +133,25 @@
   color: #6b7280;
 }
 
-.loading-container,
-.error-container {
+.honeytokens-refresh-button-wrapper {
+  margin-bottom: 1rem;
+  width: 100%;
+  max-width: 72rem;
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
 }
 
-.loading-text {
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-.error-text {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: red;
-}
-
-.delete-button {
-  background-color: #ff4d4d;
+.honeytokens-refresh-button {
+  background-color: #3b82f6;
   color: white;
   border: none;
-  padding: 5px 10px;
-  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
   cursor: pointer;
   font-size: 0.875rem;
+  transition: background-color 0.2s;
 }
 
-.delete-button:hover {
-  background-color: #ff1a1a;
+.honeytokens-refresh-button:hover {
+  background-color: #2563eb;
 }

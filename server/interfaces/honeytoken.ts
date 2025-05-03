@@ -9,4 +9,5 @@ export interface IHoneytoken {
   file_name: string;
   data: string;
   notes?: string;
+  isMonitored: boolean;
 }

@@ -8,7 +8,7 @@ function Alerts() {
   const [filteredAlerts, setFilteredAlerts] = useState<Alert[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
-  const [archiveFilterBy, setArchive] = useState<string>('');
+  const [archiveFilter, setArchiveFilter] = useState<number>(2); // Default to 'all'
 
   useEffect(() => {
     const fetchAlerts = async () => {
@@ -28,30 +28,35 @@ function Alerts() {
   }, [isLoading]);
 
   useEffect(() => {
-    if (archiveFilterBy === '') {
-      setFilteredAlerts(alerts);
-    } else {
-      const filterValue = parseInt(archiveFilterBy);
-      setFilteredAlerts(
-        alerts.filter((alert) =>
-          filterValue === 2
-            ? true
-            : filterValue === 0
-              ? alert.archive
-              : !alert.archive,
-        ),
-      );
-    }
-  }, [archiveFilterBy, alerts]);
+    const filtered = alerts.filter((alert) => {
+      if (archiveFilter === 2) return true; // 'all'
+      if (archiveFilter === 1) return !alert.archive; // 'active'
+      return alert.archive; // 'archived'
+    });
+    setFilteredAlerts(filtered);
+  }, [archiveFilter, alerts]);
 
   const archiveTypes = [
-    { id: 0, name: 'archive' },
-    { id: 1, name: 'active' },
     { id: 2, name: 'all' },
+    { id: 1, name: 'active' },
+    { id: 0, name: 'archive' },
   ];
 
   const formatDate = (epoch: number) => {
     return new Date(epoch).toLocaleString();
+  };
+
+  const handleArchiveToggle = async (
+    alertId: string,
+    currentArchiveStatus: boolean,
+  ) => {
+    try {
+      if (await archiveAlert(alertId, !currentArchiveStatus)) {
+        setIsLoading(true); // Trigger refresh
+      }
+    } catch (err) {
+      console.error('Failed to update archive status:', err);
+    }
   };
 
   if (isLoading) return <div className="loading">Loading alerts...</div>;
@@ -73,14 +78,10 @@ function Alerts() {
               <th>Grade</th>
               <th>
                 <select
-                  value={archiveFilterBy}
-                  onChange={(e) => setArchive(e.target.value)}
-                  style={{ color: archiveFilterBy === '' ? '#888' : 'black' }}
+                  value={archiveFilter}
+                  onChange={(e) => setArchiveFilter(Number(e.target.value))}
                   className="select-type"
                 >
-                  <option value="" disabled hidden>
-                    Filter by Archive
-                  </option>
                   {archiveTypes.map((type) => (
                     <option key={type.id} value={type.id}>
                       {type.name}
@@ -88,7 +89,6 @@ function Alerts() {
                   ))}
                 </select>
               </th>
-              {/* <th>Log</th> */}
             </tr>
           </thead>
           <tbody>
@@ -103,20 +103,14 @@ function Alerts() {
                   <td>{`${alert.agent_ip}:${alert.agent_port}`}</td>
                   <td>{alert.grade}</td>
                   <td>
-                    {alert.archive ? (
-                      ''
-                    ) : (
-                      <button
-                        className="button button-primary"
-                        onClick={async () => {
-                          if (await archiveAlert(alert.alert_id, true)) {
-                            setIsLoading(true);
-                          }
-                        }}
-                      >
-                        Archive
-                      </button>
-                    )}
+                    <button
+                      className={`button ${alert.archive ? 'button-primary' : 'button-primary'}`}
+                      onClick={() =>
+                        handleArchiveToggle(alert.alert_id, alert.archive)
+                      }
+                    >
+                      {alert.archive ? 'Unarchive' : 'Archive'}
+                    </button>
                   </td>
                 </tr>
               ))

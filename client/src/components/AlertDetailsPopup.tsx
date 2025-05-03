@@ -1,9 +1,10 @@
 import React from 'react';
 import { Button } from './popup';
 import '../styles/AlertDetailsPopup.css';
+import { Alert } from '../../../server/interfaces/alert';
 
 interface AlertDetailsPopupProps {
-  alert: any;
+  alert: Alert;
   onClose: () => void;
 }
 
@@ -11,43 +12,72 @@ const AlertDetailsPopup: React.FC<AlertDetailsPopupProps> = ({
   alert,
   onClose,
 }) => {
+  const detailsGroups = [
+    {
+      title: 'Basic Information',
+      items: [
+        { label: 'Alert ID', value: alert.alert_id },
+        { label: 'Token ID', value: alert.token_id },
+        { label: 'Grade', value: alert.grade },
+        {
+          label: 'Alert Date',
+          value: new Date(parseInt(alert.alert_epoch)).toLocaleString(),
+        },
+      ],
+    },
+    {
+      title: 'Access Details',
+      items: [
+        { label: 'Accessed By', value: alert.accessed_by },
+        { label: 'Location', value: alert.location },
+        { label: 'File Name', value: alert.file_name },
+      ],
+    },
+    {
+      title: 'Agent Information',
+      items: [
+        { label: 'Agent', value: `${alert.agent_ip}:${alert.agent_port}` },
+      ],
+    },
+  ];
+
   return (
     <div className="popup-overlay" onClick={onClose}>
       <div className="popup-card" onClick={(e) => e.stopPropagation()}>
-        <h2>Alert Details</h2>
+        <div className="popup-header">
+          <h2>Alert Details</h2>
+          <button className="close-button" onClick={onClose}>
+            &times;
+          </button>
+        </div>
+
         <div className="popup-content">
-          <p>
-            <strong>Alert ID:</strong> {alert.alert_id}
-          </p>
-          <p>
-            <strong>Token ID:</strong> {alert.token_id}
-          </p>
-          <p>
-            <strong>Accessed By:</strong> {alert.accessed_by}
-          </p>
-          <p>
-            <strong>Location:</strong> {alert.location}
-          </p>
-          <p>
-            <strong>File Name:</strong> {alert.file_name}
-          </p>
-          <p>
-            <strong>Agent:</strong> {alert.agent_ip}:{alert.agent_port}
-          </p>
-          <p>
-            <strong>Grade:</strong> {alert.grade}
-          </p>
-          <p>
-            <strong>Log:</strong> {alert.log}
-          </p>
-          <p>
-            <strong>Alert Date:</strong>{' '}
-            {new Date(alert.alert_epoch).toLocaleString()}
-          </p>
+          {detailsGroups.map((group, index) => (
+            <div key={index} className="details-group">
+              <h3 className="group-title">{group.title}</h3>
+              <div className="details-grid">
+                {group.items.map((item, itemIndex) => (
+                  <React.Fragment key={itemIndex}>
+                    <div className="detail-label">{item.label}:</div>
+                    <div className="detail-value">{item.value}</div>
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          <br></br>
+          {/* Full-width log section */}
+          <div className="full-width-group">
+            <h3 className="group-title">Log Details</h3>
+            <div className="full-width-value">
+              <pre>{alert.log}</pre>
+            </div>
+          </div>
         </div>
 
         <div className="popup-footer">
-          <Button className="button-outline" onClick={onClose}>
+          <Button className="button-primary" onClick={onClose}>
             Close
           </Button>
         </div>

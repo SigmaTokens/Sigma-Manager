@@ -42,8 +42,6 @@ npm run start-prod`;
     case 'Linux':
       return `git clone https://github.com/SigmaTokens/Sigma-Agent.git && \\
 cd Sigma-Agent && \\
-git pull && \\
-git checkout daniel001 && \\
 printf "MANAGER_IP=${manager_ip}\\nMANAGER_PORT=${manager_port}\\nAGENT_NAME=${agentName || 'NEW AGENT'}\\n" | tee .env > /dev/null && \\
 npm run start-prod-linux`;
 

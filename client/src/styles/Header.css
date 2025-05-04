@@ -98,6 +98,7 @@
 
 /* Add a responsive navigation menu that appears when the hamburger menu is clicked */
 
+
 .header .responsive-nav {
   display: none;
   position: absolute;

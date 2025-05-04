@@ -159,7 +159,7 @@ function Home() {
         <div className="chart-card">
           <Chart type="bar" data={honeytokenData} options={honeytokenOptions} />
         </div>
-        {/*shak6 ---- add data!!!!!! */}
+        {/*shak6 ---- add data!!!!!!x */}
       </div>
     </div>
   );

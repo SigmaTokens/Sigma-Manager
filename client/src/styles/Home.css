@@ -19,8 +19,6 @@
   min-width: 200px;
 }
 
-/* by shak6*/
-
 .graph-container {
   margin-top: 3rem;
   padding: 1.5rem;
@@ -34,4 +32,19 @@
   margin-bottom: 1rem;
   font-size: 1.5rem;
   color: #333;
+}
+
+.charts-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.chart-card {
+  flex: 1 1 300px; /* change the size of the chart cards */
+  padding: 1rem;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }

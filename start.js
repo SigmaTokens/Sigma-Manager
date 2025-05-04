@@ -152,7 +152,6 @@ function setup_vscode_settings(rootDir) {
 
   create_file(settingsFile, JSON.stringify(settings, null, 2));
 }
-
 function install_deps() {
   try {
     console.log('[+] Updating deps for root~~~');
@@ -160,6 +159,9 @@ function install_deps() {
 
     console.log('[+] Updating deps for client~~~');
     execSync('npm install --prefix client', { stdio: 'inherit' });
+
+    console.log('[+] Installing react-chartjs-2 and chart.js in client~~~');
+    execSync('npm install react-chartjs-2 chart.js --prefix client', { stdio: 'inherit' });
 
     console.log('[+] Updating deps for server~~~');
     execSync('npm install --prefix server', { stdio: 'inherit' });
@@ -170,6 +172,8 @@ function install_deps() {
     process.exit(-1);
   }
 }
+
+
 
 function run_sigmatokens(mode) {
   try {

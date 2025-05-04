@@ -171,3 +171,79 @@
   background: #c1c1c1;
   border-radius: 3px;
 }
+/* Add max-width to prevent excessive width */
+.popup-card {
+  max-width: 90vw;
+}
+
+/* Make the popup content area responsive */
+.popup-content {
+  overflow-y: auto;
+  padding-right: 8px;
+  max-height: 70vh; /* Add max-height to prevent excessive height */
+}
+
+/* Make the details grid layout responsive */
+.details-grid {
+  grid-template-columns: 1fr 2fr; /* Change grid template columns to make it responsive */
+  gap: 10px 15px;
+  margin-left: 10px;
+}
+
+/* Make the full-width log section responsive */
+.full-width-group {
+  margin-top: 25px;
+  width: 100%; /* Change width to 100% to make it full-width */
+}
+
+.full-width-value {
+  width: 100%;
+  margin-left: -24px;
+  margin-right: -24px;
+  padding: 16px 24px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+  overflow-x: auto; /* Add overflow-x to prevent horizontal scrolling */
+}
+
+/* Add media queries to make the application responsive on different screen sizes */
+@media (max-width: 768px) {
+  .popup-card {
+    width: 90%;
+    max-width: 90vw;
+  }
+  .popup-content {
+    max-height: 60vh;
+  }
+  .details-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .popup-card {
+    width: 95%;
+    max-width: 90vw;
+  }
+  .popup-content {
+    max-height: 50vh;
+  }
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+  .full-width-value {
+    padding: 10px;
+  }
+}
+
+/* Add word-break and overflow-wrap to prevent text from overflowing */
+.detail-value {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.full-width-value pre {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}

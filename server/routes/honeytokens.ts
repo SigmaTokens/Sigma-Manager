@@ -221,6 +221,10 @@ export function serveHoneytokens() {
       console.log('JOKER monitor_status:', token);
       console.log('JOKER monitor_status:', agent);
 
+      if (!token || !agent) {
+        res.status(201).json({ success: 'not monitoring honeytoken' });
+      }
+
       const response_from_agent = await fetch(
         'http://' +
           agent.agent_ip +

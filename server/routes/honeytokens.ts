@@ -215,11 +215,7 @@ export function serveHoneytokens() {
     const { token_id } = req.body;
     try {
       const token = await get_honeytoken_by_token_id(token_id);
-
       const agent = await get_agent_by_id(token.agent_id);
-
-      console.log('JOKER monitor_status:', token);
-      console.log('JOKER monitor_status:', agent);
 
       if (!token || !agent) {
         res.status(201).json({ success: 'not monitoring honeytoken' });

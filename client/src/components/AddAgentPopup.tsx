@@ -23,20 +23,13 @@ function generateScript(
   switch (os) {
     case 'Windows':
       return `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
-
 git clone https://github.com/SigmaTokens/Sigma-Agent.git
-
 Set-Location Sigma-Agent
-
-git pull
-git checkout daniel001
-
 @"
 MANAGER_IP=${manager_ip}
 MANAGER_PORT=${manager_port}
 AGENT_NAME=${agentName ? agentName : 'NEW AGENT'}
 "@ | Out-File .env -Encoding utf8
-
 npm run start-prod`;
 
     case 'Linux':

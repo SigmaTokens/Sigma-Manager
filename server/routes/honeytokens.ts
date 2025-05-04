@@ -159,33 +159,35 @@ export function serveHoneytokens() {
 
   router.delete('/honeytokens/token/:token_id', async (req, res) => {
     const { token_id } = req.params;
+
     try {
-      //remove
-
       const token = await get_honeytoken_by_token_id(token_id);
-
+      if (token == undefined) {
+        res.status(500).json({ failure: 'error' });
+      }
       const agent = await get_agent_by_id(token.agent_id);
-
-      const response_from_agent = await fetch(
-        'http://' +
-          agent.agent_ip +
-          ':' +
-          agent.agent_port +
-          '/api/honeytoken/remove',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            token_id: token_id,
-          }),
-        },
-      );
-
-      await delete_honeytoken_by_id(token_id);
-      res.json({ success: true });
+      if (agent != undefined) {
+        const response_from_agent = await fetch(
+          'http://' +
+            agent.agent_ip +
+            ':' +
+            agent.agent_port +
+            '/api/honeytoken/remove',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              token_id: token_id,
+            }),
+          },
+        );
+      }
     } catch (error) {
       console.error('[-] Failed to delete honeytoken:', error);
       res.status(500).json({ failure: error });
+    } finally {
+      await delete_honeytoken_by_id(token_id);
+      res.json({ success: true });
     }
   });
 
@@ -217,8 +219,9 @@ export function serveHoneytokens() {
       const token = await get_honeytoken_by_token_id(token_id);
       const agent = await get_agent_by_id(token.agent_id);
 
-      if (!token || !agent) {
+      if (token == undefined || agent == undefined) {
         res.status(201).json({ success: 'not monitoring honeytoken' });
+        return;
       }
 
       const response_from_agent = await fetch(

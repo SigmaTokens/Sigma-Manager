@@ -1,15 +1,15 @@
-/* Default styles */
 
+/* shak6*/
 .header {
   background-color: #282c34;
   padding: 10px;
-  position: relative; /* Add position relative to make the nav absolute */
+  position: relative;
 }
 
 .header nav {
   display: flex;
   align-items: center;
-  justify-content: flex-start; /* Change to flex-start to make the nav items go from left to right */
+  justify-content: flex-start; 
 }
 
 .header ul {
@@ -17,7 +17,7 @@
   display: flex;
   margin: 0;
   padding: 0;
-  flex-wrap: wrap; /* Add flex-wrap to make the nav items wrap to the next line on smaller screens */
+  flex-wrap: wrap; 
 }
 
 .header .logo {

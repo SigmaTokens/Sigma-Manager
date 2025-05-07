@@ -39,7 +39,10 @@ printf "MANAGER_IP=${manager_ip}\\nMANAGER_PORT=${manager_port}\\nAGENT_NAME=${a
 npm run start-prod-linux`;
 
     case 'MacOS':
-      return 'some macos script';
+      return `git clone https://github.com/SigmaTokens/Sigma-Agent.git && \\
+      cd Sigma-Agent && \\
+      printf "MANAGER_IP=${manager_ip}\\nMANAGER_PORT=${manager_port}\\nAGENT_NAME=${agentName || 'NEW AGENT'}\\n" | tee .env > /dev/null && \\
+      npm run start-prod-mac`;
     default:
       return 'os not supported yet';
   }

@@ -138,7 +138,7 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
 
           <div className="script-section">
             <p>
-              4. Run the next script (copy and paste it to the powershell cmd):
+              4. Run the next script (copy and paste it to the powershell/terminal cmd):
             </p>
             <div className="script-with-button">
               <textarea className="script-box" readOnly value={script} />

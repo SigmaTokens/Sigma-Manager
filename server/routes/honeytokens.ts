@@ -40,6 +40,24 @@ export function serveHoneytokens() {
         agent_id,
       } = req.body;
 
+      const required = {
+        type,
+        file_name,
+        location,
+        grade,
+        expiration_date,
+        notes,
+        data,
+        agent_id,
+      };
+
+      for (const [field, value] of Object.entries(required)) {
+        if (value === undefined || value === null || value === '') {
+          res.status(400).json({ failure: `Missing required field: ${field}` });
+          return;
+        }
+      }
+
       const agent = await get_agent_by_id(agent_id);
 
       const token_id = uuidv4();

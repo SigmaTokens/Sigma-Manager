@@ -9,7 +9,6 @@ interface AddAgentPopupProps {
 }
 
 interface ServerAddress {
-  ip: string;
   port: number;
 }
 
@@ -39,7 +38,7 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
   // 2) Fetch server address when in IP mode and selectedIp changes
   useEffect(() => {
     if (connectionMode === 'ip' && selectedIp) {
-      getServerAddress(selectedIp)
+      getServerAddress()
         .then((addr) => setServerAddress(addr))
         .catch(console.error);
     }
@@ -52,7 +51,7 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
       if (!serverAddress) return;
       newScript = generateScript(
         os,
-        serverAddress.ip,
+        selectedIp,
         serverAddress.port,
         agentName,
         undefined,

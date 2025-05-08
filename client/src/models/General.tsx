@@ -1,19 +1,10 @@
 export interface ServerAddress {
-  ip: string;
   port: number;
 }
 
-export async function getServerAddress(
-  address?: string,
-): Promise<ServerAddress> {
+export async function getServerAddress(): Promise<ServerAddress> {
   try {
-    const res = await fetch('http://localhost:3000/api/server', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ address }),
-    });
+    const res = await fetch('http://localhost:3000/api/server');
 
     if (!res.ok) {
       throw new Error(`Server responded with ${res.status}`);

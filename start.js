@@ -2,12 +2,13 @@ import { fileURLToPath } from 'url';
 import { execSync, exec } from 'child_process';
 import fs from 'fs';
 import path from 'path';
+import { Constants } from './server/constants.js'
 
 main();
 
 function main() {
   if (!isAdmin()) {
-    console.error('[-] Error: must run as admin!');
+    console.error(Colors.TEXT_RED_COLOR,'Error: must run as admin!');
     process.exit(-1);
   }
   const mode = get_mode();

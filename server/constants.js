@@ -4,4 +4,5 @@ export class Constants {
    static  TEXT_YELLOW_COLOR = '\x1b[33m';
    static  TEXT_CYAN_COLOR = '\x1b[36m';
    static  TEXT_MAGENTA_COLOR = '\x1b[35m';
+   static TEXT_WHITE_COLOR = "\x1b[37m";
 }

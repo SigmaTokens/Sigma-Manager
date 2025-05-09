@@ -2,14 +2,14 @@
   "type": "module",
   "scripts": {
     "format": "prettier --write \"**/*.{js,ts,jsx,tsx,json,md}\"",
-    "prod-client": "npm --prefix client run build",
-    "prod-server": "npm --prefix server run start",
-    "prod": "concurrently \"npm run prod-server\" \"npm run prod-client\"",
-    "dev-client": "npm --prefix client run dev",
-    "dev-server": "npm --prefix server run dev",
-    "dev": "concurrently \"npm run dev-server\" \"npm run dev-client\"",
-    "start-dev": "npm install cross-env && cross-env MODE=dev node start.js dev",
-    "start-prod": "npm install cross-env && cross-env MODE=prod node start.js prod"
+    "prod-client": "npm --prefix client run build --silent",
+    "prod-server": "npm --prefix server run start --silent",
+    "prod": "concurrently \"npm run prod-server --silent\" \"npm run prod-client --silent\"",
+    "dev-client": "npm --prefix client run dev --silent",
+    "dev-server": "npm --prefix server run dev --silent",
+    "dev": "concurrently \"npm run dev-server --silent\" \"npm run dev-client --silent\"",
+    "start-dev": "npm install --silent cross-env && cross-env MODE=dev node start.js dev",
+    "start-prod": "npm install --silent cross-env && cross-env MODE=prod node start.js prod"
   },
   "name": "sigmatokens",
   "version": "1.0.0",

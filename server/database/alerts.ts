@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { get_all_honeytokens } from './honeytokens';
 import { get_random_date, get_random_ip, begin_transaction, commit, rollback } from './helpers';
 import { Globals } from '../globals';
+import { Constants } from '../constants';
 
 export async function init_alerts_table() {
   await Globals.app.locals.db.exec(sql`
@@ -181,7 +182,12 @@ export async function delete_alert_by_alert_id(alert_id: string) {
       [alert_id],
     );
   } catch (error) {
-    console.error(`[-] Failed to delete alert with id ${alert_id}:`, error);
+    console.error(
+      Constants.TEXT_RED_COLOR,
+      `Failed to delete alert with id ${alert_id}:`,
+      error,
+      Constants.TEXT_WHITE_COLOR,
+    );
     throw error;
   }
 }
@@ -190,7 +196,12 @@ export async function set_archive_by_alert_id(alert_id: string, archive: boolean
   try {
     await Globals.app.locals.db.run(`UPDATE alerts SET archive = ? WHERE alert_id = ?;`, [archive, alert_id]);
   } catch (error) {
-    console.error(`[-] Failed to set alert with id ${alert_id}:`, error);
+    console.error(
+      Constants.TEXT_RED_COLOR,
+      `Failed to set alert with id ${alert_id}:`,
+      error,
+      Constants.TEXT_WHITE_COLOR,
+    );
     throw error;
   }
 }

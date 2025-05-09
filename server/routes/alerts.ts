@@ -8,6 +8,7 @@ import {
   set_archive_by_alert_id,
 } from '../database/alerts';
 import { Globals } from '../globals';
+import { Constants } from '../constants';
 
 export function serveAlerts() {
   const router = Router();
@@ -15,16 +16,11 @@ export function serveAlerts() {
   router.post('/alerts', async (req, res) => {
     try {
       const { token_id, alert_epoch, accessed_by, log } = req.body;
-      const result = await create_alert_to_token_id(
-        token_id,
-        alert_epoch,
-        accessed_by,
-        log,
-      );
+      const result = await create_alert_to_token_id(token_id, alert_epoch, accessed_by, log);
 
       res.json({ success: result });
     } catch (error: any) {
-      console.error('[-] Failed to create alert:', error.message);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to create alert:', error.message, Constants.TEXT_WHITE_COLOR);
       res.status(500).json({ failure: error.message });
     }
   });
@@ -34,7 +30,7 @@ export function serveAlerts() {
       const alerts = await get_all_alerts_join();
       res.json(alerts);
     } catch (error) {
-      console.error('[-] Failed to fetch alerts:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to fetch alerts:', error, Constants.TEXT_WHITE_COLOR);
       res.status(500).json({ failure: error });
     }
   });
@@ -45,7 +41,7 @@ export function serveAlerts() {
       const alert = await get_alert_by_alert_id(alert_id);
       res.json(alert);
     } catch (error) {
-      console.error('[-] Failed to fetch alert:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to fetch alert:', error, Constants.TEXT_WHITE_COLOR);
       res.status(500).json({ failure: error });
     }
   });
@@ -56,7 +52,7 @@ export function serveAlerts() {
       const alert = await get_alert_by_token_id(token_id);
       res.json(alert);
     } catch (error) {
-      console.error('[-] Failed to fetch alert:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to fetch alert:', error, Constants.TEXT_WHITE_COLOR);
       res.status(500).json({ failure: error });
     }
   });
@@ -67,7 +63,7 @@ export function serveAlerts() {
       await delete_alert_by_alert_id(alert_id);
       res.json({ success: true });
     } catch (error) {
-      console.error('[-] Failed to delete alert:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to delete alert:', error, Constants.TEXT_WHITE_COLOR);
       res.status(500).json({ failure: error });
     }
   });
@@ -79,7 +75,7 @@ export function serveAlerts() {
       await set_archive_by_alert_id(alert_id, archive);
       res.json({ success: true });
     } catch (error) {
-      console.error('[-] Failed to set archive status:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to set archive status:', error, Constants.TEXT_WHITE_COLOR);
       res.status(500).json({ failure: error });
     }
   });

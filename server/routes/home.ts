@@ -1,5 +1,6 @@
 import { Express, Router } from 'express';
 import { Globals } from '../globals';
+import { Constants } from '../constants';
 
 export function serveHome() {
   const router = Router();
@@ -8,9 +9,7 @@ export function serveHome() {
     try {
       const agents = await Globals.app.locals.db.all('SELECT * FROM agents');
       const alerts = await Globals.app.locals.db.all('SELECT * FROM alerts');
-      const honeytokens = await Globals.app.locals.db.all(
-        'SELECT * FROM honeytokens',
-      );
+      const honeytokens = await Globals.app.locals.db.all('SELECT * FROM honeytokens');
 
       const now = new Date();
       const sevenDays = 7 * 24 * 60 * 60 * 1000;
@@ -33,14 +32,10 @@ export function serveHome() {
       }
 
       // TODO: get the statuses ... the status now is initial - it doesn't work
-      const onlineAgents = agents.filter(
-        (a: any) => a.status === 'online',
-      ).length;
+      const onlineAgents = agents.filter((a: any) => a.status === 'online').length;
       const offlineAgents = agents.length - onlineAgents;
 
-      const resolvedAlerts = alerts.filter(
-        (a: any) => a.status === 'resolved',
-      ).length;
+      const resolvedAlerts = alerts.filter((a: any) => a.status === 'resolved').length;
 
       const threatMap: Record<string, number> = {};
       for (const alert of alerts) {
@@ -73,7 +68,12 @@ export function serveHome() {
         honeytoken_types: typeMap,
       });
     } catch (error: any) {
-      console.error('[-] Failed to fetch dashboard summary:', error.message);
+      console.error(
+        Constants.TEXT_RED_COLOR,
+        'Failed to fetch dashboard summary:',
+        error.message,
+        Constants.TEXT_WHITE_COLOR,
+      );
       res.status(500).json({ failure: error.message });
     }
   });

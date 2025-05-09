@@ -4,6 +4,7 @@ import path from 'path';
 import { init_tables } from './helpers';
 import { populate_types_table } from './types';
 import { Globals } from '../globals';
+import { Constants } from '../constants';
 
 export async function startDatabase() {
   try {
@@ -16,7 +17,8 @@ export async function startDatabase() {
     await init_tables();
     await populate_types_table();
   } catch (error) {
-    if (process.env.MODE === 'dev') console.error('[-] Failed to initialize database:', error);
+    if (process.env.MODE === 'dev')
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to initialize database:', error, Constants.TEXT_WHITE_COLOR);
     process.exit(-1);
   }
 }

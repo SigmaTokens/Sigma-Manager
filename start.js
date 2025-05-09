@@ -8,7 +8,7 @@ main();
 
 function main() {
   if (!isAdmin()) {
-    console.error(Constants.TEXT_RED_COLOR, 'Error: must run as admin!');
+    console.error(Constants.TEXT_RED_COLOR, 'Error: must run as admin!',Constants.TEXT_WHITE_COLOR);
     process.exit(-1);
   }
   const mode = get_mode();
@@ -38,7 +38,7 @@ function get_mode() {
     ? 'dev'
     : mode.includes('prod')
       ? 'prod'
-      : (console.error(Constants.TEXT_RED_COLOR,'Please specify a mode to run the project: dev or prod'), process.exit(-1));
+      : (console.error(Constants.TEXT_RED_COLOR,'Please specify a mode to run the project: dev or prod',Constants.TEXT_WHITE_COLOR), process.exit(-1));
 }
 
 function init_database_file() {
@@ -48,7 +48,7 @@ function init_database_file() {
 
   if (!fs.existsSync(database_path)) fs.writeFileSync(database_path, '');
 
-  console.log(Constants.TEXT_GREEN_COLOR,`Initiated database: ${database_path}`);
+  console.log(Constants.TEXT_GREEN_COLOR,`Initiated database: ${database_path}`,Constants.TEXT_WHITE_COLOR);
 }
 
 function get_root_dir() {
@@ -73,21 +73,21 @@ function is_extension_updated(extension) {
 
 function install_extension(extension) {
   try {
-    console.log(Constants.TEXT_YELLOW_COLOR,`Checking extension: ${extension}`);
+    console.log(Constants.TEXT_YELLOW_COLOR,`Checking extension: ${extension}`,Constants.TEXT_WHITE_COLOR);
 
     if (is_extension_installed(extension)) {
       is_extension_updated(extension).then((updateCheck) => {
         if (updateCheck) {
-          console.log(Constants.TEXT_CYAN_COLOR,`${extension} update available, upgrading...`);
+          console.log(Constants.TEXT_CYAN_COLOR,`${extension} update available, upgrading...`,Constants.TEXT_WHITE_COLOR);
           execSync(`code --install-extension ${extension} --force`);
         } 
       });
     } else {
-      console.log(Constants.TEXT_CYAN_COLOR,`Installing ${extension}...`);
+      console.log(Constants.TEXT_CYAN_COLOR,`Installing ${extension}...`,Constants.TEXT_WHITE_COLOR);
       execSync(`code --install-extension ${extension} --force`);
     }
   } catch (error) {
-    console.error(Constants.TEXT_RED_COLOR,`Failed: ${error.message}`);
+    console.error(Constants.TEXT_RED_COLOR,`Failed: ${error.message}`,Constants.TEXT_WHITE_COLOR);
     process.exit(1);
   }
 }
@@ -100,10 +100,10 @@ function install_extensions() {
 function create_file(filePath, content) {
   if (!fs.existsSync(filePath)) {
     fs.writeFileSync(filePath, content, 'utf8');
-    console.log(Constants.TEXT_GREEN_COLOR,`Created: ${filePath}`);
+    console.log(Constants.TEXT_GREEN_COLOR,`Created: ${filePath}`,Constants.TEXT_WHITE_COLOR);
   } else {
     fs.writeFileSync(filePath, content, 'utf8');
-    console.log(Constants.TEXT_GREEN_COLOR,`Updated: ${filePath}`);
+    console.log(Constants.TEXT_GREEN_COLOR,`Updated: ${filePath}`,Constants.TEXT_WHITE_COLOR);
   }
 }
 
@@ -148,25 +148,25 @@ function setup_vscode_settings(rootDir) {
 
 function install_deps() {
   try {
-    console.log(Constants.TEXT_YELLOW_COLOR,'Updating deps for root');
+    console.log(Constants.TEXT_YELLOW_COLOR,'Updating deps for root',Constants.TEXT_WHITE_COLOR);
     execSync('npm install --silent ', { stdio: 'inherit' });
 
-    console.log(Constants.TEXT_YELLOW_COLOR,'Updating deps for client');
+    console.log(Constants.TEXT_YELLOW_COLOR,'Updating deps for client',Constants.TEXT_WHITE_COLOR);
     execSync('npm install --silent  --prefix client', { stdio: 'inherit' });
 
-    console.log(Constants.TEXT_YELLOW_COLOR,'Updating deps for server');
+    console.log(Constants.TEXT_YELLOW_COLOR,'Updating deps for server',Constants.TEXT_WHITE_COLOR);
     execSync('npm install --silent --prefix server', { stdio: 'inherit' });
 
-    console.log(Constants.TEXT_GREEN_COLOR,'Deps update complete');
+    console.log(Constants.TEXT_GREEN_COLOR,'Deps update complete',Constants.TEXT_WHITE_COLOR);
   } catch (error) {
-    console.error(Constants.TEXT_RED_COLOR,'Failed to update deps:', error.message);
+    console.error(Constants.TEXT_RED_COLOR,'Failed to update deps:', error.message,Constants.TEXT_WHITE_COLOR);
     process.exit(-1);
   }
 }
 
 function run_sigmatokens(mode) {
   try {
-    console.log(Constants.TEXT_MAGENTA_COLOR,`Starting in ${mode} mode~~~`);
+    console.log(Constants.TEXT_MAGENTA_COLOR,`Starting in ${mode} mode`,Constants.TEXT_WHITE_COLOR);
     execSync(`npm run ${mode}`, { stdio: 'inherit' });
   } catch (error) {
     console.error(Constants.TEXT_RED_COLOR ,'Failed to start:', error.message);

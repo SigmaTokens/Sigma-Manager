@@ -26,23 +26,28 @@ export async function is_table_exists(table_name: string) {
 export async function init_tables() {
   if (!(await is_table_exists('types'))) {
     await init_types_table();
-    if (process.env.MODE === 'dev') console.log(Constants.TEXT_GREEN_COLOR, 'Initiated types table successfully');
+    if (process.env.MODE === 'dev')
+      console.log(Constants.TEXT_GREEN_COLOR, 'Initiated types table successfully', Constants.TEXT_WHITE_COLOR);
   }
   if (!(await is_table_exists('honeytokens'))) {
     await init_honeytokens_table();
-    if (process.env.MODE === 'dev') console.log(Constants.TEXT_GREEN_COLOR, 'Initiated honeytokens table successfully');
+    if (process.env.MODE === 'dev')
+      console.log(Constants.TEXT_GREEN_COLOR, 'Initiated honeytokens table successfully', Constants.TEXT_WHITE_COLOR);
   }
   if (!(await is_table_exists('alerts'))) {
     await init_alerts_table();
-    if (process.env.MODE === 'dev') console.log(Constants.TEXT_GREEN_COLOR, 'Initiated alerts table successfully');
+    if (process.env.MODE === 'dev')
+      console.log(Constants.TEXT_GREEN_COLOR, 'Initiated alerts table successfully', Constants.TEXT_WHITE_COLOR);
   }
   if (!(await is_table_exists('whitelist'))) {
     await init_whitelist_table();
-    if (process.env.MODE === 'dev') console.log(Constants.TEXT_GREEN_COLOR, 'Initiated whitelist table successfully');
+    if (process.env.MODE === 'dev')
+      console.log(Constants.TEXT_GREEN_COLOR, 'Initiated whitelist table successfully', Constants.TEXT_WHITE_COLOR);
   }
   if (!(await is_table_exists('agents'))) {
     await init_agents_table();
-    if (process.env.MODE === 'dev') console.log(Constants.TEXT_GREEN_COLOR, 'Initiated agents table successfully');
+    if (process.env.MODE === 'dev')
+      console.log(Constants.TEXT_GREEN_COLOR, 'Initiated agents table successfully', Constants.TEXT_WHITE_COLOR);
   }
 }
 

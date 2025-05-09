@@ -21,12 +21,9 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
   const [agentName, setAgentName] = useState('');
   const [script, setScript] = useState('');
   const [showToast, setShowToast] = useState(false);
-
-  // New states for connection mode
   const [connectionMode, setConnectionMode] = useState<'ip' | 'domain'>('ip');
   const [domainName, setDomainName] = useState<string>('');
 
-  // 1) Load local IPs once on mount
   useEffect(() => {
     getAddresses()
       .then((ips) => {
@@ -36,7 +33,6 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
       .catch(console.error);
   }, []);
 
-  // 2) Fetch server address when in IP mode and selectedIp changes
   useEffect(() => {
     if (connectionMode === 'ip' && selectedIp) {
       getServerAddress(selectedIp)
@@ -45,27 +41,14 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
     }
   }, [connectionMode, selectedIp]);
 
-  // 3) Build the install script whenever dependencies change
   useEffect(() => {
     let newScript = '';
     if (connectionMode === 'ip') {
       if (!serverAddress) return;
-      newScript = generateScript(
-        os,
-        serverAddress.ip,
-        serverAddress.port,
-        agentName,
-        undefined,
-      );
+      newScript = generateScript(os, serverAddress.ip, serverAddress.port, agentName, undefined);
     } else {
       if (!domainName) return;
-      newScript = generateScript(
-        os,
-        undefined,
-        undefined,
-        agentName,
-        domainName,
-      );
+      newScript = generateScript(os, undefined, undefined, agentName, domainName);
     }
     setScript(newScript);
   }, [os, serverAddress, agentName, connectionMode, domainName]);
@@ -126,11 +109,7 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
           {connectionMode === 'ip' && (
             <div className="instruction1">
               Select your manager IP:
-              <select
-                className="agent-input"
-                value={selectedIp}
-                onChange={(e) => setSelectedIp(e.target.value)}
-              >
+              <select className="agent-input" value={selectedIp} onChange={(e) => setSelectedIp(e.target.value)}>
                 {availableIps.map((ip) => (
                   <option key={ip} value={ip}>
                     {ip}
@@ -154,8 +133,7 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
 
           {/* Node/Git Instructions */}
           <div className="instruction3">
-            Ensure you have the latest{' '}
-            <a href="https://nodejs.org/en/download">node.js</a> and{' '}
+            Ensure you have the latest <a href="https://nodejs.org/en/download">node.js</a> and{' '}
             <a href="https://git-scm.com/downloads">git</a> installed.
           </div>
 
@@ -165,11 +143,7 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
           {/* OS Tabs */}
           <div className="tabs">
             {['Windows', 'Linux', 'MacOS'].map((tab) => (
-              <span
-                key={tab}
-                className={`tab ${os === tab ? 'active' : ''}`}
-                onClick={() => setOs(tab as typeof os)}
-              >
+              <span key={tab} className={`tab ${os === tab ? 'active' : ''}`} onClick={() => setOs(tab as typeof os)}>
                 {tab}
               </span>
             ))}
@@ -186,9 +160,7 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
           </div>
 
           {/* Confirmation */}
-          <div className="instruction6">
-            Confirm the new agent on the Agents page.
-          </div>
+          <div className="instruction6">Confirm the new agent on the Agents page.</div>
 
           {/* Close Button */}
           <div className="button-container">
@@ -202,7 +174,6 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
   );
 }
 
-// Updated generateScript to handle domain or IP/port
 function generateScript(
   os: string,
   manager_ip?: string,

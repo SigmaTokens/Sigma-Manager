@@ -38,11 +38,11 @@ function main(): void {
       serveClient();
 
       Globals.server = app.listen(port, () => {
-        console.log(Constants.TEXT_MAGENTA_COLOR, `Server running on port ${port}`);
+        console.log(Constants.TEXT_MAGENTA_COLOR, `Server running on port ${port}`, Constants.TEXT_WHITE_COLOR);
       });
     })
     .catch((error) => {
-      console.error('[-] Failed to initialize server:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to initialize server:', error, Constants.TEXT_WHITE_COLOR);
       process.exit(1);
     });
 }

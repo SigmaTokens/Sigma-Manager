@@ -70,10 +70,13 @@ export function serveHoneytokens() {
         type,
         file_name,
         location,
+        '',
+        '',
         grade,
         new Date(),
         expiration_date,
         notes,
+        '',
         data,
       );
 
@@ -95,6 +98,88 @@ export function serveHoneytokens() {
             grade: grade,
             expiration_date: expiration_date,
             notes: notes,
+            data: data,
+          }),
+        },
+      );
+
+      res.status(200).json({ success: 'nice' });
+    } catch (error) {
+      console.error({ failure: error });
+      res.status(500).json({ failure: error });
+    }
+  });
+  router.post('/honeytokens/api', async (req, res) => {
+    try {
+      const {
+        type,
+        http_method,
+        route,
+        grade,
+        expiration_date,
+        response,
+        data,
+        agent_id,
+      } = req.body;
+
+      const required = {
+        type,
+        http_method,
+        route,
+        grade,
+        expiration_date,
+        response,
+        data,
+        agent_id,
+      };
+
+      for (const [field, value] of Object.entries(required)) {
+        if (value === undefined || value === null || value === '') {
+          res.status(400).json({ failure: `Missing required field: ${field}` });
+          return;
+        }
+      }
+
+      const agent = await get_agent_by_id(agent_id);
+
+      const token_id = uuidv4();
+      const group_id = uuidv4();
+
+      await insert_honeytoken(
+        agent_id,
+        token_id,
+        group_id,
+        type,
+        '',
+        '',
+        http_method,
+        route,
+        grade,
+        new Date(),
+        expiration_date,
+        '',
+        response,
+        data,
+      );
+
+      const response_from_agent = await fetch(
+        'http://' +
+          agent.agent_ip +
+          ':' +
+          agent.agent_port +
+          '/api/honeytoken/add',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            token_id: token_id,
+            group_id: group_id,
+            type: type,
+            file_name: http_method,
+            location: route,
+            grade: grade,
+            expiration_date: expiration_date,
+            notes: response,
             data: data,
           }),
         },

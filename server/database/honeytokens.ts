@@ -16,7 +16,10 @@ export async function init_honeytokens_table() {
       expire_date DATETIME,
       location VARCHAR,
       file_name VARCHAR,
+      http_method VARCHAR,
+      route VARCHAR,
       data TEXT,
+      response TEXT,
       notes TEXT,
       agent_id VARCHAR,
       FOREIGN KEY (type_id) REFERENCES types (type_id) ON DELETE CASCADE,
@@ -37,7 +40,10 @@ export async function get_all_honeytokens() {
       expire_date,
       location,
       file_name,
+      http_method,
+      route,
       data,
+      response,
       notes
     FROM
       honeytokens
@@ -57,7 +63,10 @@ export async function get_honeytoken_by_token_id(token_id: String) {
         expire_date,
         location,
         file_name,
+        http_method,
+        route,
         data,
+        response,
         notes
       FROM
         honeytokens
@@ -80,7 +89,10 @@ export async function get_honeytokens_by_agent_id(agent_id: String) {
         expire_date,
         location,
         file_name,
+        http_method,
+        route,
         data,
+        response,
         notes
       FROM
         honeytokens
@@ -103,7 +115,10 @@ export async function get_honeytokens_by_type_id(type_id: String) {
         expire_date,
         location,
         file_name,
+        http_method,
+        route,
         data,
+        response,
         notes
       FROM
         honeytokens
@@ -126,7 +141,10 @@ export async function get_honeytokens_by_group_id(group_id: String) {
         expire_date,
         location,
         file_name,
+        http_method,
+        route,
         notes,
+        response,
         data
       FROM
         honeytokens
@@ -232,10 +250,13 @@ export async function insert_honeytoken(
   type_id: any,
   file_name: string,
   location: string,
+  http_method: string,
+  route: string,
   grade: number,
   creation_date: Date,
   expiration_date: Date,
   notes: string,
+  response: string,
   data: string,
 ) {
   await Globals.app.locals.db.run(
@@ -251,11 +272,14 @@ export async function insert_honeytoken(
           expire_date,
           location,
           file_name,
+          http_method,
+          route,
           data,
+          response,
           notes
         )
       VALUES
-        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
     [
       agent_id,
@@ -267,7 +291,10 @@ export async function insert_honeytoken(
       expiration_date,
       location,
       file_name,
+      http_method,
+      route,
       data,
+      response,
       notes,
     ],
   );
@@ -295,7 +322,10 @@ export async function dummy_populate_honeytokens() {
         .split('T')[0],
       location: 'sample location',
       file_name: 'sample file_name',
+      http_method: 'GET',
+      route: '/sample/route',
       data: `Sample data for token ${i + 1}`,
+      response: `Sample response for token ${i + 1}`,
       notes: `Sample notes for token ${i + 1}`,
     });
   }
@@ -313,11 +343,14 @@ export async function dummy_populate_honeytokens() {
             expire_date,
             location,
             file_name,
+            http_method,
+            route,
             data,
+            response,
             notes
           )
         VALUES
-          (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       [
         token.token_id,
@@ -328,7 +361,10 @@ export async function dummy_populate_honeytokens() {
         token.expire_date,
         token.location,
         token.file_name,
+        token.http_method,
+        token.route,
         token.data,
+        token.response,
         token.notes,
       ],
     );

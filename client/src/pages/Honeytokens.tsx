@@ -14,6 +14,7 @@ function Honeytokens() {
   const [honeytokens, setHoneytokens] = useState<IHoneytoken[]>([]);
   const [refreshCounter, setRefreshCounter] = useState(0);
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
+  const [isReversed, setIsReversed] = useState(false);
 
   useEffect(() => {
     const fetchHoneytokens = async () => {
@@ -79,6 +80,11 @@ function Honeytokens() {
     }
   };
 
+  const handleReverseClick = () => {
+    setHoneytokens((prev) => [...prev].reverse());
+    setIsReversed((prev) => !prev);
+  };
+
   return (
     <div className="honeytokens-container">
       <h1 className="honeytokens-title">Honeytokens Dashboard</h1>
@@ -96,18 +102,42 @@ function Honeytokens() {
         <table className="honeytokens-table">
           <thead>
             <tr>
-              <th>Agent ID</th>
-              <th>Token ID</th>
-              <th>Group ID</th>
-              <th>Type ID</th>
-              <th>Creation Date</th>
-              <th>Expire Date</th>
-              <th>Location</th>
-              <th>File Name</th>
-              <th>Data</th>
-              <th>Notes</th>
-              <th>Status</th>
-              <th>Actions</th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Agent ID
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Token ID
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Group ID
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Type ID
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Creation Date
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Expire Date
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Location
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                File Name
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Data
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Notes
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Status
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>

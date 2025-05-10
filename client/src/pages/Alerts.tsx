@@ -14,6 +14,7 @@ function Alerts() {
   const [archiveFilter, setArchiveFilter] = useState<number>(2);
   const [expandedDetails, setExpandedDetails] = useState<string | null>(null);
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
+  const [isReversed, setIsReversed] = useState(false);
 
   useEffect(() => {
     const fetchAlerts = async () => {
@@ -51,6 +52,11 @@ function Alerts() {
     return new Date(epoch).toLocaleString();
   };
 
+  const handleReverseClick = () => {
+    setFilteredAlerts((prev) => [...prev].reverse());
+    setIsReversed((prev) => !prev);
+  };
+
   const handleArchiveToggle = async (
     alertId: string,
     currentArchiveStatus: boolean,
@@ -86,13 +92,27 @@ function Alerts() {
         <table className="alerts-table">
           <thead>
             <tr>
-              <th>Alert ID</th>
-              <th>Token ID</th>
-              <th>Date</th>
-              <th>Accessed By</th>
-              <th>File</th>
-              <th>Agent</th>
-              <th>Grade</th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Alert ID
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Token ID
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Date
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Accessed By
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                File
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Agent
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Grade
+              </th>
               <th className="filter-header">
                 <select
                   value={archiveFilter}

@@ -2,16 +2,22 @@ import { fileURLToPath } from 'url';
 import { execSync, exec } from 'child_process';
 import fs from 'fs';
 import path from 'path';
+import { initializeSchema as initialize_schema } from './server/database/init.js';
 
 main();
 
-function main() {
+async function main() {
   if (!isAdmin()) {
     console.error('[-] Error: must run as admin!');
     process.exit(-1);
   }
+
   const mode = get_mode();
   init_database_file();
+
+  
+  await initialize_schema();
+
   const root_dir = get_root_dir();
   setup_prettier_config(root_dir);
   setup_vscode_settings(root_dir);
@@ -19,6 +25,7 @@ function main() {
   install_deps();
   run_sigmatokens(mode);
 }
+
 
 function isAdmin() {
   try {

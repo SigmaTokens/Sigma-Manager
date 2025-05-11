@@ -122,9 +122,27 @@ export function serveAgents() {
       const { agent_id } = req.params;
 
       await verify_agent_by_id(agent_id);
+
+      const agent = await get_agent_by_id(agent_id);
+
+      const response_from_agent = await fetch(
+        'http://' +
+          agent.agent_ip +
+          ':' +
+          agent.agent_port +
+          '/api/general/init',
+        {
+          //signal: AbortSignal.timeout(300),
+          method: 'GET',
+        },
+      );
+
       res.json({ success: true });
+      return;
     } catch (err) {
       console.error(Constants.TEXT_RED_COLOR, 'Error: ', err);
+      res.json({ success: false });
+      return;
     }
   });
 

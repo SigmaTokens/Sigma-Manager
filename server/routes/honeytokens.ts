@@ -119,31 +119,31 @@ export function serveHoneytokens() {
   });
 
   router.post('/honeytokens/agent', async (req, res) => {
-    const { agent_id, agent_ip, agent_port } = req.body;
+    const { agent_ip, agent_port } = req.body;
     try {
-      if (!agent_id && (!agent_ip || !agent_port)) {
+      if (!agent_ip || !agent_port) {
         console.error('[-] missing params');
-        res.status(607).json({ failure: 'missing params' });
+        res.status(500).json({ failure: 'missing params' });
         return;
       }
 
-      let targetAgentId = agent_id;
+      console.log('agent ip: ', agent_ip);
+      console.log('agent port: ', agent_port);
 
-      if (!targetAgentId) {
-        console.log('agent ip: ', agent_ip);
-        console.log('agent port: ', agent_port);
-        const agents = await Globals.app.locals.db.all(`SELECT * FROM agents`);
-        console.log('Current agents in DB:', agents);
-        const agent = await get_agent_by_uri(agent_ip, agent_port);
-        if (!agent) {
-          console.error('[-] agent not found');
-          res.status(666).json({ failure: 'agent not found' });
-          return;
-        }
-        targetAgentId = agent.agent_id;
+      const agent = await get_agent_by_uri(agent_ip, agent_port);
+
+      if (!agent) {
+        console.error('[-] agent not found');
+        res.status(500).json({ failure: 'agent not found' });
+        return;
       }
 
-      const honeytokens = await get_honeytokens_by_agent_id(targetAgentId);
+      if (agent.validated !== 0) {
+        res.status(200).json([]);
+        return;
+      }
+
+      const honeytokens = await get_honeytokens_by_agent_id(agent.agent_id);
       res.status(200).json(honeytokens || []);
       return;
     } catch (error) {

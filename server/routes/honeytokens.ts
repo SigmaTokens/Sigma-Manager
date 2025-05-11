@@ -117,8 +117,8 @@ export function serveHoneytokens() {
         route,
         grade,
         expiration_date,
+        notes,
         response,
-        data,
         agent_id,
       } = req.body;
 
@@ -128,8 +128,8 @@ export function serveHoneytokens() {
         route,
         grade,
         expiration_date,
-        response,
-        data,
+        notes,
+        response, 
         agent_id,
       };
 
@@ -157,9 +157,9 @@ export function serveHoneytokens() {
         grade,
         new Date(),
         expiration_date,
-        '',
+        notes,
         response,
-        data,
+        '',
       );
 
       const response_from_agent = await fetch(
@@ -179,8 +179,8 @@ export function serveHoneytokens() {
             location: route,
             grade: grade,
             expiration_date: expiration_date,
-            notes: response,
-            data: data,
+            notes: notes,
+            data: response,
           }),
         },
       );

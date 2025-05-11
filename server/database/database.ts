@@ -6,6 +6,7 @@ import { init_tables, print_table } from './helpers';
 import { populate_types_table } from './types';
 import { dummy_populate_honeytokens } from './honeytokens';
 import { dummy_populate_alerts } from './alerts';
+import { init_users_table } from './users';
 import { Globals } from '../globals';
 
 export async function startDatabase() {
@@ -17,6 +18,7 @@ export async function startDatabase() {
     });
 
     await init_tables();
+    await init_users_table();
 
     await populate_types_table();
 

@@ -19,11 +19,14 @@ export async function init_honeytokens_table() {
       data TEXT,
       notes TEXT,
       agent_id VARCHAR,
+      user_id INTEGER,
       FOREIGN KEY (type_id) REFERENCES types (type_id) ON DELETE CASCADE,
-      FOREIGN KEY (agent_id) REFERENCES agents (agent_id) ON DELETE SET NULL
+      FOREIGN KEY (agent_id) REFERENCES agents (agent_id) ON DELETE SET NULL,
+      FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE SET NULL
     );
   `);
 }
+
 
 export async function get_all_honeytokens() {
   return await Globals.app.locals.db.all(sql`
@@ -224,7 +227,6 @@ export async function delete_honeytokens_by_group_id(group_id: String) {
     await rollback();
   }
 }
-
 export async function insert_honeytoken(
   agent_id: string,
   token_id: string,
@@ -237,6 +239,7 @@ export async function insert_honeytoken(
   expiration_date: Date,
   notes: string,
   data: string,
+  user_id: number,
 ) {
   await Globals.app.locals.db.run(
     sql`
@@ -252,10 +255,11 @@ export async function insert_honeytoken(
           location,
           file_name,
           data,
-          notes
+          notes,
+          user_id
         )
       VALUES
-        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
     [
       agent_id,
@@ -269,9 +273,11 @@ export async function insert_honeytoken(
       file_name,
       data,
       notes,
+      user_id,
     ],
   );
 }
+
 
 export async function dummy_populate_honeytokens() {
   await delete_all_honeytokens();
@@ -280,6 +286,10 @@ export async function dummy_populate_honeytokens() {
   const types = await get_all_types();
 
   if (types.length === 0) throw new Error('[-] No types found in types table');
+
+  const users = await get_all_users();
+
+  if (users.length === 0) throw new Error('[-] No users found in users table');
 
   for (let i = 0; i < 10; i++) {
     honeytokens.push({
@@ -297,6 +307,7 @@ export async function dummy_populate_honeytokens() {
       file_name: 'sample file_name',
       data: `Sample data for token ${i + 1}`,
       notes: `Sample notes for token ${i + 1}`,
+      user_id: users[Math.floor(Math.random() * users.length)].user_id,
     });
   }
 
@@ -314,10 +325,11 @@ export async function dummy_populate_honeytokens() {
             location,
             file_name,
             data,
-            notes
+            notes,
+            user_id
           )
         VALUES
-          (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       [
         token.token_id,
@@ -326,11 +338,6 @@ export async function dummy_populate_honeytokens() {
         token.grade,
         token.creation_date,
         token.expire_date,
-        token.location,
-        token.file_name,
-        token.data,
-        token.notes,
-      ],
-    );
-  }
+        token
+      
 }

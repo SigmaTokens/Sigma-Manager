@@ -2,7 +2,6 @@ const sql = (strings: TemplateStringsArray, ...values: any[]) =>
   String.raw(strings, ...values);
 import { Globals } from '../globals';
 import { begin_transaction, commit, rollback } from './helpers';
-
 export async function init_agents_table() {
   await Globals.app.locals.db.run(sql`
     CREATE TABLE IF NOT EXISTS agents (
@@ -10,7 +9,9 @@ export async function init_agents_table() {
       agent_name TEXT NOT NULL,
       agent_ip TEXT NOT NULL,
       agent_port INTEGER NOT NULL,
-      validated INTEGER DEFAULT 0
+      validated INTEGER DEFAULT 0,
+      user_id INTEGER,
+      FOREIGN KEY (user_id) REFERENCES users (user_id)
     );
   `);
 }
@@ -20,15 +21,16 @@ export async function insert_agent(
   ip: string,
   name: string,
   port: number,
+  user_id: number,
 ) {
   await Globals.app.locals.db.run(
     sql`
       INSERT INTO
-        agents (agent_id, agent_ip, agent_name, agent_port)
+        agents (agent_id, agent_ip, agent_name, agent_port, user_id)
       VALUES
-        (?, ?, ?, ?)
+        (?, ?, ?, ?, ?)
     `,
-    [agent_id, ip, name, port],
+    [agent_id, ip, name, port, user_id],
   );
 }
 
@@ -37,6 +39,7 @@ export async function update_agent(
   ip: string,
   name: string,
   port: number,
+  user_id: number,
 ) {
   await Globals.app.locals.db.run(
     sql`
@@ -44,13 +47,15 @@ export async function update_agent(
       SET
         agent_ip = ?,
         agent_name = ?,
-        agent_port = ?
+        agent_port = ?,
+        user_id = ?
       WHERE
         agent_id = ?
     `,
-    [ip, name, port, agent_id],
+    [ip, name, port, user_id, agent_id],
   );
 }
+
 
 export async function verify_agent_by_id(agent_id: string) {
   await Globals.app.locals.db.run(

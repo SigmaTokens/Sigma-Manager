@@ -239,7 +239,7 @@ export async function insert_honeytoken(
   expiration_date: Date,
   notes: string,
   data: string,
-  user_id: number,
+  0 //change it later to user_id 
 ) {
   await Globals.app.locals.db.run(
     sql`

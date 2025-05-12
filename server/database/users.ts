@@ -27,10 +27,8 @@ const sql = (strings: TemplateStringsArray, ...values: any[]) =>
   }
   
 
-
   export async function add_user(username: string, password: string) {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const userId = uuidv4();
+    const userId = uuidv4(); 
   
     await Globals.app.locals.db.run(
       sql`
@@ -39,10 +37,9 @@ const sql = (strings: TemplateStringsArray, ...values: any[]) =>
         VALUES
           (?, ?, ?)
       `,
-      [userId, username, hashedPassword],
+      [userId, username, password],
     );
   }
-  
   export async function check_user_credentials(username: string, password: string) {
     const user = await Globals.app.locals.db.get(sql`
       SELECT

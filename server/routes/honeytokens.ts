@@ -78,6 +78,7 @@ export function serveHoneytokens() {
         notes,
         '',
         data,
+        0,
       );
 
       const response_from_agent = await fetch(
@@ -120,6 +121,7 @@ export function serveHoneytokens() {
         notes,
         response,
         agent_id,
+        api_port,
       } = req.body;
 
       const required = {
@@ -131,6 +133,7 @@ export function serveHoneytokens() {
         notes,
         response, 
         agent_id,
+        api_port,
       };
 
       for (const [field, value] of Object.entries(required)) {
@@ -160,6 +163,7 @@ export function serveHoneytokens() {
         notes,
         response,
         '',
+        api_port,
       );
 
       const response_from_agent = await fetch(
@@ -181,6 +185,7 @@ export function serveHoneytokens() {
             expiration_date: expiration_date,
             notes: notes,
             data: response,
+            // api_port: api_port,
           }),
         },
       );

@@ -22,6 +22,7 @@ export async function init_honeytokens_table() {
       response TEXT,
       notes TEXT,
       agent_id VARCHAR,
+      api_port INTEGER,
       FOREIGN KEY (type_id) REFERENCES types (type_id) ON DELETE CASCADE,
       FOREIGN KEY (agent_id) REFERENCES agents (agent_id) ON DELETE SET NULL
     );
@@ -44,7 +45,8 @@ export async function get_all_honeytokens() {
       route,
       data,
       response,
-      notes
+      notes,
+      api_port
     FROM
       honeytokens
   `);
@@ -67,7 +69,8 @@ export async function get_honeytoken_by_token_id(token_id: String) {
         route,
         data,
         response,
-        notes
+        notes,
+        api_port
       FROM
         honeytokens
       WHERE
@@ -93,7 +96,8 @@ export async function get_honeytokens_by_agent_id(agent_id: String) {
         route,
         data,
         response,
-        notes
+        notes,
+        api_port
       FROM
         honeytokens
       WHERE
@@ -119,7 +123,8 @@ export async function get_honeytokens_by_type_id(type_id: String) {
         route,
         data,
         response,
-        notes
+        notes,
+        api_port
       FROM
         honeytokens
       WHERE
@@ -145,7 +150,8 @@ export async function get_honeytokens_by_group_id(group_id: String) {
         route,
         notes,
         response,
-        data
+        data,
+        api_port
       FROM
         honeytokens
       WHERE
@@ -258,6 +264,7 @@ export async function insert_honeytoken(
   notes: string,
   response: string,
   data: string,
+  api_port: number,
 ) {
   await Globals.app.locals.db.run(
     sql`
@@ -276,10 +283,11 @@ export async function insert_honeytoken(
           route,
           data,
           response,
-          notes
+          notes,
+          api_port
         )
       VALUES
-        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
     [
       agent_id,
@@ -296,6 +304,7 @@ export async function insert_honeytoken(
       data,
       response,
       notes,
+      api_port,
     ],
   );
 }
@@ -327,6 +336,7 @@ export async function dummy_populate_honeytokens() {
       data: `Sample data for token ${i + 1}`,
       response: `Sample response for token ${i + 1}`,
       notes: `Sample notes for token ${i + 1}`,
+      api_port: Math.floor(Math.random() * 10000) + 1,
     });
   }
 
@@ -347,10 +357,11 @@ export async function dummy_populate_honeytokens() {
             route,
             data,
             response,
-            notes
+            notes,
+            api_port,
           )
         VALUES
-          (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       [
         token.token_id,
@@ -366,6 +377,7 @@ export async function dummy_populate_honeytokens() {
         token.data,
         token.response,
         token.notes,
+        token.api_port,
       ],
     );
   }

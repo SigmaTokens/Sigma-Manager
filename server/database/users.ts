@@ -1,3 +1,7 @@
+
+import { v4 as uuidv4 } from 'uuid'; 
+
+
 const sql = (strings: TemplateStringsArray, ...values: any[]) =>
     String.raw(strings, ...values);
   import { Globals } from '../globals';
@@ -22,18 +26,23 @@ const sql = (strings: TemplateStringsArray, ...values: any[]) =>
     `);
   }
   
+
+
   export async function add_user(username: string, password: string) {
     const hashedPassword = await bcrypt.hash(password, 10);
+    const userId = uuidv4();
+  
     await Globals.app.locals.db.run(
       sql`
         INSERT INTO
-          users (username, password)
+          users (id, username, password)
         VALUES
-          (?, ?)
+          (?, ?, ?)
       `,
-      [username, hashedPassword],
+      [userId, username, hashedPassword],
     );
   }
+  
   export async function check_user_credentials(username: string, password: string) {
     const user = await Globals.app.locals.db.get(sql`
       SELECT

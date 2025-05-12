@@ -18,7 +18,7 @@ export async function startDatabase() {
     });
 
     await init_tables();
-    await init_users_table();
+   // await init_users_table();
 
     await populate_types_table();
 

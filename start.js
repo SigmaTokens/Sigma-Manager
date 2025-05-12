@@ -163,11 +163,6 @@ function install_deps() {
     console.log('[+] Updating deps for server~~~');
     execSync('npm install --prefix server', { stdio: 'inherit' });
 
-    console.log('[+] Installing bcrypt~~~');
-    execSync('npm install bcrypt --prefix server', { stdio: 'inherit' });
-
-    console.log('[+] Installing @types/bcrypt~~~');
-    execSync('npm install --save-dev @types/bcrypt --prefix server', { stdio: 'inherit' });
 
     console.log('[+] Deps update complete!');
   } catch (error) {

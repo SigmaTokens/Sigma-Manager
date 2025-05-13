@@ -79,6 +79,7 @@ export function serveHoneytokens() {
         '',
         data,
         0,
+        '1',
       );
 
       const response_from_agent = await fetch(
@@ -131,7 +132,7 @@ export function serveHoneytokens() {
         grade,
         expiration_date,
         notes,
-        response, 
+        response,
         agent_id,
         api_port,
       };
@@ -164,6 +165,7 @@ export function serveHoneytokens() {
         response,
         '',
         api_port,
+        '1',
       );
 
       const response_from_agent = await fetch(

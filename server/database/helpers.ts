@@ -6,6 +6,7 @@ import { init_types_table } from './types';
 import { init_whitelist_table } from './whitelist';
 import { init_agents_table } from './agents';
 import { Globals } from '../globals';
+import { init_users_table } from './users';
 
 export async function is_table_exists(table_name: string) {
   const result = await Globals.app.locals.db.get(
@@ -30,7 +31,6 @@ export async function init_tables() {
     await init_types_table();
     if (process.env.MODE === 'dev')
       console.log('[+] Initiated types table successfully');
-    
   }
   if (!(await is_table_exists('honeytokens'))) {
     await init_honeytokens_table();

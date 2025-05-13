@@ -152,7 +152,6 @@ function setup_vscode_settings(rootDir) {
 
   create_file(settingsFile, JSON.stringify(settings, null, 2));
 }
-
 function install_deps() {
   try {
     console.log('[+] Updating deps for root~~~');
@@ -164,12 +163,15 @@ function install_deps() {
     console.log('[+] Updating deps for server~~~');
     execSync('npm install --prefix server', { stdio: 'inherit' });
 
+
     console.log('[+] Deps update complete!');
   } catch (error) {
     console.error('[-] Failed to update deps:', error.message);
     process.exit(-1);
   }
 }
+
+
 
 function run_sigmatokens(mode) {
   try {

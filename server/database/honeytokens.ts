@@ -23,11 +23,14 @@ export async function init_honeytokens_table() {
       notes TEXT,
       agent_id VARCHAR,
       api_port INTEGER,
+      user_id INTEGER,
       FOREIGN KEY (type_id) REFERENCES types (type_id) ON DELETE CASCADE,
-      FOREIGN KEY (agent_id) REFERENCES agents (agent_id) ON DELETE SET NULL
+      FOREIGN KEY (agent_id) REFERENCES agents (agent_id) ON DELETE SET NULL,
+      FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE SET NULL
     );
   `);
 }
+
 
 export async function get_all_honeytokens() {
   return await Globals.app.locals.db.all(sql`
@@ -265,6 +268,7 @@ export async function insert_honeytoken(
   response: string,
   data: string,
   api_port: number,
+  user_id: string,
 ) {
   await Globals.app.locals.db.run(
     sql`
@@ -305,13 +309,11 @@ export async function insert_honeytoken(
       response,
       notes,
       api_port,
+      user_id,
     ],
   );
 }
 
-export async function dummy_populate_honeytokens() {
-  await delete_all_honeytokens();
-  const honeytokens = [];
 
   const types = await get_all_types();
 

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import {
   Card,
   Input,
-  //Checkbox,
   Select,
   SelectTrigger,
   SelectValue,
@@ -21,51 +20,96 @@ import {
 
 function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
   const [quantity, setQuantity] = useState<number>(1);
-  //const [excludeAccess, setExcludeAccess] = useState<string>('');
   const [selectedType, setSelectedType] = useState<string>('');
-  const [spreadAuto /*,setSpreadAuto*/] = useState<boolean>(false);
   const [notes, setNotes] = useState<string>('');
-  const [ComponentAddresses, setComponentAddresses] = useState<string>('');
+  const [componentAddresses, setComponentAddresses] = useState<string>('');
   const [expirationDate, setExpirationDate] = useState<string>('');
   const [grade, setGrade] = useState<number>(1);
   const [fileName, setFileName] = useState<string>('');
   const [fileContent, setFileContent] = useState<string>('');
   const [agentID, setAgentID] = useState<string>('');
   const [agents, setAgents] = useState<IAgent[]>([]);
+  const [errors, setErrors] = useState<any>({});
 
   useEffect(() => {
     getAgents().then((data) => {
       setAgents(data);
-      setAgentID(data[0].agent_id);
+      if (data.length > 0) setAgentID(data[0].agent_id);
     });
   }, []);
 
+  const validate = () => {
+    const newErrors: any = {};
+    if (!quantity) newErrors.quantity = true;
+    if (!selectedType) newErrors.selectedType = true;
+    if (!fileName) newErrors.fileName = true;
+    if (!componentAddresses) newErrors.componentAddresses = true;
+    if (!expirationDate) newErrors.expirationDate = true;
+    if (!agentID) newErrors.agentID = true;
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async () => {
+    if (!validate()) return;
+    try {
+      const response = await createHoneytokenText(
+        fileName,
+        componentAddresses,
+        grade,
+        expirationDate,
+        notes,
+        fileContent,
+        agentID,
+      );
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error creating honeytoken:', errorText);
+        alert('Failed to create honeytoken.');
+        return;
+      }
+      onClose();
+      window.location.href = '/honeytokens';
+    } catch (err) {
+      console.error('Request failed:', err);
+      alert('Something went wrong while creating the honeytoken.');
+    }
+  };
+
   return (
-    <div className="overlay" onClick={onClose}>
+    <div className="overlay">
       <div className="popup-card-token" onClick={(e) => e.stopPropagation()}>
         <Card>
           <h2 className="popup-title">Create Honeytoken</h2>
 
           <div className="popup-content">
             <p>
-              <label>Quantity</label>
+              <label>
+                Quantity <span className="required-star">*</span>
+              </label>
               <Input
                 type="number"
-                placeholder="Quantity"
                 min={1}
-                value={spreadAuto ? quantity : 1}
-                onChange={(e) => setQuantity(Number(e.target.value))}
-                disabled={!spreadAuto}
+                value={quantity}
+                onChange={(e) => {
+                  setQuantity(Number(e.target.value));
+                  setErrors({});
+                }}
               />
             </p>
 
             <p>
-              <label>Type</label>
+              <label>
+                Type <span className="required-star">*</span>
+              </label>
               <select
                 value={selectedType}
-                onChange={(e) => setSelectedType(e.target.value)}
-                style={{ color: selectedType === '' ? '#888' : 'black' }}
+                onChange={(e) => {
+                  setSelectedType(e.target.value);
+                  setErrors({});
+                }}
                 className="select-type"
+                style={{ color: selectedType ? '#000' : '#bbb' }}
               >
                 <option value="" disabled hidden>
                   Select Honeytoken Type
@@ -78,27 +122,12 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
               </select>
             </p>
 
-            {/* <p>
-              <label>Exclude Access</label>
-              <Input
-                type="text"
-                placeholder="Exclude Access (comma-separated)"
-                value={excludeAccess}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setExcludeAccess(e.target.value)
-                }
-              />
-            </p> */}
-
             <p>
               <label>Notes</label>
               <Input
                 type="text"
-                placeholder="Notes"
                 value={notes}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setNotes(e.target.value)
-                }
+                onChange={(e) => setNotes(e.target.value)}
               />
             </p>
 
@@ -108,72 +137,75 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                 setFileName={setFileName}
                 fileContent={fileContent}
                 setFileContent={setFileContent}
-                fileLocation={ComponentAddresses}
+                fileLocation={componentAddresses}
                 setFileLocation={setComponentAddresses}
+                clearErrors={() => setErrors({})}
               />
             )}
 
             <p>
               <label>Grade </label>
               <small className="grade-subtitle">
-                (Choose a grade between 1-10)
+                (Set the alert severity for this honeytoken (1 = lowest, 10 =
+                highest))
               </small>
-              <Input
-                type="number"
+              <input
+                type="range"
                 min={1}
                 max={10}
                 value={grade}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setGrade(Number(e.target.value))
-                }
+                onChange={(e) => setGrade(Number(e.target.value))}
+                className="custom-slider"
               />
+              <div className="selected-grade">Selected Grade: {grade}</div>
             </p>
 
             <p>
-              <label>Expiration Date</label>
+              <label>
+                Expiration Date <span className="required-star">*</span>
+              </label>
               <Input
                 type="date"
                 value={expirationDate}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setExpirationDate(e.target.value)
-                }
+                onChange={(e) => {
+                  setExpirationDate(e.target.value);
+                  setErrors({});
+                }}
               />
             </p>
 
             <p>
-              <label>agent</label>
+              <label>
+                Agent <span className="required-star">*</span>
+              </label>
               <Select
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                   setAgentID(e.target.value);
+                  setErrors({});
                 }}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select Agent IP" />
                 </SelectTrigger>
                 <SelectContent>
-                  {agents.map((agent) => (
-                    <SelectItem key={agent.agent_id} value={agent.agent_id}>
-                      {agent.agent_ip}:{agent.agent_port} | {agent.agent_name}
-                    </SelectItem>
-                  ))}
+                  {agents
+                    .filter((agent) => agent.validated)
+                    .map((agent) => (
+                      <SelectItem key={agent.agent_id} value={agent.agent_id}>
+                        {agent.agent_ip}:{agent.agent_port} | {agent.agent_name}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </p>
-
-            {/* <p>
-              <div className="checkbox-container">
-                <Checkbox
-                  checked={spreadAuto}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setSpreadAuto(e.target.checked)
-                  }
-                  disabled={true}
-                />
-                <label>Spread Tokens Automatically</label>
-              </div>
-            </p> */}
           </div>
 
+          {Object.keys(errors).length > 0 && (
+            <div className="global-error">
+              <span className="required-star">*</span> Please fill in all
+              required fields
+            </div>
+          )}
           <div className="button-container">
             <button className="button button-outline" onClick={onClose}>
               Cancel
@@ -182,35 +214,7 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
             <button
               className="button button-primary"
               disabled={selectedType === ''}
-              onClick={async () => {
-                if (quantity === 1) {
-                  try {
-                    const response = await createHoneytokenText(
-                      fileName,
-                      ComponentAddresses,
-                      grade,
-                      expirationDate,
-                      notes,
-                      fileContent,
-                      agentID,
-                    );
-                    if (!response.ok) {
-                      const errorText = await response.text();
-                      console.error('Error:', errorText);
-                      alert('Failed to create honeytoken.');
-                    } else {
-                      onClose();
-                    }
-                  } catch (err) {
-                    console.error('Request failed:', err);
-                    alert(
-                      'Something went wrong while creating the honeytoken.',
-                    );
-                  }
-                } else {
-                  //TODO: handle quantity > 1 in the future
-                }
-              }}
+              onClick={handleSubmit}
             >
               Submit
             </button>

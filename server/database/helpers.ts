@@ -30,6 +30,7 @@ export async function init_tables() {
     await init_types_table();
     if (process.env.MODE === 'dev')
       console.log('[+] Initiated types table successfully');
+    
   }
   if (!(await is_table_exists('honeytokens'))) {
     await init_honeytokens_table();
@@ -51,6 +52,7 @@ export async function init_tables() {
     if (process.env.MODE === 'dev')
       console.log('[+] Initiated agents table successfully');
   }
+  await init_users_table();
 }
 
 export async function print_table(table_name: string) {

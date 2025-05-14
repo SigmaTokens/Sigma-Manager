@@ -40,6 +40,24 @@ export function serveHoneytokens() {
         agent_id,
       } = req.body;
 
+      const required = {
+        type,
+        file_name,
+        location,
+        grade,
+        expiration_date,
+        notes,
+        data,
+        agent_id,
+      };
+
+      for (const [field, value] of Object.entries(required)) {
+        if (value === undefined || value === null || value === '') {
+          res.status(400).json({ failure: `Missing required field: ${field}` });
+          return;
+        }
+      }
+
       const agent = await get_agent_by_id(agent_id);
 
       const token_id = uuidv4();
@@ -52,11 +70,15 @@ export function serveHoneytokens() {
         type,
         file_name,
         location,
+        '',
+        '',
         grade,
         new Date(),
         expiration_date,
         notes,
+        '',
         data,
+        0,
       );
 
       const response_from_agent = await fetch(
@@ -78,6 +100,92 @@ export function serveHoneytokens() {
             expiration_date: expiration_date,
             notes: notes,
             data: data,
+          }),
+        },
+      );
+
+      res.status(200).json({ success: 'nice' });
+    } catch (error) {
+      console.error({ failure: error });
+      res.status(500).json({ failure: error });
+    }
+  });
+  router.post('/honeytokens/api', async (req, res) => {
+    try {
+      const {
+        type,
+        http_method,
+        route,
+        grade,
+        expiration_date,
+        notes,
+        response,
+        agent_id,
+        api_port,
+      } = req.body;
+
+      const required = {
+        type,
+        http_method,
+        route,
+        grade,
+        expiration_date,
+        notes,
+        response, 
+        agent_id,
+        api_port,
+      };
+
+      for (const [field, value] of Object.entries(required)) {
+        if (value === undefined || value === null || value === '') {
+          res.status(400).json({ failure: `Missing required field: ${field}` });
+          return;
+        }
+      }
+
+      const agent = await get_agent_by_id(agent_id);
+
+      const token_id = uuidv4();
+      const group_id = uuidv4();
+
+      await insert_honeytoken(
+        agent_id,
+        token_id,
+        group_id,
+        type,
+        '',
+        '',
+        http_method,
+        route,
+        grade,
+        new Date(),
+        expiration_date,
+        notes,
+        response,
+        '',
+        api_port,
+      );
+
+      const response_from_agent = await fetch(
+        'http://' +
+          agent.agent_ip +
+          ':' +
+          agent.agent_port +
+          '/api/honeytoken/add',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            token_id: token_id,
+            group_id: group_id,
+            type: type,
+            file_name: http_method,
+            location: route,
+            grade: grade,
+            expiration_date: expiration_date,
+            notes: notes,
+            data: response,
+            // api_port: api_port,
           }),
         },
       );
@@ -159,33 +267,35 @@ export function serveHoneytokens() {
 
   router.delete('/honeytokens/token/:token_id', async (req, res) => {
     const { token_id } = req.params;
+
     try {
-      //remove
-
       const token = await get_honeytoken_by_token_id(token_id);
-
+      if (token == undefined) {
+        res.status(500).json({ failure: 'error' });
+      }
       const agent = await get_agent_by_id(token.agent_id);
-
-      const response_from_agent = await fetch(
-        'http://' +
-          agent.agent_ip +
-          ':' +
-          agent.agent_port +
-          '/api/honeytoken/remove',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            token_id: token_id,
-          }),
-        },
-      );
-
-      await delete_honeytoken_by_id(token_id);
-      res.json({ success: true });
+      if (agent != undefined) {
+        const response_from_agent = await fetch(
+          'http://' +
+            agent.agent_ip +
+            ':' +
+            agent.agent_port +
+            '/api/honeytoken/remove',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              token_id: token_id,
+            }),
+          },
+        );
+      }
     } catch (error) {
       console.error('[-] Failed to delete honeytoken:', error);
       res.status(500).json({ failure: error });
+    } finally {
+      await delete_honeytoken_by_id(token_id);
+      res.json({ success: true });
     }
   });
 
@@ -215,11 +325,12 @@ export function serveHoneytokens() {
     const { token_id } = req.body;
     try {
       const token = await get_honeytoken_by_token_id(token_id);
-
       const agent = await get_agent_by_id(token.agent_id);
 
-      console.log('JOKER monitor_status:', token);
-      console.log('JOKER monitor_status:', agent);
+      if (token == undefined || agent == undefined) {
+        res.status(201).json({ success: 'not monitoring honeytoken' });
+        return;
+      }
 
       const response_from_agent = await fetch(
         'http://' +

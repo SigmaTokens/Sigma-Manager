@@ -16,7 +16,7 @@ import { Constants } from '../constants';
 async function checkAgentStatus(ip: string, port: string): Promise<string> {
   try {
     const response = await fetch('http://' + ip + ':' + port + '/status', {
-      signal: AbortSignal.timeout(300),
+      //signal: AbortSignal.timeout(300),
     });
     return response.status == 200 ? 'online' : 'offline';
   } catch (error) {
@@ -140,7 +140,7 @@ export function serveAgents() {
           agent.agent_port +
           '/api/monitor/status',
         {
-          signal: AbortSignal.timeout(300),
+          //signal: AbortSignal.timeout(300),
           method: 'GET',
         },
       );

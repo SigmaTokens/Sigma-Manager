@@ -1,3 +1,5 @@
+/* AddAgentPopup.css */
+
 .overlay {
   position: fixed;
   top: 0;
@@ -11,10 +13,30 @@
   z-index: 9999;
 }
 
-.instruction1 {
+/* Instruction blocks all share the same spacing & layout */
+.instruction0,
+.instruction1,
+.instruction2,
+.instruction3,
+.instruction4,
+.instruction6 {
+  margin-bottom: 1rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+/* Make the “Add agent via…” radios horizontal */
+.instruction0 {
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* space between the labels */
+  margin-bottom: 1rem;
+}
+.instruction0 label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .agent-input {
@@ -27,8 +49,9 @@
 .tabs {
   display: flex;
   justify-content: center;
-  gap: 20px;
-  margin: 20px 0px 40px 0px;
+  gap: 20px; 
+  margin: 20px 0 40px;
+}
 }
 
 .tab {
@@ -127,6 +150,7 @@ input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
 input[type='number'] {
   -moz-appearance: textfield;
   appearance: textfield;
@@ -135,6 +159,7 @@ input[type='number'] {
 .script-with-button {
   position: relative;
 }
+
 .copy-icon {
   color: gray;
   position: absolute;

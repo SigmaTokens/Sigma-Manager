@@ -1,5 +1,10 @@
 import { GiCardboardBoxClosed, GiCardboardBox } from 'react-icons/gi';
-import { FiChevronDown, FiChevronRight, FiInfo } from 'react-icons/fi';
+import {
+  FiChevronDown,
+  FiChevronUp,
+  FiChevronRight,
+  FiInfo,
+} from 'react-icons/fi';
 import { useEffect, useState } from 'react';
 import '../styles/Alerts.css';
 import { getAlerts, archiveAlert } from '../models/Alerts';
@@ -14,6 +19,7 @@ function Alerts() {
   const [archiveFilter, setArchiveFilter] = useState<number>(2);
   const [expandedDetails, setExpandedDetails] = useState<string | null>(null);
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
+  const [isReversed, setIsReversed] = useState(false);
 
   useEffect(() => {
     const fetchAlerts = async () => {
@@ -51,6 +57,11 @@ function Alerts() {
     return new Date(epoch).toLocaleString();
   };
 
+  const handleReverseClick = () => {
+    setFilteredAlerts((prev) => [...prev].reverse());
+    setIsReversed((prev) => !prev);
+  };
+
   const handleArchiveToggle = async (
     alertId: string,
     currentArchiveStatus: boolean,
@@ -86,13 +97,28 @@ function Alerts() {
         <table className="alerts-table">
           <thead>
             <tr>
-              <th>Alert ID</th>
-              <th>Token ID</th>
-              <th>Date</th>
-              <th>Accessed By</th>
-              <th>File</th>
-              <th>Agent</th>
-              <th>Grade</th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Alert ID {isReversed ? <FiChevronUp /> : <FiChevronDown />}
+              </th>
+
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Token ID {isReversed ? <FiChevronUp /> : <FiChevronDown />}
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Date {isReversed ? <FiChevronUp /> : <FiChevronDown />}
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Accessed By {isReversed ? <FiChevronUp /> : <FiChevronDown />}
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                File {isReversed ? <FiChevronUp /> : <FiChevronDown />}
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Agent {isReversed ? <FiChevronUp /> : <FiChevronDown />}
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Grade {isReversed ? <FiChevronUp /> : <FiChevronDown />}
+              </th>
               <th className="filter-header">
                 <select
                   value={archiveFilter}

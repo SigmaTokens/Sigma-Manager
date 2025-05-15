@@ -38,7 +38,6 @@ export function serveHoneytokens() {
         location,
         grade,
         expiration_date,
-        notes,
         data,
         agent_id,
       };
@@ -101,17 +100,7 @@ export function serveHoneytokens() {
   });
   router.post('/honeytokens/api', async (req, res) => {
     try {
-      const {
-        type,
-        http_method,
-        route,
-        grade,
-        expiration_date,
-        notes,
-        response,
-        agent_id,
-        api_port,
-      } = req.body;
+      const { type, http_method, route, grade, expiration_date, notes, response, agent_id, api_port } = req.body;
 
       const required = {
         type,
@@ -157,11 +146,7 @@ export function serveHoneytokens() {
       );
 
       const response_from_agent = await fetch(
-        'http://' +
-          agent.agent_ip +
-          ':' +
-          agent.agent_port +
-          '/api/honeytoken/add',
+        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/honeytoken/add',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

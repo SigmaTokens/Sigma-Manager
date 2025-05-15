@@ -38,7 +38,6 @@ export function serveHoneytokens() {
         location,
         grade,
         expiration_date,
-        data,
         agent_id,
       };
 

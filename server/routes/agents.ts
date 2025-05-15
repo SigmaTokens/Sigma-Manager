@@ -57,9 +57,9 @@ export function serveAgents() {
       );
 
       if (agent_id_exists) {
-        await update_agent(id, ip, name, parseInt(port));
+        await update_agent(id, ip, name, parseInt(port), 1);
       } else {
-        await insert_agent(id, ip, name, parseInt(port));
+        await insert_agent(id, ip, name, parseInt(port), 1);
       }
       res.sendStatus(200);
     } catch (error: any) {

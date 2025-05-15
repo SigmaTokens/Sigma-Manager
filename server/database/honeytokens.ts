@@ -31,7 +31,6 @@ export async function init_honeytokens_table() {
   `);
 }
 
-
 export async function get_all_honeytokens() {
   return await Globals.app.locals.db.all(sql`
     SELECT
@@ -49,7 +48,8 @@ export async function get_all_honeytokens() {
       data,
       response,
       notes,
-      api_port
+      api_port,
+      user_id
     FROM
       honeytokens
   `);
@@ -73,7 +73,8 @@ export async function get_honeytoken_by_token_id(token_id: String) {
         data,
         response,
         notes,
-        api_port
+        api_port,
+        user_id
       FROM
         honeytokens
       WHERE
@@ -100,7 +101,8 @@ export async function get_honeytokens_by_agent_id(agent_id: String) {
         data,
         response,
         notes,
-        api_port
+        api_port,
+        user_id
       FROM
         honeytokens
       WHERE
@@ -127,7 +129,8 @@ export async function get_honeytokens_by_type_id(type_id: String) {
         data,
         response,
         notes,
-        api_port
+        api_port,
+        user_id
       FROM
         honeytokens
       WHERE
@@ -154,7 +157,8 @@ export async function get_honeytokens_by_group_id(group_id: String) {
         notes,
         response,
         data,
-        api_port
+        api_port,
+        user_id
       FROM
         honeytokens
       WHERE
@@ -288,10 +292,11 @@ export async function insert_honeytoken(
           data,
           response,
           notes,
-          api_port
+          api_port,
+          user_id
         )
       VALUES
-        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
     [
       agent_id,
@@ -312,75 +317,4 @@ export async function insert_honeytoken(
       user_id,
     ],
   );
-}
-
-
-  const types = await get_all_types();
-
-  if (types.length === 0) throw new Error('[-] No types found in types table');
-
-  for (let i = 0; i < 10; i++) {
-    honeytokens.push({
-      token_id: uuidv4(),
-      group_id: `group_${Math.floor(Math.random() * 5) + 1}`,
-      type_id: types[Math.floor(Math.random() * types.length)].type_id,
-      grade: Math.floor(Math.random() * 10) + 1,
-      creation_date: new Date(Date.now() - Math.random() * 10000000000)
-        .toISOString()
-        .split('T')[0],
-      expire_date: new Date(Date.now() + Math.random() * 10000000000)
-        .toISOString()
-        .split('T')[0],
-      location: 'sample location',
-      file_name: 'sample file_name',
-      http_method: 'GET',
-      route: '/sample/route',
-      data: `Sample data for token ${i + 1}`,
-      response: `Sample response for token ${i + 1}`,
-      notes: `Sample notes for token ${i + 1}`,
-      api_port: Math.floor(Math.random() * 10000) + 1,
-    });
-  }
-
-  for (const token of honeytokens) {
-    await Globals.app.locals.db.run(
-      sql`
-        INSERT INTO
-          honeytokens (
-            token_id,
-            group_id,
-            type_id,
-            grade,
-            creation_date,
-            expire_date,
-            location,
-            file_name,
-            http_method,
-            route,
-            data,
-            response,
-            notes,
-            api_port,
-          )
-        VALUES
-          (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `,
-      [
-        token.token_id,
-        token.group_id,
-        token.type_id,
-        token.grade,
-        token.creation_date,
-        token.expire_date,
-        token.location,
-        token.file_name,
-        token.http_method,
-        token.route,
-        token.data,
-        token.response,
-        token.notes,
-        token.api_port,
-      ],
-    );
-  }
 }

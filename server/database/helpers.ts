@@ -50,7 +50,12 @@ export async function init_tables() {
     if (process.env.MODE === 'dev')
       console.log(Constants.TEXT_GREEN_COLOR, 'Initiated agents table successfully', Constants.TEXT_WHITE_COLOR);
   }
-  await init_users_table();
+
+  if (!(await is_table_exists('users'))) {
+    await init_users_table();
+    if (process.env.MODE === 'dev')
+      console.log(Constants.TEXT_GREEN_COLOR, 'Initiated users table successfully', Constants.TEXT_WHITE_COLOR);
+  }
 }
 
 export async function print_table(table_name: string) {

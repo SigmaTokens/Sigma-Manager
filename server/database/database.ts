@@ -3,6 +3,7 @@ import { open } from 'sqlite';
 import path from 'path';
 import { init_tables } from './helpers';
 import { populate_types_table } from './types';
+import { init_users_table } from './users';
 import { Globals } from '../globals';
 import { Constants } from '../constants';
 
@@ -15,6 +16,7 @@ export async function startDatabase() {
     });
 
     await init_tables();
+    await init_users_table();
     await populate_types_table();
   } catch (error) {
     if (process.env.MODE === 'dev')

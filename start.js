@@ -145,7 +145,6 @@ function setup_vscode_settings(rootDir) {
 
   create_file(settingsFile, JSON.stringify(settings, null, 2));
 }
-
 function install_deps() {
   try {
     console.log(Constants.TEXT_YELLOW_COLOR,'Updating deps for root',Constants.TEXT_WHITE_COLOR);

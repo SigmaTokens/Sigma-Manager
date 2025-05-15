@@ -6,6 +6,7 @@ import { init_whitelist_table } from './whitelist';
 import { init_agents_table } from './agents';
 import { Globals } from '../globals';
 import { Constants } from '../constants';
+import { init_users_table } from './users';
 
 export async function is_table_exists(table_name: string) {
   const result = await Globals.app.locals.db.get(
@@ -48,6 +49,21 @@ export async function init_tables() {
     await init_agents_table();
     if (process.env.MODE === 'dev')
       console.log(Constants.TEXT_GREEN_COLOR, 'Initiated agents table successfully', Constants.TEXT_WHITE_COLOR);
+  }
+  await init_users_table();
+}
+
+export async function print_table(table_name: string) {
+  try {
+    const rows = await Globals.app.locals.db.all(sql`
+      SELECT
+        *
+      FROM
+        ${table_name}
+    `);
+    if (process.env.MODE === 'dev') console.log(`[+] Table '${table_name}' data (${rows.length} rows):`, rows);
+  } catch (error) {
+    if (process.env.MODE === 'dev') console.error(`[-] Failed to fetch data from table '${table_name}':`, error);
   }
 }
 

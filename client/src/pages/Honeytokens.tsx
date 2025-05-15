@@ -9,11 +9,13 @@ import {
 } from '../models/Honeytoken';
 import { IHoneytoken } from '../../../server/interfaces/honeytoken';
 import { FaTrash, FaPlay, FaStop } from 'react-icons/fa';
+import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 
 function Honeytokens() {
   const [honeytokens, setHoneytokens] = useState<IHoneytoken[]>([]);
   const [refreshCounter, setRefreshCounter] = useState(0);
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
+  const [isReversed, setIsReversed] = useState(false);
 
   useEffect(() => {
     const fetchHoneytokens = async () => {
@@ -79,6 +81,11 @@ function Honeytokens() {
     }
   };
 
+  const handleReverseClick = () => {
+    setHoneytokens((prev) => [...prev].reverse());
+    setIsReversed((prev) => !prev);
+  };
+
   return (
     <div className="honeytokens-container">
       <h1 className="honeytokens-title">Honeytokens Dashboard</h1>
@@ -96,20 +103,41 @@ function Honeytokens() {
         <table className="honeytokens-table">
           <thead>
             <tr>
-              <th>Agent ID</th>
-              <th>Token ID</th>
-              <th>Group ID</th>
-              <th>Type ID</th>
-              <th>Creation Date</th>
-              <th>Expire Date</th>
-              <th>Location</th>
-              <th>File Name</th>
-              <th>Data</th>
-              <th>Notes</th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Agent ID {isReversed ? <FiChevronUp /> : <FiChevronDown />}
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Token ID {isReversed ? <FiChevronUp /> : <FiChevronDown />}
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Group ID {isReversed ? <FiChevronUp /> : <FiChevronDown />}
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Type ID {isReversed ? <FiChevronUp /> : <FiChevronDown />}
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Creation Date {isReversed ? <FiChevronUp /> : <FiChevronDown />}
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Expire Date {isReversed ? <FiChevronUp /> : <FiChevronDown />}
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Location {isReversed ? <FiChevronUp /> : <FiChevronDown />}
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                File Name {isReversed ? <FiChevronUp /> : <FiChevronDown />}
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Data {isReversed ? <FiChevronUp /> : <FiChevronDown />}
+              </th>
+              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+                Notes {isReversed ? <FiChevronUp /> : <FiChevronDown />}
+              </th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
+
           <tbody>
             {honeytokens.length > 0 ? (
               honeytokens.map((honeytoken) => (

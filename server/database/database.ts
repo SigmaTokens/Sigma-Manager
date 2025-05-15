@@ -3,7 +3,6 @@ import { open } from 'sqlite';
 import path from 'path';
 import { init_tables } from './helpers';
 import { populate_types_table } from './types';
-import { init_users_table } from './users';
 import { Globals } from '../globals';
 import { Constants } from '../constants';
 

@@ -43,12 +43,12 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
 
   useEffect(() => {
     let newScript = '';
+    console.log('cool');
     if (connectionMode === 'ip') {
       if (!serverAddress) return;
-      newScript = generateScript(os, serverAddress.ip, serverAddress.port, agentName, undefined);
+      newScript = generateScript(os, serverAddress.ip, serverAddress.port, agentName, undefined, 'ip');
     } else {
-      if (!domainName) return;
-      newScript = generateScript(os, undefined, undefined, agentName, domainName);
+      newScript = generateScript(os, undefined, undefined, agentName, domainName, 'domain');
     }
     setScript(newScript);
   }, [os, serverAddress, agentName, connectionMode, domainName]);
@@ -180,11 +180,12 @@ function generateScript(
   manager_port?: number,
   agentName?: string,
   manager_domain?: string,
+  mode?: 'domain' | 'ip',
 ): string {
   const header = `AGENT_NAME=${agentName || 'NEW AGENT'}`;
   switch (os) {
     case 'Windows':
-      if (manager_domain) {
+      if (mode == 'domain') {
         return `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
 git clone https://github.com/SigmaTokens/Sigma-Agent.git
 Set-Location Sigma-Agent
@@ -204,7 +205,7 @@ ${header}
 "@ | Out-File .env -Encoding utf8
 npm run start-prod`;
     case 'Linux':
-      if (manager_domain) {
+      if (mode == 'domain') {
         return `git clone https://github.com/SigmaTokens/Sigma-Agent.git && \
 cd Sigma-Agent && \
 printf "MANAGER_DOMAIN=${manager_domain}\n${header}\n" | tee .env > /dev/null && \
@@ -215,7 +216,7 @@ cd Sigma-Agent && \
 printf "MANAGER_IP=${manager_ip}\nMANAGER_PORT=${manager_port}\n${header}\n" | tee .env > /dev/null && \
 npm run start-prod-linux`;
     case 'MacOS':
-      if (manager_domain) {
+      if (mode == 'domain') {
         return `echo "MANAGER_DOMAIN=${manager_domain}\n${header}" > .env && ./start-mac.sh`;
       }
       return `echo "MANAGER_IP=${manager_ip}\nMANAGER_PORT=${manager_port}\n${header}" > .env && ./start-mac.sh`;

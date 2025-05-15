@@ -18,11 +18,7 @@ export async function getAgents() {
   }
 }
 
-export async function addAgent(
-  agentIP: string,
-  agentName: string,
-  agentPort: number | undefined,
-) {
+export async function addAgent(agentIP: string, agentName: string, agentPort: number | undefined) {
   try {
     const response = await fetch('http://localhost:3000/api/agents/add', {
       method: 'POST',
@@ -39,8 +35,6 @@ export async function addAgent(
     if (!response.ok) {
       const errorText = await response.text();
       console.error('Error:', errorText);
-    } else {
-      console.log('Agent added successfully!');
     }
   } catch (err) {
     console.error('Request failed:', err);
@@ -86,31 +80,24 @@ export async function stopAgent(agent_id: string) {
 }
 
 export async function areAgentsConnected() {
-  const response = await fetch(
-    'http://localhost:3000/api/agents/active_status',
-  );
+  const response = await fetch('http://localhost:3000/api/agents/active_status');
   return await response.json();
 }
 
 export async function isAgentMonitoring(agent_id: string): Promise<boolean> {
   try {
-    const response = await fetch(
-      `http://localhost:3000/api/agents/monitor_status`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          agent_id: agent_id,
-        }),
+    const response = await fetch(`http://localhost:3000/api/agents/monitor_status`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    );
+      body: JSON.stringify({
+        agent_id: agent_id,
+      }),
+    });
     if (response.ok && response.status === 200) {
-      console.log('agent is monitoring');
       return true;
     }
-    console.log('agent is not monitoring');
     return false;
   } catch (err) {
     console.error('Error stopping agent:', err);
@@ -120,12 +107,9 @@ export async function isAgentMonitoring(agent_id: string): Promise<boolean> {
 
 export async function deleteAgent(agent_id: string) {
   try {
-    const response = await fetch(
-      `http://localhost:3000/api/agents/agent/${agent_id}`,
-      {
-        method: 'DELETE',
-      },
-    );
+    const response = await fetch(`http://localhost:3000/api/agents/agent/${agent_id}`, {
+      method: 'DELETE',
+    });
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -134,18 +118,11 @@ export async function deleteAgent(agent_id: string) {
   }
 }
 
-export async function verifyAgent(
-  agent_id: string,
-  setAgents: any,
-  setStatusUpdates: any,
-) {
+export async function verifyAgent(agent_id: string, setAgents: any, setStatusUpdates: any) {
   try {
-    const response = await fetch(
-      `http://localhost:3000/api/agents/verify/${agent_id}`,
-      {
-        method: 'GET',
-      },
-    );
+    const response = await fetch(`http://localhost:3000/api/agents/verify/${agent_id}`, {
+      method: 'GET',
+    });
     fetchAgents(setAgents, setStatusUpdates);
   } catch (err) {
     console.error('Error verifying agent: ', err);
@@ -177,10 +154,7 @@ export async function fetchAgents(setAgents: any, setStatusUpdates: any) {
 
           return { ...agent, isMonitoring: isMonitoring };
         } catch (err) {
-          console.error(
-            `Failed to check monitoring for agent ${agent.agent_id}:`,
-            err,
-          );
+          console.error(`Failed to check monitoring for agent ${agent.agent_id}:`, err);
           return { ...agent, isMonitoring: false };
         }
       }),

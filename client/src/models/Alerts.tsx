@@ -12,7 +12,7 @@ export async function getAlerts() {
 
 export async function archiveAlert(alertId: string, archive: boolean) {
   try {
-    const response = await fetch('http://localhost:3000/api/alerts/archive/'+alertId, {
+    const response = await fetch('http://localhost:3000/api/alerts/archive/' + alertId, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -28,7 +28,6 @@ export async function archiveAlert(alertId: string, archive: boolean) {
       alert('Failed to set alert as archive.');
       return false;
     } else {
-      console.log('Alert set as archive successfully!');
       return true;
     }
   } catch (err) {

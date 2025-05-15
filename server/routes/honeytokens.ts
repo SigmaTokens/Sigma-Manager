@@ -13,6 +13,7 @@ import {
 import { Globals } from '../globals';
 import { get_agent_by_id, get_agent_by_uri } from '../database/agents';
 import { v4 as uuidv4 } from 'uuid';
+import { Constants } from '../constants';
 
 export function serveHoneytokens() {
   const router = Router();
@@ -22,23 +23,14 @@ export function serveHoneytokens() {
       const honeytokens = await get_all_honeytokens();
       res.json(honeytokens);
     } catch (error) {
-      console.error('[-] Failed to fetch honeytokens:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to fetch honeytokens:', error, Constants.TEXT_WHITE_COLOR);
       res.status(500).json({ failure: error });
     }
   });
 
   router.post('/honeytokens/text', async (req, res) => {
     try {
-      const {
-        type,
-        file_name,
-        location,
-        grade,
-        expiration_date,
-        notes,
-        data,
-        agent_id,
-      } = req.body;
+      const { type, file_name, location, grade, expiration_date, notes, data, agent_id } = req.body;
 
       const required = {
         type,
@@ -83,11 +75,7 @@ export function serveHoneytokens() {
       );
 
       const response_from_agent = await fetch(
-        'http://' +
-          agent.agent_ip +
-          ':' +
-          agent.agent_port +
-          '/api/honeytoken/add',
+        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/honeytoken/add',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -205,7 +193,12 @@ export function serveHoneytokens() {
       const honeytoken = await get_honeytoken_by_token_id(token_id);
       res.json(honeytoken);
     } catch (error) {
-      console.error('[-] Failed to fetch honeytoken by token_id:', error);
+      console.error(
+        Constants.TEXT_RED_COLOR,
+        'Failed to fetch honeytoken by token_id:',
+        error,
+        Constants.TEXT_WHITE_COLOR,
+      );
       res.status(500).json({ failure: error });
     }
   });
@@ -214,7 +207,7 @@ export function serveHoneytokens() {
     const { agent_id, agent_ip, agent_port } = req.body;
     try {
       if (!agent_id && (!agent_ip || !agent_port)) {
-        console.error('[-] missing params');
+        console.error(Constants.TEXT_RED_COLOR, 'missing params', Constants.TEXT_WHITE_COLOR);
         res.status(607).json({ failure: 'missing params' });
         return;
       }
@@ -222,13 +215,10 @@ export function serveHoneytokens() {
       let targetAgentId = agent_id;
 
       if (!targetAgentId) {
-        console.log('agent ip: ', agent_ip);
-        console.log('agent port: ', agent_port);
         const agents = await Globals.app.locals.db.all(`SELECT * FROM agents`);
-        console.log('Current agents in DB:', agents);
         const agent = await get_agent_by_uri(agent_ip, agent_port);
         if (!agent) {
-          console.error('[-] agent not found');
+          console.error(Constants.TEXT_RED_COLOR, 'agent not found', Constants.TEXT_WHITE_COLOR);
           res.status(666).json({ failure: 'agent not found' });
           return;
         }
@@ -239,7 +229,12 @@ export function serveHoneytokens() {
       res.status(200).json(honeytokens || []);
       return;
     } catch (error) {
-      console.error('[-] Failed to fetch honeytokens by agent_id:', error);
+      console.error(
+        Constants.TEXT_RED_COLOR,
+        'Failed to fetch honeytokens by agent_id:',
+        error,
+        Constants.TEXT_WHITE_COLOR,
+      );
       res.status(444).json({ error: 'Internal server error' });
       return;
     }
@@ -251,7 +246,12 @@ export function serveHoneytokens() {
       const honeytokens = await get_honeytokens_by_type_id(type_id);
       res.json(honeytokens);
     } catch (error) {
-      console.error('[-] Failed to fetch honeytokens by type_id:', error);
+      console.error(
+        Constants.TEXT_RED_COLOR,
+        'Failed to fetch honeytokens by type_id:',
+        error,
+        Constants.TEXT_WHITE_COLOR,
+      );
       res.status(500).json({ failure: error });
     }
   });
@@ -262,7 +262,12 @@ export function serveHoneytokens() {
       const honeytokens = await get_honeytokens_by_group_id(group_id);
       res.json(honeytokens);
     } catch (error) {
-      console.error('[-] Failed to fetch honeytokens by group_id:', error);
+      console.error(
+        Constants.TEXT_RED_COLOR,
+        'Failed to fetch honeytokens by group_id:',
+        error,
+        Constants.TEXT_WHITE_COLOR,
+      );
       res.status(500).json({ failure: error });
     }
   });
@@ -278,11 +283,7 @@ export function serveHoneytokens() {
       const agent = await get_agent_by_id(token.agent_id);
       if (agent != undefined) {
         const response_from_agent = await fetch(
-          'http://' +
-            agent.agent_ip +
-            ':' +
-            agent.agent_port +
-            '/api/honeytoken/remove',
+          'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/honeytoken/remove',
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -293,7 +294,7 @@ export function serveHoneytokens() {
         );
       }
     } catch (error) {
-      console.error('[-] Failed to delete honeytoken:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to delete honeytoken:', error, Constants.TEXT_WHITE_COLOR);
       res.status(500).json({ failure: error });
     } finally {
       await delete_honeytoken_by_id(token_id);
@@ -307,7 +308,7 @@ export function serveHoneytokens() {
       await delete_honeytokens_by_type_id(type_id);
       res.json({ success: true });
     } catch (error) {
-      console.error('[-] Failed to delete honeytokens:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to delete honeytokens:', error, Constants.TEXT_WHITE_COLOR);
       res.status(500).json({ failure: error });
     }
   });
@@ -318,7 +319,7 @@ export function serveHoneytokens() {
       await delete_honeytokens_by_group_id(group_id);
       res.json({ success: true });
     } catch (error) {
-      console.error('[-] Failed to delete honeytokens:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to delete honeytokens:', error, Constants.TEXT_WHITE_COLOR);
       res.status(500).json({ failure: error });
     }
   });
@@ -335,11 +336,7 @@ export function serveHoneytokens() {
       }
 
       const response_from_agent = await fetch(
-        'http://' +
-          agent.agent_ip +
-          ':' +
-          agent.agent_port +
-          '/api/honeytoken/status',
+        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/honeytoken/status',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -349,17 +346,17 @@ export function serveHoneytokens() {
         },
       );
       if (response_from_agent.ok && response_from_agent.status === 200) {
-        console.log('monitoring honeytoken');
         res.status(200).json({ success: 'monitoring honeytoken' });
         return;
       }
-      console.log('not monitoring honeytoken');
       res.status(201).json({ success: 'not monitoring honeytoken' });
       return;
     } catch (error) {
       console.error(
-        '[-] Failed to check monitoring status for honeytoken',
+        Constants.TEXT_WHITE_COLOR,
+        'Failed to check monitoring status for honeytoken',
         error,
+        Constants.TEXT_WHITE_COLOR,
       );
       res.status(500).json({ failure: error });
     }
@@ -369,18 +366,10 @@ export function serveHoneytokens() {
     const { token_id } = req.body;
     try {
       const token = await get_honeytoken_by_token_id(token_id);
-
       const agent = await get_agent_by_id(token.agent_id);
 
-      console.log('JOKER start:', token);
-      console.log('JOKER start:', agent);
-
       const response_from_agent = await fetch(
-        'http://' +
-          agent.agent_ip +
-          ':' +
-          agent.agent_port +
-          '/api/honeytoken/start',
+        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/honeytoken/start',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -390,14 +379,16 @@ export function serveHoneytokens() {
         },
       );
       if (response_from_agent.ok || response_from_agent.status === 200) {
-        console.log('started monitor on honeytoken');
         res.status(200).json({ success: 'started monitor on honeytoken' });
         return;
       }
-
-      console.log({ response_from_agent });
     } catch (error) {
-      console.error('[-] Failed to start monitor on honeytoken:', error);
+      console.error(
+        Constants.TEXT_RED_COLOR,
+        'Failed to start monitor on honeytoken:',
+        error,
+        Constants.TEXT_WHITE_COLOR,
+      );
       res.status(500).json({ failure: error });
     }
   });
@@ -408,15 +399,8 @@ export function serveHoneytokens() {
       const token = await get_honeytoken_by_token_id(token_id);
       const agent = await get_agent_by_id(token.agent_id);
 
-      console.log('JOKER stop:', token);
-      console.log('JOKER stop:', agent);
-
       const response_from_agent = await fetch(
-        'http://' +
-          agent.agent_ip +
-          ':' +
-          agent.agent_port +
-          '/api/honeytoken/stop',
+        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/honeytoken/stop',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -426,15 +410,13 @@ export function serveHoneytokens() {
         },
       );
       if (response_from_agent.ok && response_from_agent.status === 200) {
-        console.log('stopped monitor on honeytoken!');
         res.status(200).json({ success: 'stopped monitor on honeytoken' });
         return;
       }
-      console.log('nothing to stop!');
       res.status(201).json({ success: 'nothing to stop' });
       return;
     } catch (error) {
-      console.error('[-] Failed to stop honeytoken:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to stop honeytoken:', error, Constants.TEXT_WHITE_COLOR);
       res.status(500).json({ failure: error });
     }
   });

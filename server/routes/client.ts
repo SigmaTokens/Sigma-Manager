@@ -13,9 +13,7 @@ export const serveClient = () => {
     });
   } else {
     Globals.app.get('*', (req: any, res: any) => {
-      res.send(
-        '[+] API is running in development mode. Use Vite for the client.',
-      );
+      res.send('API is running in development mode. Use Vite for the client.');
     });
   }
 };

@@ -127,9 +127,6 @@ export function serveHoneytokens() {
         return;
       }
 
-      console.log('agent ip: ', agent_ip);
-      console.log('agent port: ', agent_port);
-
       const agent = await get_agent_by_uri(agent_ip, agent_port);
 
       if (!agent) {
@@ -138,12 +135,13 @@ export function serveHoneytokens() {
         return;
       }
 
-      if (agent.validated !== 0) {
+      if (agent.validated === 0) {
         res.status(200).json([]);
         return;
       }
 
       const honeytokens = await get_honeytokens_by_agent_id(agent.agent_id);
+
       res.status(200).json(honeytokens || []);
       return;
     } catch (error) {
@@ -273,15 +271,59 @@ export function serveHoneytokens() {
     }
   });
 
+  router.post('/honeytokens/monitor_status', async (req, res) => {
+    const { agents_ids } = req.body;
+
+    const statuses: Record<string, boolean> = {};
+
+    try {
+      for (const agent_id of agents_ids) {
+        const agent = await get_agent_by_id(agent_id);
+
+        if (!agent) {
+          continue; // Skip if agent not found
+        }
+
+        try {
+          const response = await fetch(
+            `http://${agent.agent_ip}:${agent.agent_port}/api/honeytoken/statuses`,
+            {
+              method: 'GET',
+            },
+          );
+
+          if (response.ok) {
+            const agentTokensStatuses: Record<string, boolean> =
+              await response.json();
+
+            // Merge agentTokensStatuses into the main statuses object
+            Object.assign(statuses, agentTokensStatuses);
+          }
+        } catch (err) {
+          console.warn(
+            `[!] Failed to fetch agentTokensStatuses from agent ${agent_id}:`,
+            err,
+          );
+          continue;
+        }
+      }
+
+      res.status(200).json(statuses);
+    } catch (error) {
+      console.error(
+        '[-] Failed to check monitoring status for honeytokens:',
+        error,
+      );
+      res.status(500).json({ failure: error });
+    }
+  });
+
   router.put('/honeytokens/start', async (req, res) => {
     const { token_id } = req.body;
     try {
       const token = await get_honeytoken_by_token_id(token_id);
 
       const agent = await get_agent_by_id(token.agent_id);
-
-      console.log('JOKER start:', token);
-      console.log('JOKER start:', agent);
 
       const response_from_agent = await fetch(
         'http://' +
@@ -297,6 +339,7 @@ export function serveHoneytokens() {
           }),
         },
       );
+
       if (response_from_agent.ok || response_from_agent.status === 200) {
         console.log('started monitor on honeytoken');
         res.status(200).json({ success: 'started monitor on honeytoken' });
@@ -315,9 +358,6 @@ export function serveHoneytokens() {
     try {
       const token = await get_honeytoken_by_token_id(token_id);
       const agent = await get_agent_by_id(token.agent_id);
-
-      console.log('JOKER stop:', token);
-      console.log('JOKER stop:', agent);
 
       const response_from_agent = await fetch(
         'http://' +

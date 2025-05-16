@@ -16,19 +16,24 @@ function AgentsPage() {
   const [statusUpdates, setStatusUpdates] = useState<Record<string, string>>(
     {},
   );
+  const [loadingAgentId, setLoadingAgentId] = useState<string | null>(null);
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
 
   const handleDelete = async (agentId: string) => {
     try {
+      setLoadingAgentId(agentId);
       await deleteAgent(agentId);
       setRefreshCounter((prev) => prev + 1);
     } catch (error) {
       console.error('Failed to delete agent:', error);
+    } finally {
+      setLoadingAgentId(null);
     }
   };
 
   const handleStart = async (agentId: string) => {
     try {
+      setLoadingAgentId(agentId);
       await startAgent(agentId);
       setAgents((prevAgents) =>
         prevAgents.map((agent) =>
@@ -37,11 +42,14 @@ function AgentsPage() {
       );
     } catch (error) {
       console.error('Failed to start agent:', error);
+    } finally {
+      setLoadingAgentId(null);
     }
   };
 
   const handleStop = async (agentId: string) => {
     try {
+      setLoadingAgentId(agentId);
       await stopAgent(agentId);
       setAgents((prevAgents) =>
         prevAgents.map((agent) =>
@@ -52,6 +60,8 @@ function AgentsPage() {
       );
     } catch (error) {
       console.error('Failed to stop agent:', error);
+    } finally {
+      setLoadingAgentId(null);
     }
   };
 
@@ -103,38 +113,72 @@ function AgentsPage() {
                     {statusUpdates[agent.agent_id] !== 'unknown' &&
                       statusUpdates[agent.agent_id] !== 'offline' &&
                       (agent.isMonitoring ? (
-                        <FaStop
-                          className={`action-icon stop ${hoveredIcon === `stop-${agent.agent_id}` ? 'hovered' : ''}`}
+                        <button
                           onClick={() => handleStop(agent.agent_id)}
+                          disabled={loadingAgentId === agent.agent_id}
+                          style={{
+                            opacity:
+                              loadingAgentId === agent.agent_id ? 0.5 : 1,
+                            pointerEvents:
+                              loadingAgentId === agent.agent_id
+                                ? 'none'
+                                : 'auto',
+                          }}
                           onMouseEnter={() =>
                             setHoveredIcon(`stop-${agent.agent_id}`)
                           }
                           onMouseLeave={() => setHoveredIcon(null)}
                           title="Stop Agent"
-                        />
+                        >
+                          <FaStop
+                            className={`action-icon stop ${hoveredIcon === `stop-${agent.agent_id}` ? 'hovered' : ''}`}
+                          />
+                        </button>
                       ) : (
-                        <FaPlay
-                          className={`action-icon start ${hoveredIcon === `start-${agent.agent_id}` ? 'hovered' : ''}`}
+                        <button
                           onClick={() => handleStart(agent.agent_id)}
+                          disabled={loadingAgentId === agent.agent_id}
+                          style={{
+                            opacity:
+                              loadingAgentId === agent.agent_id ? 0.5 : 1,
+                            pointerEvents:
+                              loadingAgentId === agent.agent_id
+                                ? 'none'
+                                : 'auto',
+                          }}
                           onMouseEnter={() =>
                             setHoveredIcon(`start-${agent.agent_id}`)
                           }
                           onMouseLeave={() => setHoveredIcon(null)}
                           title="Start Agent"
-                        />
+                        >
+                          <FaPlay
+                            className={`action-icon start ${hoveredIcon === `start-${agent.agent_id}` ? 'hovered' : ''}`}
+                          />
+                        </button>
                       ))}
-                    <FaTrash
-                      className={`action-icon delete ${hoveredIcon === `delete-${agent.agent_id}` ? 'hovered' : ''}`}
+
+                    <button
                       onClick={() => handleDelete(agent.agent_id)}
+                      disabled={loadingAgentId === agent.agent_id}
+                      style={{
+                        opacity: loadingAgentId === agent.agent_id ? 0.5 : 1,
+                        pointerEvents:
+                          loadingAgentId === agent.agent_id ? 'none' : 'auto',
+                      }}
                       onMouseEnter={() =>
                         setHoveredIcon(`delete-${agent.agent_id}`)
                       }
                       onMouseLeave={() => setHoveredIcon(null)}
                       title="Delete Agent"
-                    />
-                    {agent.validated == 0 ? (
-                      <FaCheckSquare
-                        className={`action-icon verify ${hoveredIcon === `verify-${agent.agent_id}` ? 'hovered' : ''}`}
+                    >
+                      <FaTrash
+                        className={`action-icon delete ${hoveredIcon === `delete-${agent.agent_id}` ? 'hovered' : ''}`}
+                      />
+                    </button>
+
+                    {agent.validated == 0 && (
+                      <button
                         onClick={() =>
                           verifyAgent(
                             agent.agent_id,
@@ -142,14 +186,22 @@ function AgentsPage() {
                             setStatusUpdates,
                           )
                         }
+                        disabled={loadingAgentId === agent.agent_id}
+                        style={{
+                          opacity: loadingAgentId === agent.agent_id ? 0.5 : 1,
+                          pointerEvents:
+                            loadingAgentId === agent.agent_id ? 'none' : 'auto',
+                        }}
                         onMouseEnter={() =>
                           setHoveredIcon(`verify-${agent.agent_id}`)
                         }
                         onMouseLeave={() => setHoveredIcon(null)}
                         title="Verify Agent"
-                      />
-                    ) : (
-                      <></>
+                      >
+                        <FaCheckSquare
+                          className={`action-icon verify ${hoveredIcon === `verify-${agent.agent_id}` ? 'hovered' : ''}`}
+                        />
+                      </button>
                     )}
                   </div>
                 </td>

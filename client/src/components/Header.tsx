@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import '../styles/Header.css';
-import logo from '../assets/sigma.png';
+import logo from '../assets/SigmaTokens.png';
 import CreateHoneytokenForm from './HoneyTokenCreation';
 import AddAgentPopup from '../components/AddAgentPopup';
 import { getAgents } from '../models/Agents';

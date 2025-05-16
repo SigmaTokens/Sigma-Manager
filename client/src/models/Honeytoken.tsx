@@ -1,3 +1,6 @@
+import { IAgentStatus } from '../../../server/interfaces/agent';
+import { areAgentsConnected } from './Agents';
+
 export async function createHoneytokenText(
   fileName: string,
   ComponentAddresses: string,
@@ -106,5 +109,43 @@ export async function isHoneytokenMonitored(token_id: string): Promise<boolean> 
   } catch (err) {
     console.error('Error checking if honeytoken is monitored:', err);
     return false;
+  }
+}
+
+export async function getHoneytokensMonitorStatuses(): Promise<
+  Record<string, boolean>
+> {
+  try {
+    const agents_data: IAgentStatus[] = await areAgentsConnected();
+
+    const agents_ids: string[] = agents_data
+      .filter(({ status }) => status === 'online')
+      .map(({ agent_id }) => agent_id);
+
+    if (agents_ids.length === 0) {
+      return {}; // Early exit if no online agents
+    }
+
+    const response = await fetch(
+      'http://localhost:3000/api/honeytokens/monitor_status',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ agents_ids }),
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch monitoring statuses');
+      return {};
+    }
+
+    const data: Record<string, boolean> = await response.json();
+    return data;
+  } catch (err) {
+    console.error('Error fetching monitoring statuses:', err);
+    return {};
   }
 }

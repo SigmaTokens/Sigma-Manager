@@ -188,28 +188,29 @@ export function serveHoneytokens() {
   });
 
   router.post('/honeytokens/agent', async (req, res) => {
-    const { agent_id, agent_ip, agent_port } = req.body;
+    const { agent_ip, agent_port } = req.body;
     try {
-      if (!agent_id && (!agent_ip || !agent_port)) {
+      if (!agent_ip || !agent_port) {
         console.error(Constants.TEXT_RED_COLOR, 'missing params', Constants.TEXT_WHITE_COLOR);
-        res.status(607).json({ failure: 'missing params' });
+        res.status(500).json({ failure: 'missing params' });
         return;
       }
 
-      let targetAgentId = agent_id;
+      const agent = await get_agent_by_uri(agent_ip, agent_port);
 
-      if (!targetAgentId) {
-        const agents = await Globals.app.locals.db.all(`SELECT * FROM agents`);
-        const agent = await get_agent_by_uri(agent_ip, agent_port);
-        if (!agent) {
-          console.error(Constants.TEXT_RED_COLOR, 'agent not found', Constants.TEXT_WHITE_COLOR);
-          res.status(666).json({ failure: 'agent not found' });
-          return;
-        }
-        targetAgentId = agent.agent_id;
+      if (!agent) {
+        console.error(Constants.TEXT_RED_COLOR, 'agent not found', Constants.TEXT_WHITE_COLOR);
+        res.status(500).json({ failure: 'agent not found' });
+        return;
       }
 
-      const honeytokens = await get_honeytokens_by_agent_id(targetAgentId);
+      if (agent.validated === 0) {
+        res.status(200).json([]); // returns empty array of honeytokens
+        return;
+      }
+
+      const honeytokens = await get_honeytokens_by_agent_id(agent.agent_id);
+
       res.status(200).json(honeytokens || []);
       return;
     } catch (error) {
@@ -346,6 +347,43 @@ export function serveHoneytokens() {
     }
   });
 
+  router.post('/honeytokens/monitor_status', async (req, res) => {
+    const { agents_ids } = req.body;
+
+    const statuses: Record<string, boolean> = {};
+
+    try {
+      for (const agent_id of agents_ids) {
+        const agent = await get_agent_by_id(agent_id);
+
+        if (!agent) {
+          continue; // Skip if agent not found
+        }
+
+        try {
+          const response = await fetch(`http://${agent.agent_ip}:${agent.agent_port}/api/honeytoken/statuses`, {
+            method: 'GET',
+          });
+
+          if (response.ok) {
+            const agentTokensStatuses: Record<string, boolean> = await response.json();
+
+            // Merge agentTokensStatuses into the main statuses object
+            Object.assign(statuses, agentTokensStatuses);
+          }
+        } catch (err) {
+          console.warn(`[!] Failed to fetch agentTokensStatuses from agent ${agent_id}:`, err);
+          continue;
+        }
+      }
+
+      res.status(200).json(statuses);
+    } catch (error) {
+      console.error('[-] Failed to check monitoring status for honeytokens:', error);
+      res.status(500).json({ failure: error });
+    }
+  });
+
   router.put('/honeytokens/start', async (req, res) => {
     const { token_id } = req.body;
     try {
@@ -362,6 +400,7 @@ export function serveHoneytokens() {
           }),
         },
       );
+
       if (response_from_agent.ok || response_from_agent.status === 200) {
         res.status(200).json({ success: 'started monitor on honeytoken' });
         return;

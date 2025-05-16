@@ -5,7 +5,7 @@ import {
   deleteHoneytoken,
   startMonitorOnHoneytoken,
   stopMonitorOnHoneytoken,
-  isHoneytokenMonitored,
+  getHoneytokensMonitorStatuses,
 } from '../models/Honeytoken';
 import { IHoneytoken } from '../../../server/interfaces/honeytoken';
 import { FaTrash, FaPlay, FaStop } from 'react-icons/fa';
@@ -17,23 +17,20 @@ function Honeytokens() {
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
   const [isReversed, setIsReversed] = useState(false);
 
+  // 👇 NEW STATE
+  const [loadingTokenId, setLoadingTokenId] = useState<string | null>(null);
+
   useEffect(() => {
     const fetchHoneytokens = async () => {
       try {
         const tokenData = await getHoneytokens();
 
-        const tokensWithMonitoringStatus = await Promise.all(
-          tokenData.map(async (token: IHoneytoken) => {
-            try {
-              const isMonitored = await isHoneytokenMonitored(token.token_id);
-              return { ...token, isMonitored };
-            } catch (err) {
-              console.error(
-                `Failed to check monitoring status for honeytoken ${token.token_id}:`,
-                err,
-              );
-              return { ...token, isMonitored: false };
-            }
+        const monitoringStatuses = await getHoneytokensMonitorStatuses();
+
+        const tokensWithMonitoringStatus = tokenData.map(
+          (token: IHoneytoken) => ({
+            ...token,
+            isMonitored: monitoringStatuses[token.token_id] ?? false,
           }),
         );
 
@@ -48,15 +45,19 @@ function Honeytokens() {
 
   const handleDeleteHoneytoken = async (tokenId: string) => {
     try {
+      setLoadingTokenId(tokenId); // 👈
       await deleteHoneytoken(tokenId);
       setRefreshCounter((prev) => prev + 1);
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoadingTokenId(null); // 👈
     }
   };
 
   const handleStartMonitoring = async (tokenId: string) => {
     try {
+      setLoadingTokenId(tokenId); // 👈
       await startMonitorOnHoneytoken(tokenId);
       setHoneytokens((prevTokens) =>
         prevTokens.map((token) =>
@@ -65,11 +66,14 @@ function Honeytokens() {
       );
     } catch (error) {
       console.error('Failed to start monitoring honeytoken:', error);
+    } finally {
+      setLoadingTokenId(null); // 👈
     }
   };
 
   const handleStopMonitoring = async (tokenId: string) => {
     try {
+      setLoadingTokenId(tokenId); // 👈
       await stopMonitorOnHoneytoken(tokenId);
       setHoneytokens((prevTokens) =>
         prevTokens.map((token) =>
@@ -78,6 +82,8 @@ function Honeytokens() {
       );
     } catch (error) {
       console.error('Failed to stop monitoring honeytoken:', error);
+    } finally {
+      setLoadingTokenId(null); // 👈
     }
   };
 
@@ -94,6 +100,7 @@ function Honeytokens() {
         <button
           className="honeytokens-refresh-button"
           onClick={() => setRefreshCounter((prev) => prev + 1)}
+          disabled={loadingTokenId !== null} // 👈 Prevent refresh during actions
         >
           Refresh Statuses
         </button>
@@ -162,8 +169,7 @@ function Honeytokens() {
                   <td>
                     <div className="action-icons">
                       {honeytoken.isMonitored ? (
-                        <FaStop
-                          className={`action-icon stop ${hoveredIcon === `stop-${honeytoken.token_id}` ? 'hovered' : ''}`}
+                        <button
                           onClick={() =>
                             handleStopMonitoring(honeytoken.token_id)
                           }
@@ -172,10 +178,22 @@ function Honeytokens() {
                           }
                           onMouseLeave={() => setHoveredIcon(null)}
                           title="Stop Monitoring"
-                        />
+                          disabled={loadingTokenId === honeytoken.token_id} // 👈
+                          style={{
+                            opacity:
+                              loadingTokenId === honeytoken.token_id ? 0.5 : 1,
+                            pointerEvents:
+                              loadingTokenId === honeytoken.token_id
+                                ? 'none'
+                                : 'auto',
+                          }}
+                        >
+                          <FaStop
+                            className={`action-icon stop ${hoveredIcon === `stop-${honeytoken.token_id}` ? 'hovered' : ''}`}
+                          />
+                        </button>
                       ) : (
-                        <FaPlay
-                          className={`action-icon start ${hoveredIcon === `start-${honeytoken.token_id}` ? 'hovered' : ''}`}
+                        <button
                           onClick={() =>
                             handleStartMonitoring(honeytoken.token_id)
                           }
@@ -184,10 +202,22 @@ function Honeytokens() {
                           }
                           onMouseLeave={() => setHoveredIcon(null)}
                           title="Start Monitoring"
-                        />
+                          disabled={loadingTokenId === honeytoken.token_id} // 👈
+                          style={{
+                            opacity:
+                              loadingTokenId === honeytoken.token_id ? 0.5 : 1,
+                            pointerEvents:
+                              loadingTokenId === honeytoken.token_id
+                                ? 'none'
+                                : 'auto',
+                          }}
+                        >
+                          <FaPlay
+                            className={`action-icon start ${hoveredIcon === `start-${honeytoken.token_id}` ? 'hovered' : ''}`}
+                          />
+                        </button>
                       )}
-                      <FaTrash
-                        className={`action-icon delete ${hoveredIcon === `delete-${honeytoken.token_id}` ? 'hovered' : ''}`}
+                      <button
                         onClick={() =>
                           handleDeleteHoneytoken(honeytoken.token_id)
                         }
@@ -196,7 +226,20 @@ function Honeytokens() {
                         }
                         onMouseLeave={() => setHoveredIcon(null)}
                         title="Delete Honeytoken"
-                      />
+                        disabled={loadingTokenId === honeytoken.token_id} // 👈
+                        style={{
+                          opacity:
+                            loadingTokenId === honeytoken.token_id ? 0.5 : 1,
+                          pointerEvents:
+                            loadingTokenId === honeytoken.token_id
+                              ? 'none'
+                              : 'auto',
+                        }}
+                      >
+                        <FaTrash
+                          className={`action-icon delete ${hoveredIcon === `delete-${honeytoken.token_id}` ? 'hovered' : ''}`}
+                        />
+                      </button>
                     </div>
                   </td>
                 </tr>

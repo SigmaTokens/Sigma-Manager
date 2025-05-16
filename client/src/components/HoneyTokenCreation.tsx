@@ -1,25 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Card,
-  Input,
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from './popup';
+import { Card, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './popup';
 import '../styles/HoneyTokenCreation.css';
 import { getAgents } from '../models/Agents';
 import { createHoneytokenText } from '../models/Honeytoken';
 import TextHoneyToken from './TextHoneyToken';
-import {
-  IAgent,
-  IHoneytokenType,
-  CreateHoneytokenFormProps,
-} from '../../../server/interfaces/agent';
+import { IAgent, IHoneytokenType, CreateHoneytokenFormProps } from '../../../server/interfaces/agent';
 
 function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
-  const [quantity, setQuantity] = useState<number>(1);
+  // const [quantity, setQuantity] = useState<number>(1);
   const [selectedType, setSelectedType] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
   const [componentAddresses, setComponentAddresses] = useState<string>('');
@@ -40,7 +28,7 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
 
   const validate = () => {
     const newErrors: any = {};
-    if (!quantity) newErrors.quantity = true;
+    // if (!quantity) newErrors.quantity = true;
     if (!selectedType) newErrors.selectedType = true;
     if (!fileName) newErrors.fileName = true;
     if (!componentAddresses) newErrors.componentAddresses = true;
@@ -83,7 +71,7 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
           <h2 className="popup-title">Create Honeytoken</h2>
 
           <div className="popup-content">
-            <p>
+            {/* <p>
               <label>
                 Quantity <span className="required-star">*</span>
               </label>
@@ -96,9 +84,9 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                   setErrors({});
                 }}
               />
-            </p>
+            </p> */}
 
-            <p>
+            <div>
               <label>
                 Type <span className="required-star">*</span>
               </label>
@@ -120,16 +108,12 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                   </option>
                 ))}
               </select>
-            </p>
+            </div>
 
-            <p>
+            <div>
               <label>Notes</label>
-              <Input
-                type="text"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-              />
-            </p>
+              <Input type="text" value={notes} onChange={(e) => setNotes(e.target.value)} />
+            </div>
 
             {selectedType === 'text' && (
               <TextHoneyToken
@@ -143,11 +127,10 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
               />
             )}
 
-            <p>
-              <label>Grade </label>
+            <div>
+              <label>Alert Severity </label>
               <small className="grade-subtitle">
-                (Set the alert severity for this honeytoken (1 = lowest, 10 =
-                highest))
+                Set the alert severity for this honeytoken (1 = lowest, 10 = highest)
               </small>
               <input
                 type="range"
@@ -158,9 +141,9 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                 className="custom-slider"
               />
               <div className="selected-grade">Selected Grade: {grade}</div>
-            </p>
+            </div>
 
-            <p>
+            <div>
               <label>
                 Expiration Date <span className="required-star">*</span>
               </label>
@@ -172,9 +155,9 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                   setErrors({});
                 }}
               />
-            </p>
+            </div>
 
-            <p>
+            <div>
               <label>
                 Agent <span className="required-star">*</span>
               </label>
@@ -197,13 +180,12 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                     ))}
                 </SelectContent>
               </Select>
-            </p>
+            </div>
           </div>
 
           {Object.keys(errors).length > 0 && (
             <div className="global-error">
-              <span className="required-star">*</span> Please fill in all
-              required fields
+              <span className="required-star">*</span> Please fill in all required fields
             </div>
           )}
           <div className="button-container">
@@ -211,11 +193,7 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
               Cancel
             </button>
 
-            <button
-              className="button button-primary"
-              disabled={selectedType === ''}
-              onClick={handleSubmit}
-            >
+            <button className="button button-primary" disabled={selectedType === ''} onClick={handleSubmit}>
               Submit
             </button>
           </div>

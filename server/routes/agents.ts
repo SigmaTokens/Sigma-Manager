@@ -33,7 +33,7 @@ export function serveAgents() {
 
       res.json(agents);
     } catch (error) {
-      console.error('[-] Failed to fetch agents:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to fetch agents:', error, Constants.TEXT_WHITE_COLOR);
       res.status(500).json({ failure: error });
     }
   });
@@ -43,23 +43,19 @@ export function serveAgents() {
       const { id, ip, name, port } = req.body;
 
       if (!ip || !name || !port || !id) {
-        res
-          .status(400)
-          .json({ error: 'Missing required fields (id ,ip, name, port)' });
+        res.status(400).json({ error: 'Missing required fields (id ,ip, name, port)' });
         return;
       }
 
       const agents = await get_all_agents();
 
       //TODO: change this to a query instead ...
-      const agent_id_exists = agents.some(
-        (agent: any) => agent.agent_id === id,
-      );
+      const agent_id_exists = agents.some((agent: any) => agent.agent_id === id);
 
       if (agent_id_exists) {
-        await update_agent(id, ip, name, parseInt(port));
+        await update_agent(id, ip, name, parseInt(port), 1);
       } else {
-        await insert_agent(id, ip, name, parseInt(port));
+        await insert_agent(id, ip, name, parseInt(port), 1);
       }
       res.sendStatus(200);
     } catch (error: any) {
@@ -74,7 +70,7 @@ export function serveAgents() {
       const agent = await get_agent_by_id(agent_id);
       res.json(agent);
     } catch (error) {
-      console.error('[-] Failed to get agent:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to get agent:', error, Constants.TEXT_WHITE_COLOR);
       res.status(500).json({ failure: error });
     }
   });
@@ -85,7 +81,7 @@ export function serveAgents() {
       const agent = await get_agent_by_uri(agent_ip, agent_port);
       res.json(agent);
     } catch (error) {
-      console.error('[-] Failed to get agent:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to get agent:', error, Constants.TEXT_WHITE_COLOR);
       res.status(500).json({ failure: error });
     }
   });
@@ -96,7 +92,7 @@ export function serveAgents() {
       await delete_agent_by_id(agent_id);
       res.json({ success: true });
     } catch (error) {
-      console.error('[-] Failed to delete agent:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to delete agent:', error, Constants.TEXT_WHITE_COLOR);
       res.status(500).json({ failure: error });
     }
   });
@@ -112,7 +108,7 @@ export function serveAgents() {
       );
       res.status(200).json(statusUpdates);
     } catch (err) {
-      console.error('[-] Failed to update agent statuses:', err);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to update agent statuses:', err, Constants.TEXT_WHITE_COLOR);
       res.status(500).json({ error: 'Status update failed' });
     }
   });
@@ -152,11 +148,7 @@ export function serveAgents() {
       const agent = await get_agent_by_id(agent_id);
 
       const response_from_agent = await fetch(
-        'http://' +
-          agent.agent_ip +
-          ':' +
-          agent.agent_port +
-          '/api/monitor/status',
+        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/monitor/status',
         {
           //signal: AbortSignal.timeout(300),
           method: 'GET',
@@ -169,7 +161,7 @@ export function serveAgents() {
       res.status(201).json({ success: 'not monitoring' });
       return;
     } catch (error) {
-      console.error('[-] Failed to check monitoring status', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to check monitoring status', error, Constants.TEXT_WHITE_COLOR);
       res.status(500).json({ failure: error });
     }
   });
@@ -180,11 +172,7 @@ export function serveAgents() {
       const agent = await get_agent_by_id(agent_id);
 
       const response_from_agent = await fetch(
-        'http://' +
-          agent.agent_ip +
-          ':' +
-          agent.agent_port +
-          '/api/monitor/start',
+        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/monitor/start',
         {
           method: 'GET',
         },
@@ -194,7 +182,7 @@ export function serveAgents() {
         return;
       }
     } catch (error) {
-      console.error('[-] Failed to start agent:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to start agent:', error, Constants.TEXT_WHITE_COLOR);
       res.status(500).json({ failure: error });
     }
   });
@@ -205,11 +193,7 @@ export function serveAgents() {
       const agent = await get_agent_by_id(agent_id);
 
       const response_from_agent = await fetch(
-        'http://' +
-          agent.agent_ip +
-          ':' +
-          agent.agent_port +
-          '/api/monitor/stop',
+        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/monitor/stop',
         {
           method: 'GET',
         },
@@ -221,7 +205,7 @@ export function serveAgents() {
       res.status(201).json({ success: 'nothing to stop' });
       return;
     } catch (error) {
-      console.error('[-] Failed to stop agent:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to stop agent:', error, Constants.TEXT_WHITE_COLOR);
       res.status(500).json({ failure: error });
     }
   });

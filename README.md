@@ -17,14 +17,14 @@ Please make sure you have node.js installed on your system version >= `v22.14.0`
 ### Production
 
 To run the project in production, run the following command:
-with npm: `npm run start-prod`
+with npm: `npm run start-prod --silent`
 
 Then you can browse to [localhost:3000](localhost:3000)
 
 ### Development
 
 To run the project in development, run the following command:
-with npm: `npm run start-dev`
+with npm: `npm run start-dev --silent`
 
 Then you can browse to [localhost:5173](localhost:5173)
 

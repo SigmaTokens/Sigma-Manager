@@ -8,6 +8,7 @@ import { Globals } from './globals';
 import { serveAgents } from './routes/agents';
 import { serveHome } from './routes/home';
 import { serveGeneral } from './routes/general';
+import { Constants } from './constants';
 main();
 
 function main(): void {
@@ -22,7 +23,12 @@ function main(): void {
 
   startDatabase()
     .then((database) => {
-      console.log('[+] Database connection initialized:', app.locals.db);
+      console.log(
+        Constants.TEXT_CYAN_COLOR,
+        'Database connection initialized:',
+        Constants.TEXT_WHITE_COLOR,
+        app.locals.db,
+      );
 
       serveGeneral();
       serveHome();
@@ -32,11 +38,11 @@ function main(): void {
       serveClient();
 
       Globals.server = app.listen(port, () => {
-        console.log(`[+] Server running on port ${port}`);
+        console.log(Constants.TEXT_MAGENTA_COLOR, `Server running on port ${port}`, Constants.TEXT_WHITE_COLOR);
       });
     })
     .catch((error) => {
-      console.error('[-] Failed to initialize server:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to initialize server:', error, Constants.TEXT_WHITE_COLOR);
       process.exit(1);
     });
 }

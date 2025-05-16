@@ -1,15 +1,9 @@
-const sql = (strings: TemplateStringsArray, ...values: any[]) =>
-  String.raw(strings, ...values);
+const sql = (strings: TemplateStringsArray, ...values: any[]) => String.raw(strings, ...values);
 import { v4 as uuidv4 } from 'uuid';
 import { get_all_honeytokens } from './honeytokens';
-import {
-  get_random_date,
-  get_random_ip,
-  begin_transaction,
-  commit,
-  rollback,
-} from './helpers';
+import { get_random_date, get_random_ip, begin_transaction, commit, rollback } from './helpers';
 import { Globals } from '../globals';
+import { Constants } from '../constants';
 
 export async function init_alerts_table() {
   await Globals.app.locals.db.exec(sql`
@@ -87,14 +81,7 @@ export async function create_alerts_to_token_id(
           VALUES
             (?, ?, ?, ?, ?, ?);
         `,
-        [
-          uuidv4(),
-          alert.token_id,
-          alert.alert_epoch,
-          alert.accessed_by,
-          alert.log,
-          alert.archive,
-        ],
+        [uuidv4(), alert.token_id, alert.alert_epoch, alert.accessed_by, alert.log, alert.archive],
       );
     }
 
@@ -195,70 +182,26 @@ export async function delete_alert_by_alert_id(alert_id: string) {
       [alert_id],
     );
   } catch (error) {
-    console.error(`[-] Failed to delete alert with id ${alert_id}:`, error);
+    console.error(
+      Constants.TEXT_RED_COLOR,
+      `Failed to delete alert with id ${alert_id}:`,
+      error,
+      Constants.TEXT_WHITE_COLOR,
+    );
     throw error;
   }
 }
 
-export async function set_archive_by_alert_id(
-  alert_id: string,
-  archive: boolean,
-) {
+export async function set_archive_by_alert_id(alert_id: string, archive: boolean) {
   try {
-    await Globals.app.locals.db.run(
-      `UPDATE alerts SET archive = ? WHERE alert_id = ?;`,
-      [archive, alert_id],
-    );
+    await Globals.app.locals.db.run(`UPDATE alerts SET archive = ? WHERE alert_id = ?;`, [archive, alert_id]);
   } catch (error) {
-    console.error(`[-] Failed to set alert with id ${alert_id}:`, error);
-    throw error;
-  }
-}
-
-export async function dummy_populate_alerts() {
-  await delete_all_alerts();
-
-  const alerts = [];
-  const honeytokens = await get_all_honeytokens();
-
-  if (honeytokens.length === 0)
-    throw new Error('[-] No tokens found in honeytokens table');
-
-  for (let i = 0; i < 10; i++) {
-    alerts.push({
-      alert_id: uuidv4(),
-      token_id:
-        honeytokens[Math.floor(Math.random() * honeytokens.length)].token_id,
-      alert_epoch: get_random_date().getTime(),
-      accessed_by: get_random_ip(),
-      log: `Suspicious activity detected on token ${i + 1}`,
-      archive: false,
-    });
-  }
-
-  for (const alert of alerts) {
-    await Globals.app.locals.db.run(
-      sql`
-        INSERT INTO
-          alerts (
-            alert_id,
-            token_id,
-            alert_epoch,
-            accessed_by,
-            log,
-            archive
-          )
-        VALUES
-          (?, ?, ?, ?, ?, ?);
-      `,
-      [
-        alert.alert_id,
-        alert.token_id,
-        alert.alert_epoch,
-        alert.accessed_by,
-        alert.log,
-        alert.archive,
-      ],
+    console.error(
+      Constants.TEXT_RED_COLOR,
+      `Failed to set alert with id ${alert_id}:`,
+      error,
+      Constants.TEXT_WHITE_COLOR,
     );
+    throw error;
   }
 }

@@ -13,6 +13,7 @@ import {
 import { Globals } from '../globals';
 import { get_agent_by_id, get_agent_by_uri } from '../database/agents';
 import { v4 as uuidv4 } from 'uuid';
+import { Constants } from '../constants';
 
 export function serveHoneytokens() {
   const router = Router();
@@ -22,23 +23,14 @@ export function serveHoneytokens() {
       const honeytokens = await get_all_honeytokens();
       res.json(honeytokens);
     } catch (error) {
-      console.error('[-] Failed to fetch honeytokens:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to fetch honeytokens:', error, Constants.TEXT_WHITE_COLOR);
       res.status(500).json({ failure: error });
     }
   });
 
   router.post('/honeytokens/text', async (req, res) => {
     try {
-      const {
-        type,
-        file_name,
-        location,
-        grade,
-        expiration_date,
-        notes,
-        data,
-        agent_id,
-      } = req.body;
+      const { type, file_name, location, grade, expiration_date, notes, data, agent_id } = req.body;
 
       const required = {
         type,
@@ -46,8 +38,6 @@ export function serveHoneytokens() {
         location,
         grade,
         expiration_date,
-        notes,
-        data,
         agent_id,
       };
 
@@ -70,19 +60,20 @@ export function serveHoneytokens() {
         type,
         file_name,
         location,
+        '',
+        '',
         grade,
         new Date(),
         expiration_date,
         notes,
+        '',
         data,
+        0,
+        '1',
       );
 
       const response_from_agent = await fetch(
-        'http://' +
-          agent.agent_ip +
-          ':' +
-          agent.agent_port +
-          '/api/honeytoken/add',
+        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/honeytoken/add',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -106,6 +97,79 @@ export function serveHoneytokens() {
       res.status(500).json({ failure: error });
     }
   });
+  router.post('/honeytokens/api', async (req, res) => {
+    try {
+      const { type, http_method, route, grade, expiration_date, notes, response, agent_id, api_port } = req.body;
+
+      const required = {
+        type,
+        http_method,
+        route,
+        grade,
+        expiration_date,
+        notes,
+        response,
+        agent_id,
+        api_port,
+      };
+
+      for (const [field, value] of Object.entries(required)) {
+        if (value === undefined || value === null || value === '') {
+          res.status(400).json({ failure: `Missing required field: ${field}` });
+          return;
+        }
+      }
+
+      const agent = await get_agent_by_id(agent_id);
+
+      const token_id = uuidv4();
+      const group_id = uuidv4();
+
+      await insert_honeytoken(
+        agent_id,
+        token_id,
+        group_id,
+        type,
+        '',
+        '',
+        http_method,
+        route,
+        grade,
+        new Date(),
+        expiration_date,
+        notes,
+        response,
+        '',
+        api_port,
+        '1',
+      );
+
+      const response_from_agent = await fetch(
+        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/honeytoken/add',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            token_id: token_id,
+            group_id: group_id,
+            type: type,
+            file_name: http_method,
+            location: route,
+            grade: grade,
+            expiration_date: expiration_date,
+            notes: notes,
+            data: response,
+            // api_port: api_port,
+          }),
+        },
+      );
+
+      res.status(200).json({ success: 'nice' });
+    } catch (error) {
+      console.error({ failure: error });
+      res.status(500).json({ failure: error });
+    }
+  });
 
   router.get('/honeytokens/token/:token_id', async (req, res) => {
     const { token_id } = req.params;
@@ -113,7 +177,12 @@ export function serveHoneytokens() {
       const honeytoken = await get_honeytoken_by_token_id(token_id);
       res.json(honeytoken);
     } catch (error) {
-      console.error('[-] Failed to fetch honeytoken by token_id:', error);
+      console.error(
+        Constants.TEXT_RED_COLOR,
+        'Failed to fetch honeytoken by token_id:',
+        error,
+        Constants.TEXT_WHITE_COLOR,
+      );
       res.status(500).json({ failure: error });
     }
   });
@@ -122,7 +191,7 @@ export function serveHoneytokens() {
     const { agent_ip, agent_port } = req.body;
     try {
       if (!agent_ip || !agent_port) {
-        console.error('[-] missing params');
+        console.error(Constants.TEXT_RED_COLOR, 'missing params', Constants.TEXT_WHITE_COLOR);
         res.status(500).json({ failure: 'missing params' });
         return;
       }
@@ -130,13 +199,13 @@ export function serveHoneytokens() {
       const agent = await get_agent_by_uri(agent_ip, agent_port);
 
       if (!agent) {
-        console.error('[-] agent not found');
+        console.error(Constants.TEXT_RED_COLOR, 'agent not found', Constants.TEXT_WHITE_COLOR);
         res.status(500).json({ failure: 'agent not found' });
         return;
       }
 
       if (agent.validated === 0) {
-        res.status(200).json([]);
+        res.status(200).json([]); // returns empty array of honeytokens
         return;
       }
 
@@ -145,7 +214,12 @@ export function serveHoneytokens() {
       res.status(200).json(honeytokens || []);
       return;
     } catch (error) {
-      console.error('[-] Failed to fetch honeytokens by agent_id:', error);
+      console.error(
+        Constants.TEXT_RED_COLOR,
+        'Failed to fetch honeytokens by agent_id:',
+        error,
+        Constants.TEXT_WHITE_COLOR,
+      );
       res.status(444).json({ error: 'Internal server error' });
       return;
     }
@@ -157,7 +231,12 @@ export function serveHoneytokens() {
       const honeytokens = await get_honeytokens_by_type_id(type_id);
       res.json(honeytokens);
     } catch (error) {
-      console.error('[-] Failed to fetch honeytokens by type_id:', error);
+      console.error(
+        Constants.TEXT_RED_COLOR,
+        'Failed to fetch honeytokens by type_id:',
+        error,
+        Constants.TEXT_WHITE_COLOR,
+      );
       res.status(500).json({ failure: error });
     }
   });
@@ -168,7 +247,12 @@ export function serveHoneytokens() {
       const honeytokens = await get_honeytokens_by_group_id(group_id);
       res.json(honeytokens);
     } catch (error) {
-      console.error('[-] Failed to fetch honeytokens by group_id:', error);
+      console.error(
+        Constants.TEXT_RED_COLOR,
+        'Failed to fetch honeytokens by group_id:',
+        error,
+        Constants.TEXT_WHITE_COLOR,
+      );
       res.status(500).json({ failure: error });
     }
   });
@@ -184,11 +268,7 @@ export function serveHoneytokens() {
       const agent = await get_agent_by_id(token.agent_id);
       if (agent != undefined) {
         const response_from_agent = await fetch(
-          'http://' +
-            agent.agent_ip +
-            ':' +
-            agent.agent_port +
-            '/api/honeytoken/remove',
+          'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/honeytoken/remove',
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -199,7 +279,7 @@ export function serveHoneytokens() {
         );
       }
     } catch (error) {
-      console.error('[-] Failed to delete honeytoken:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to delete honeytoken:', error, Constants.TEXT_WHITE_COLOR);
       res.status(500).json({ failure: error });
     } finally {
       await delete_honeytoken_by_id(token_id);
@@ -213,7 +293,7 @@ export function serveHoneytokens() {
       await delete_honeytokens_by_type_id(type_id);
       res.json({ success: true });
     } catch (error) {
-      console.error('[-] Failed to delete honeytokens:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to delete honeytokens:', error, Constants.TEXT_WHITE_COLOR);
       res.status(500).json({ failure: error });
     }
   });
@@ -224,7 +304,7 @@ export function serveHoneytokens() {
       await delete_honeytokens_by_group_id(group_id);
       res.json({ success: true });
     } catch (error) {
-      console.error('[-] Failed to delete honeytokens:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to delete honeytokens:', error, Constants.TEXT_WHITE_COLOR);
       res.status(500).json({ failure: error });
     }
   });
@@ -241,11 +321,7 @@ export function serveHoneytokens() {
       }
 
       const response_from_agent = await fetch(
-        'http://' +
-          agent.agent_ip +
-          ':' +
-          agent.agent_port +
-          '/api/honeytoken/status',
+        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/honeytoken/status',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -255,17 +331,17 @@ export function serveHoneytokens() {
         },
       );
       if (response_from_agent.ok && response_from_agent.status === 200) {
-        console.log('monitoring honeytoken');
         res.status(200).json({ success: 'monitoring honeytoken' });
         return;
       }
-      console.log('not monitoring honeytoken');
       res.status(201).json({ success: 'not monitoring honeytoken' });
       return;
     } catch (error) {
       console.error(
-        '[-] Failed to check monitoring status for honeytoken',
+        Constants.TEXT_WHITE_COLOR,
+        'Failed to check monitoring status for honeytoken',
         error,
+        Constants.TEXT_WHITE_COLOR,
       );
       res.status(500).json({ failure: error });
     }
@@ -285,35 +361,25 @@ export function serveHoneytokens() {
         }
 
         try {
-          const response = await fetch(
-            `http://${agent.agent_ip}:${agent.agent_port}/api/honeytoken/statuses`,
-            {
-              method: 'GET',
-            },
-          );
+          const response = await fetch(`http://${agent.agent_ip}:${agent.agent_port}/api/honeytoken/statuses`, {
+            method: 'GET',
+          });
 
           if (response.ok) {
-            const agentTokensStatuses: Record<string, boolean> =
-              await response.json();
+            const agentTokensStatuses: Record<string, boolean> = await response.json();
 
             // Merge agentTokensStatuses into the main statuses object
             Object.assign(statuses, agentTokensStatuses);
           }
         } catch (err) {
-          console.warn(
-            `[!] Failed to fetch agentTokensStatuses from agent ${agent_id}:`,
-            err,
-          );
+          console.warn(`[!] Failed to fetch agentTokensStatuses from agent ${agent_id}:`, err);
           continue;
         }
       }
 
       res.status(200).json(statuses);
     } catch (error) {
-      console.error(
-        '[-] Failed to check monitoring status for honeytokens:',
-        error,
-      );
+      console.error('[-] Failed to check monitoring status for honeytokens:', error);
       res.status(500).json({ failure: error });
     }
   });
@@ -322,15 +388,10 @@ export function serveHoneytokens() {
     const { token_id } = req.body;
     try {
       const token = await get_honeytoken_by_token_id(token_id);
-
       const agent = await get_agent_by_id(token.agent_id);
 
       const response_from_agent = await fetch(
-        'http://' +
-          agent.agent_ip +
-          ':' +
-          agent.agent_port +
-          '/api/honeytoken/start',
+        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/honeytoken/start',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -341,14 +402,16 @@ export function serveHoneytokens() {
       );
 
       if (response_from_agent.ok || response_from_agent.status === 200) {
-        console.log('started monitor on honeytoken');
         res.status(200).json({ success: 'started monitor on honeytoken' });
         return;
       }
-
-      console.log({ response_from_agent });
     } catch (error) {
-      console.error('[-] Failed to start monitor on honeytoken:', error);
+      console.error(
+        Constants.TEXT_RED_COLOR,
+        'Failed to start monitor on honeytoken:',
+        error,
+        Constants.TEXT_WHITE_COLOR,
+      );
       res.status(500).json({ failure: error });
     }
   });
@@ -360,11 +423,7 @@ export function serveHoneytokens() {
       const agent = await get_agent_by_id(token.agent_id);
 
       const response_from_agent = await fetch(
-        'http://' +
-          agent.agent_ip +
-          ':' +
-          agent.agent_port +
-          '/api/honeytoken/stop',
+        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/honeytoken/stop',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -374,15 +433,13 @@ export function serveHoneytokens() {
         },
       );
       if (response_from_agent.ok && response_from_agent.status === 200) {
-        console.log('stopped monitor on honeytoken!');
         res.status(200).json({ success: 'stopped monitor on honeytoken' });
         return;
       }
-      console.log('nothing to stop!');
       res.status(201).json({ success: 'nothing to stop' });
       return;
     } catch (error) {
-      console.error('[-] Failed to stop honeytoken:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to stop honeytoken:', error, Constants.TEXT_WHITE_COLOR);
       res.status(500).json({ failure: error });
     }
   });

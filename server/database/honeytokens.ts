@@ -1,7 +1,4 @@
-const sql = (strings: TemplateStringsArray, ...values: any[]) =>
-  String.raw(strings, ...values);
-import { v4 as uuidv4 } from 'uuid';
-import { get_all_types } from './types';
+const sql = (strings: TemplateStringsArray, ...values: any[]) => String.raw(strings, ...values);
 import { begin_transaction, commit, rollback } from './helpers';
 import { Globals } from '../globals';
 
@@ -16,11 +13,17 @@ export async function init_honeytokens_table() {
       expire_date DATETIME,
       location VARCHAR,
       file_name VARCHAR,
+      http_method VARCHAR,
+      route VARCHAR,
       data TEXT,
+      response TEXT,
       notes TEXT,
       agent_id VARCHAR,
+      api_port INTEGER,
+      user_id INTEGER,
       FOREIGN KEY (type_id) REFERENCES types (type_id) ON DELETE CASCADE,
-      FOREIGN KEY (agent_id) REFERENCES agents (agent_id) ON DELETE SET NULL
+      FOREIGN KEY (agent_id) REFERENCES agents (agent_id) ON DELETE SET NULL,
+      FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE SET NULL
     );
   `);
 }
@@ -37,8 +40,13 @@ export async function get_all_honeytokens() {
       expire_date,
       location,
       file_name,
+      http_method,
+      route,
       data,
-      notes
+      response,
+      notes,
+      api_port,
+      user_id
     FROM
       honeytokens
   `);
@@ -57,8 +65,13 @@ export async function get_honeytoken_by_token_id(token_id: String) {
         expire_date,
         location,
         file_name,
+        http_method,
+        route,
         data,
-        notes
+        response,
+        notes,
+        api_port,
+        user_id
       FROM
         honeytokens
       WHERE
@@ -80,8 +93,13 @@ export async function get_honeytokens_by_agent_id(agent_id: String) {
         expire_date,
         location,
         file_name,
+        http_method,
+        route,
         data,
-        notes
+        response,
+        notes,
+        api_port,
+        user_id
       FROM
         honeytokens
       WHERE
@@ -103,8 +121,13 @@ export async function get_honeytokens_by_type_id(type_id: String) {
         expire_date,
         location,
         file_name,
+        http_method,
+        route,
         data,
-        notes
+        response,
+        notes,
+        api_port,
+        user_id
       FROM
         honeytokens
       WHERE
@@ -126,8 +149,13 @@ export async function get_honeytokens_by_group_id(group_id: String) {
         expire_date,
         location,
         file_name,
+        http_method,
+        route,
         notes,
-        data
+        response,
+        data,
+        api_port,
+        user_id
       FROM
         honeytokens
       WHERE
@@ -232,11 +260,16 @@ export async function insert_honeytoken(
   type_id: any,
   file_name: string,
   location: string,
+  http_method: string,
+  route: string,
   grade: number,
   creation_date: Date,
   expiration_date: Date,
   notes: string,
+  response: string,
   data: string,
+  api_port: number,
+  user_id: string,
 ) {
   await Globals.app.locals.db.run(
     sql`
@@ -251,11 +284,16 @@ export async function insert_honeytoken(
           expire_date,
           location,
           file_name,
+          http_method,
+          route,
           data,
-          notes
+          response,
+          notes,
+          api_port,
+          user_id
         )
       VALUES
-        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
     [
       agent_id,
@@ -267,70 +305,13 @@ export async function insert_honeytoken(
       expiration_date,
       location,
       file_name,
+      http_method,
+      route,
       data,
+      response,
       notes,
+      api_port,
+      user_id,
     ],
   );
-}
-
-export async function dummy_populate_honeytokens() {
-  await delete_all_honeytokens();
-  const honeytokens = [];
-
-  const types = await get_all_types();
-
-  if (types.length === 0) throw new Error('[-] No types found in types table');
-
-  for (let i = 0; i < 10; i++) {
-    honeytokens.push({
-      token_id: uuidv4(),
-      group_id: `group_${Math.floor(Math.random() * 5) + 1}`,
-      type_id: types[Math.floor(Math.random() * types.length)].type_id,
-      grade: Math.floor(Math.random() * 10) + 1,
-      creation_date: new Date(Date.now() - Math.random() * 10000000000)
-        .toISOString()
-        .split('T')[0],
-      expire_date: new Date(Date.now() + Math.random() * 10000000000)
-        .toISOString()
-        .split('T')[0],
-      location: 'sample location',
-      file_name: 'sample file_name',
-      data: `Sample data for token ${i + 1}`,
-      notes: `Sample notes for token ${i + 1}`,
-    });
-  }
-
-  for (const token of honeytokens) {
-    await Globals.app.locals.db.run(
-      sql`
-        INSERT INTO
-          honeytokens (
-            token_id,
-            group_id,
-            type_id,
-            grade,
-            creation_date,
-            expire_date,
-            location,
-            file_name,
-            data,
-            notes
-          )
-        VALUES
-          (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `,
-      [
-        token.token_id,
-        token.group_id,
-        token.type_id,
-        token.grade,
-        token.creation_date,
-        token.expire_date,
-        token.location,
-        token.file_name,
-        token.data,
-        token.notes,
-      ],
-    );
-  }
 }

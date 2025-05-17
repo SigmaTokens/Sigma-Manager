@@ -96,13 +96,13 @@ select {
 select:invalid {
   color: #bbb;
 }
-
 .popup-content > p {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 6px; /* Chosen from main for consistent spacing within p elements */
 }
 
+/* New classes from main, to be preserved */
 .selected-grade {
   text-align: center;
   margin-top: 5px;

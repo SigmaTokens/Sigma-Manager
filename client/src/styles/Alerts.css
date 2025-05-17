@@ -1,7 +1,7 @@
-/* Container Styles */
+/* shak6 */
 .alerts-container {
   padding: 1.5rem;
-  background-color: #f9fafb;
+  background-color: #ffffff;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -16,9 +16,8 @@
   text-align: center;
 }
 
-/* Table Container */
 .table-container {
-  background-color: white;
+  background-color: ffffff;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   border-radius: 0.5rem;
   overflow-x: auto;
@@ -45,7 +44,7 @@
 }
 
 .alerts-table th {
-  background-color: #f9fafb;
+  background-color: #ffffff;
   font-size: 0.75rem;
   font-weight: 500;
   color: #6b7280;

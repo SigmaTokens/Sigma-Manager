@@ -1,10 +1,12 @@
 .agents-container {
   padding: 1.5rem;
-  background-color: #f9fafb;
+  background-color: #ffffff;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .agents-title {
@@ -12,21 +14,24 @@
   font-weight: 700;
   color: #1f2937;
   margin-bottom: 1.5rem;
+  word-break: break-all;
+  overflow-wrap: break-word;
 }
 
 .table-container {
-  background-color: white;
+  background-color: ffffff;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   border-radius: 0.5rem;
   overflow: hidden;
   width: 100%;
-  max-width: 72rem;
+  max-width: 100%;
+  padding: 1rem;
 }
 
 .agents-table {
   width: 100%;
   border-collapse: collapse;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #ffffff;
 }
 
 .agents-table th,
@@ -34,10 +39,12 @@
   padding: 0.75rem;
   text-align: center;
   border: 1px solid #e5e7eb;
+  word-break: break-all;
+  overflow-wrap: break-word;
 }
 
 .agents-table th {
-  background-color: #f9fafb;
+  background-color: #ffffff;
   font-size: 0.75rem;
   font-weight: 500;
   color: #6b7280;
@@ -63,18 +70,13 @@
   font-weight: bold;
 }
 
-.agents-status-online {
-  color: green !important;
-  font-weight: bold;
-}
-
 .agents-status-offline {
-  color: red !important;
+  color: red;
   font-weight: bold;
 }
 
 .agents-status-unknown {
-  color: gray !important;
+  color: gray;
   font-weight: bold;
 }
 
@@ -144,4 +146,51 @@
 
 .agents-status-unknown {
   color: #ffc107;
+}
+
+/* Media query for medium screens (e.g., tablets) */
+@media (max-width: 1024px) {
+  .agents-container {
+    padding: 1rem;
+  }
+  .agents-title {
+    font-size: 1.5rem;
+  }
+  .table-container {
+    padding: 0.5rem;
+  }
+}
+/* Media query for small screens (e.g., mobile devices) */
+@media (max-width: 768px) {
+  .agents-container {
+    padding: 0.5rem;
+  }
+  .agents-title {
+    font-size: 1.25rem;
+  }
+  .table-container {
+    padding: 0.25rem;
+  }
+  .agents-table {
+    font-size: 0.75rem;
+  }
+  .agents-refresh-button-wrapper {
+    text-align: center;
+  }
+}
+
+/* Media query for extra small screens (e.g., small mobile devices) */
+@media (max-width: 480px) {
+  .agents-container {
+    padding: 0.25rem;
+  }
+  .agents-title {
+    font-size: 1rem;
+  }
+  .table-container {
+    padding: 0.1rem;
+  }
+  .agents-table {
+    font-size: 0.5rem;
+  }
 }

@@ -18,29 +18,6 @@ export async function getAgents() {
   }
 }
 
-export async function addAgent(agentIP: string, agentName: string, agentPort: number | undefined) {
-  try {
-    const response = await fetch('http://localhost:3000/api/agents/add', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        ip: agentIP,
-        name: agentName,
-        port: agentPort,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Error:', errorText);
-    }
-  } catch (err) {
-    console.error('Request failed:', err);
-  }
-}
-
 export async function startAgent(agent_id: string) {
   try {
     const response = await fetch(`http://localhost:3000/api/agents/start`, {

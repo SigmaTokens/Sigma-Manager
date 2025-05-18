@@ -42,6 +42,11 @@ export function serveAgents() {
     try {
       const { id, ip, name, port } = req.body;
 
+      console.log('JOKER id:', id);
+      console.log('JOKER ip:', ip);
+      console.log('JOKER name:', name);
+      console.log('JOKER port:', port);
+
       if (!ip || !name || !port || !id) {
         res.status(400).json({ error: 'Missing required fields (id ,ip, name, port)' });
         return;
@@ -122,11 +127,7 @@ export function serveAgents() {
       const agent = await get_agent_by_id(agent_id);
 
       const response_from_agent = await fetch(
-        'http://' +
-          agent.agent_ip +
-          ':' +
-          agent.agent_port +
-          '/api/general/init',
+        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/general/init',
         {
           //signal: AbortSignal.timeout(300),
           method: 'GET',

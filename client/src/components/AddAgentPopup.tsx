@@ -204,6 +204,7 @@ MANAGER_PORT=${manager_port}
 ${header}
 "@ | Out-File .env -Encoding utf8
 npm run start-prod`;
+
     case 'Linux':
       if (mode == 'domain') {
         return `git clone https://github.com/SigmaTokens/Sigma-Agent.git && \
@@ -215,11 +216,19 @@ npm run start-prod-linux`;
 cd Sigma-Agent && \
 printf "MANAGER_IP=${manager_ip}\nMANAGER_PORT=${manager_port}\n${header}\n" | tee .env > /dev/null && \
 npm run start-prod-linux`;
+
     case 'MacOS':
       if (mode == 'domain') {
-        return `echo "MANAGER_DOMAIN=${manager_domain}\n${header}" > .env && ./start-mac.sh`;
+        return `git clone https://github.com/SigmaTokens/Sigma-Agent.git && \
+cd Sigma-Agent && \
+printf "MANAGER_DOMAIN=${manager_domain}\n${header}\n" | tee .env > /dev/null && \
+npm run start-prod-mac`;
       }
-      return `echo "MANAGER_IP=${manager_ip}\nMANAGER_PORT=${manager_port}\n${header}" > .env && ./start-mac.sh`;
+      return `git clone https://github.com/SigmaTokens/Sigma-Agent.git && \
+cd Sigma-Agent && \
+printf "MANAGER_IP=${manager_ip}\nMANAGER_PORT=${manager_port}\n${header}\n" | tee .env > /dev/null && \
+npm run start-prod-mac`;
+
     default:
       return 'OS not supported yet';
   }

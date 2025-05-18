@@ -143,7 +143,7 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
             </div>
             {selectedType === 'api' && (
   <div className="api-table-section">
-    <label>API Endpoints Table</label>
+    {/* <label>API Endpoints Table</label> */}
     <table className="api-table">
       <thead>
         <tr>

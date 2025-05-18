@@ -5,6 +5,7 @@ import { getAgents } from '../models/Agents';
 import { createHoneytokenText } from '../models/Honeytoken';
 import TextHoneyToken from './TextHoneyToken';
 import { IAgent, IHoneytokenType, CreateHoneytokenFormProps } from '../../../server/interfaces/agent';
+import ApiHoneyToken from './ApiHoneyToken';
 
 function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
   // const [quantity, setQuantity] = useState<number>(1);
@@ -18,7 +19,8 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
   const [agentID, setAgentID] = useState<string>('');
   const [agents, setAgents] = useState<IAgent[]>([]);
   const [errors, setErrors] = useState<any>({});
-
+  const [apiPort, setApiPort] = useState('');
+  
   useEffect(() => {
     getAgents().then((data) => {
       setAgents(data);
@@ -86,29 +88,30 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
               />
             </p> */}
 
-            <div>
-              <label>
-                Type <span className="required-star">*</span>
-              </label>
-              <select
-                value={selectedType}
-                onChange={(e) => {
-                  setSelectedType(e.target.value);
-                  setErrors({});
-                }}
-                className="select-type"
-                style={{ color: selectedType ? '#000' : '#bbb' }}
-              >
-                <option value="" disabled hidden>
-                  Select Honeytoken Type
-                </option>
-                {types.map((type: IHoneytokenType) => (
-                  <option key={type.id} value={type.id}>
-                    {type.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+<div>
+  <label>
+    Type <span className="required-star">*</span>
+  </label>
+  <select
+    value={selectedType}
+    onChange={(e) => {
+      setSelectedType(e.target.value);
+      setErrors({});
+    }}
+    className="select-type"
+    style={{ color: selectedType ? '#000' : '#bbb' }}
+  >
+    <option value="" disabled hidden>
+      Select Honeytoken Type
+    </option>
+    {types.map((type: IHoneytokenType) => (
+      <option key={type.id} value={type.id}>
+        {type.name}
+      </option>
+    ))}
+    <option value="api">API</option>
+  </select>
+</div>
 
             <div>
               <label>Notes</label>
@@ -156,6 +159,36 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                 }}
               />
             </div>
+            
+                <div>
+                <table>
+      <thead>
+        <tr>
+          <th>method</th>
+          <th>route</th>
+          <th>resaults</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>get</td>
+          <td>Cell 2</td>
+          <td>Cell 3</td>
+        </tr>
+        <tr>
+          <td>set</td>
+          <td>Cell 5</td>
+          <td>Cell 6</td>
+        </tr>
+        <tr>
+          <td>get</td>
+          <td>Cell 8</td>
+          <td>Cell 9</td>
+        </tr>
+      </tbody>
+    </table>
+                </div>
+
 
             <div>
               <label>

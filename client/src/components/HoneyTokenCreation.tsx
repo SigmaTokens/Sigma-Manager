@@ -5,7 +5,6 @@ import { getAgents } from '../models/Agents';
 import { createHoneytokenText } from '../models/Honeytoken';
 import TextHoneyToken from './TextHoneyToken';
 import { IAgent, IHoneytokenType, CreateHoneytokenFormProps } from '../../../server/interfaces/agent';
-import ApiHoneyToken from './ApiHoneyToken';
 
 function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
   // const [quantity, setQuantity] = useState<number>(1);
@@ -19,8 +18,33 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
   const [agentID, setAgentID] = useState<string>('');
   const [agents, setAgents] = useState<IAgent[]>([]);
   const [errors, setErrors] = useState<any>({});
-  const [apiPort, setApiPort] = useState('');
+
+//// shak6 and 144-198
+  const [apiRows, setApiRows] = useState([
+    { method: 'GET', route: '', result: '' },
+  ]);
   
+  const handleApiChange = (index: number, field: string, value: string) => {
+    const updatedRows = [...apiRows];
+    updatedRows[index][field as keyof typeof updatedRows[0]] = value;
+    setApiRows(updatedRows);
+  };
+  
+  const addApiRow = () => {
+    setApiRows([...apiRows, { method: 'GET', route: '', result: '' }]);
+  };
+  
+  const removeApiRow = (index: number) => {
+    const updatedRows = [...apiRows];
+    updatedRows.splice(index, 1);
+    setApiRows(updatedRows);
+  };
+//  shak6
+
+
+
+
+
   useEffect(() => {
     getAgents().then((data) => {
       setAgents(data);
@@ -117,6 +141,60 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
               <label>Notes</label>
               <Input type="text" value={notes} onChange={(e) => setNotes(e.target.value)} />
             </div>
+            {selectedType === 'api' && (
+  <div className="api-table-section">
+    <label>API Endpoints Table</label>
+    <table className="api-table">
+      <thead>
+        <tr>
+          <th>Method</th>
+          <th>Route</th>
+          <th>Result</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {apiRows.map((row, index) => (
+          <tr key={index}>
+            <td>
+              <select
+                value={row.method}
+                onChange={(e) => handleApiChange(index, 'method', e.target.value)}
+              >
+                <option value="GET">GET</option>
+                <option value="POST">POST</option>
+                <option value="PUT">PUT</option>
+                <option value="DELETE">DELETE</option>
+              </select>
+            </td>
+            <td>
+              <input
+                type="text"
+                value={row.route}
+                onChange={(e) => handleApiChange(index, 'route', e.target.value)}
+              />
+            </td>
+            <td>
+              <input
+                type="text"
+                value={row.result}
+                onChange={(e) => handleApiChange(index, 'result', e.target.value)}
+              />
+            </td>
+            <td>
+              <button type="button" onClick={() => removeApiRow(index)}>
+                Delete
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    <button type="button" onClick={addApiRow} style={{ marginTop: '0.5rem' }}>
+      Add Row
+    </button>
+  </div>
+)}
 
             {selectedType === 'text' && (
               <TextHoneyToken
@@ -146,7 +224,7 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
               <div className="selected-grade">Selected Grade: {grade}</div>
             </div>
 
-            <div>
+             <div>
               <label>
                 Expiration Date <span className="required-star">*</span>
               </label>
@@ -158,38 +236,7 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                   setErrors({});
                 }}
               />
-            </div>
-            
-                <div>
-                <table>
-      <thead>
-        <tr>
-          <th>method</th>
-          <th>route</th>
-          <th>resaults</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>get</td>
-          <td>Cell 2</td>
-          <td>Cell 3</td>
-        </tr>
-        <tr>
-          <td>set</td>
-          <td>Cell 5</td>
-          <td>Cell 6</td>
-        </tr>
-        <tr>
-          <td>get</td>
-          <td>Cell 8</td>
-          <td>Cell 9</td>
-        </tr>
-      </tbody>
-    </table>
-                </div>
-
-
+             </div>
             <div>
               <label>
                 Agent <span className="required-star">*</span>

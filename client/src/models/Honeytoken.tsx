@@ -1,6 +1,5 @@
 import { IAgentStatus } from '../../../server/interfaces/agent';
 import { areAgentsConnected } from './Agents';
-
 export async function createHoneytokenText(
   fileName: string,
   ComponentAddresses: string,

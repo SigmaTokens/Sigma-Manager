@@ -19,10 +19,12 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
   const [selectedIp, setSelectedIp] = useState<string>('');
   const [serverAddress, setServerAddress] = useState<ServerAddress>();
   const [agentName, setAgentName] = useState('');
-  const [script, setScript] = useState('');
-  const [showToast, setShowToast] = useState(false);
+  const [installToast, setInstallToast] = useState(false);
+  const [updateToast, setUpdateToast] = useState(false);
   const [connectionMode, setConnectionMode] = useState<'ip' | 'domain'>('ip');
   const [domainName, setDomainName] = useState<string>('');
+  const [installScript, setInstallScript] = useState('');
+  const [updateScript, setUpdateScript] = useState('');
 
   useEffect(() => {
     getAddresses()
@@ -42,21 +44,22 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
   }, [connectionMode, selectedIp]);
 
   useEffect(() => {
-    let newScript = '';
+    let newInstallScript = '';
     console.log('cool');
     if (connectionMode === 'ip') {
       if (!serverAddress) return;
-      newScript = generateScript(os, serverAddress.ip, serverAddress.port, agentName, undefined, 'ip');
+      newInstallScript = generateInstallScript(os, serverAddress.ip, serverAddress.port, agentName, undefined, 'ip');
     } else {
-      newScript = generateScript(os, undefined, undefined, agentName, domainName, 'domain');
+      newInstallScript = generateInstallScript(os, undefined, undefined, agentName, domainName, 'domain');
     }
-    setScript(newScript);
+    setInstallScript(newInstallScript);
+    setUpdateScript(generateUpdateScript(os));
   }, [os, serverAddress, agentName, connectionMode, domainName]);
 
-  function copyToClipboard() {
-    navigator.clipboard.writeText(script).then(() => {
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 1000);
+  function copyToClipboard(text: string, setToast: React.Dispatch<React.SetStateAction<boolean>>) {
+    navigator.clipboard.writeText(text).then(() => {
+      setToast(true);
+      setTimeout(() => setToast(false), 1000);
     });
   }
 
@@ -153,9 +156,15 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
           <div className="script-section">
             <p>Run this script:</p>
             <div className="script-with-button">
-              <textarea className="script-box" readOnly value={script} />
-              {showToast && <div className="toast">Copied!</div>}
-              <FaClipboard className="copy-icon" onClick={copyToClipboard} />
+              <textarea className="install-script-box" readOnly value={installScript} />
+              {installToast && <div className="toast">Copied!</div>}
+              <FaClipboard className="copy-icon" onClick={() => copyToClipboard(installScript, setInstallToast)} />
+            </div>
+            <p>To update an existing agent, run:</p>
+            <div className="script-with-button">
+              <textarea className="update-script-box" readOnly value={updateScript} />
+              <FaClipboard onClick={() => copyToClipboard(updateScript, setUpdateToast)} className="copy-icon" />
+              {updateToast && <div className="toast">Copied!</div>}
             </div>
           </div>
 
@@ -174,7 +183,7 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
   );
 }
 
-function generateScript(
+function generateInstallScript(
   os: string,
   manager_ip?: string,
   manager_port?: number,
@@ -231,6 +240,19 @@ npm run start-prod-mac`;
 
     default:
       return 'OS not supported yet';
+  }
+}
+
+function generateUpdateScript(os: string): string {
+  switch (os) {
+    case 'Windows':
+      return 'git pull && npm run start-prod';
+    case 'Linux':
+      return 'git pull && npm run start-prod-linux';
+    case 'MacOS':
+      return 'git pull && npm run start-prod-mac';
+    default:
+      return '';
   }
 }
 

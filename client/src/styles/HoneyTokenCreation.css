@@ -130,3 +130,38 @@ select:invalid {
 .select-type option[value=''][disabled] {
   color: #bbb !important;
 }
+
+.api-table-scroll {
+  max-height: calc(7 * 2.5rem); /* 7 rows × ~2.5rem per row */
+  overflow-y: auto;
+}
+
+.api-action-cell {
+  display: flex;
+  gap: 0.5rem;
+}
+.api-row-icon {
+  cursor: pointer;
+}
+
+.api-table-container {
+  max-height: 17.5rem;
+  overflow-y: auto;
+}
+.api-minus-icon {
+  cursor: pointer;
+}
+.api-minus-icon:hover {
+  color: red;
+}
+.api-add-button {
+  text-align: center;
+  margin-top: 0.5rem;
+}
+.api-plus-icon {
+  cursor: pointer;
+  font-size: 1.25rem;
+}
+.api-plus-icon:hover {
+  color: green;
+}

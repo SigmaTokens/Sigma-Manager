@@ -5,6 +5,8 @@ import { getAgents } from '../models/Agents';
 import { createHoneytokenText } from '../models/Honeytoken';
 import TextHoneyToken from './TextHoneyToken';
 import { IAgent, IHoneytokenType, CreateHoneytokenFormProps } from '../../../server/interfaces/agent';
+import { FiPlus, FiMinus } from 'react-icons/fi';
+import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 
 function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
   // const [quantity, setQuantity] = useState<number>(1);
@@ -18,24 +20,47 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
   const [agentID, setAgentID] = useState<string>('');
   const [agents, setAgents] = useState<IAgent[]>([]);
   const [errors, setErrors] = useState<any>({});
+  const [port, setPort] = useState<number | ''>('');
+  const [apiRows, setApiRows] = useState([{ method: 'GET', route: '', response: '' }]);
 
   useEffect(() => {
     getAgents().then((data) => {
       setAgents(data);
-      if (data.length > 0) setAgentID(data[0].agent_id);
+      if (data.length) setAgentID(data[0].agent_id);
     });
   }, []);
 
+  const addApiRow = () => {
+    setApiRows((rows) => [{ method: 'GET', route: '', response: '' }, ...rows]);
+  };
+
+  const removeApiRow = (index: number) => {
+    setApiRows((rows) => rows.filter((_, i) => i !== index));
+  };
+
+  const handleApiChange = (index: number, field: string, value: string) => {
+    setApiRows((rows) => rows.map((r, i) => (i === index ? { ...r, [field]: value } : r)));
+  };
+
+  const onDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
+    const items = Array.from(apiRows);
+    const [moved] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, moved);
+    setApiRows(items);
+  };
+
   const validate = () => {
-    const newErrors: any = {};
-    // if (!quantity) newErrors.quantity = true;
-    if (!selectedType) newErrors.selectedType = true;
-    if (!fileName) newErrors.fileName = true;
-    if (!componentAddresses) newErrors.componentAddresses = true;
-    if (!expirationDate) newErrors.expirationDate = true;
-    if (!agentID) newErrors.agentID = true;
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    const newErr: any = {};
+    if (!selectedType) newErr.selectedType = true;
+    if (selectedType === 'api') {
+      if (port === '' || port < 0 || port > 65535) newErr.port = true;
+      apiRows.forEach((r, i) => {
+        if (!/^\/[A-Za-z0-9_/:-]*$/.test(r.route)) newErr[`route${i}`] = true;
+      });
+    }
+    setErrors(newErr);
+    return !Object.keys(newErr).length;
   };
 
   const handleSubmit = async () => {
@@ -107,6 +132,7 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                     {type.name}
                   </option>
                 ))}
+                <option value="api">API</option>
               </select>
             </div>
 
@@ -114,6 +140,87 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
               <label>Notes</label>
               <Input type="text" value={notes} onChange={(e) => setNotes(e.target.value)} />
             </div>
+            {selectedType === 'api' && (
+              <>
+                <div className="field">
+                  <label>
+                    Port <span className="required-star">*</span>
+                  </label>
+                  <Input
+                    type="number"
+                    min={0}
+                    max={65535}
+                    value={port}
+                    onChange={(e) => setPort(e.target.value === '' ? '' : Number(e.target.value))}
+                    className={errors.port ? 'input-error' : ''}
+                  />
+                </div>
+                <div className="api-table-container">
+                  <DragDropContext onDragEnd={onDragEnd}>
+                    <Droppable droppableId="apiRows">
+                      {(provided) => (
+                        <table className="api-table" {...provided.droppableProps} ref={provided.innerRef}>
+                          <thead>
+                            <tr>
+                              <th>Method</th>
+                              <th>Route</th>
+                              <th>Response</th>
+                              <th></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {apiRows.map((row, index) => (
+                              <Draggable key={index} draggableId={`row-${index}`} index={index}>
+                                {(prov) => (
+                                  <tr ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps}>
+                                    <td>
+                                      <select
+                                        value={row.method}
+                                        onChange={(e) => handleApiChange(index, 'method', e.target.value)}
+                                      >
+                                        {['GET', 'POST', 'PUT', 'DELETE'].map((m) => (
+                                          <option key={m}>{m}</option>
+                                        ))}
+                                      </select>
+                                    </td>
+                                    <td>
+                                      <input
+                                        type="text"
+                                        pattern="^/[A-Za-z0-9_/:-]*$"
+                                        title="Must start with / and contain only letters, numbers, /, -, _, :"
+                                        value={row.route}
+                                        onChange={(e) => handleApiChange(index, 'route', e.target.value)}
+                                        className={errors[`route${index}`] ? 'input-error' : ''}
+                                        required
+                                      />
+                                    </td>
+                                    <td>
+                                      <input
+                                        type="text"
+                                        value={row.response}
+                                        onChange={(e) => handleApiChange(index, 'response', e.target.value)}
+                                      />
+                                    </td>
+                                    <td className="api-minus-cell">
+                                      <FiMinus className="api-minus-icon" onClick={() => removeApiRow(index)} />
+                                    </td>
+                                  </tr>
+                                )}
+                              </Draggable>
+                            ))}
+                            {provided.placeholder}
+                          </tbody>
+                        </table>
+                      )}
+                    </Droppable>
+                  </DragDropContext>
+                </div>
+
+                <div className="api-add-button">
+                  <FiPlus className="api-plus-icon" onClick={addApiRow} />
+                </div>
+              </>
+            )}
 
             {selectedType === 'text' && (
               <TextHoneyToken
@@ -156,7 +263,6 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                 }}
               />
             </div>
-
             <div>
               <label>
                 Agent <span className="required-star">*</span>

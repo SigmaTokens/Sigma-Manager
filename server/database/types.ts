@@ -15,7 +15,9 @@ export async function init_types_table() {
 export async function get_all_types() {
   return await Globals.app.locals.db.all(sql`
     SELECT
-      type_id
+      type_id,
+      type_name,
+      description -- Added type_name and description
     FROM
       types
   `);

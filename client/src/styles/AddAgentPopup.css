@@ -46,9 +46,14 @@
   border-radius: 4px;
 }
 
+.instruction1 .agent-input {
+  flex: none; /* don’t stretch */
+  max-width: 140px; /* adjust to taste */
+}
+
 .instruction2 .agent-input {
   flex: none; /* don’t stretch */
-  max-width: 200px; /* adjust to taste */
+  max-width: 130px; /* adjust to taste */
 }
 
 .tabs {

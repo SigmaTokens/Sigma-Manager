@@ -14,7 +14,7 @@ interface ServerAddress {
 }
 
 export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
-  const [os, setOs] = useState<'Windows' | 'Linux' | 'MacOS'>('Windows');
+  const [os, setOs] = useState<'Windows' | 'Linux' | 'Mac'>('Windows');
   const [availableIps, setAvailableIps] = useState<string[]>([]);
   const [selectedIp, setSelectedIp] = useState<string>('');
   const [serverAddress, setServerAddress] = useState<ServerAddress>();
@@ -145,7 +145,7 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
 
           {/* OS Tabs */}
           <div className="tabs">
-            {['Windows', 'Linux', 'MacOS'].map((tab) => (
+            {['Windows', 'Linux', 'Mac'].map((tab) => (
               <span key={tab} className={`tab ${os === tab ? 'active' : ''}`} onClick={() => setOs(tab as typeof os)}>
                 {tab}
               </span>
@@ -226,7 +226,7 @@ cd Sigma-Agent && \
 printf "MANAGER_IP=${manager_ip}\nMANAGER_PORT=${manager_port}\n${header}\n" | tee .env > /dev/null && \
 npm run start-prod-linux`;
 
-    case 'MacOS':
+    case 'Mac':
       if (mode == 'domain') {
         return `git clone https://github.com/SigmaTokens/Sigma-Agent.git && \
 cd Sigma-Agent && \
@@ -249,7 +249,7 @@ function generateUpdateScript(os: string): string {
       return 'git pull && npm run start-prod';
     case 'Linux':
       return 'git pull && npm run start-prod-linux';
-    case 'MacOS':
+    case 'Mac':
       return 'git pull && npm run start-prod-mac';
     default:
       return '';
@@ -259,11 +259,11 @@ function generateUpdateScript(os: string): string {
 function getOsInstructions(os: string): string {
   switch (os) {
     case 'Windows':
-      return "Please open PowerShell as administrator and change to your install directory using 'cd'.";
+      return "Please open PowerShell as admin and change to your agent install directory using 'cd'.";
     case 'Linux':
-      return "Please open your terminal and change to your install directory using 'cd'.";
-    case 'MacOS':
-      return "Please open Terminal (Applications → Utilities → Terminal) and change to your install directory using 'cd'.";
+      return "Please open Terminal as admin and change to your agent install directory using 'cd'.";
+    case 'Mac':
+      return "Please open Terminal as admin and change to your agent install directory using 'cd'.";
     default:
       return 'OS not supported yet.';
   }

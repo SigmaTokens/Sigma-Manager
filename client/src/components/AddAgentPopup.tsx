@@ -201,8 +201,7 @@ Set-Location Sigma-Agent
 @"
 MANAGER_DOMAIN=${manager_domain}
 ${header}
-"@ | Out-File .env -Encoding utf8
-npm run start-prod`;
+"@ | Out-File .env -Encoding utf8; npm run start-prod`;
       }
       return `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
 git clone https://github.com/SigmaTokens/Sigma-Agent.git
@@ -211,8 +210,7 @@ Set-Location Sigma-Agent
 MANAGER_IP=${manager_ip}
 MANAGER_PORT=${manager_port}
 ${header}
-"@ | Out-File .env -Encoding utf8
-npm run start-prod`;
+"@ | Out-File .env -Encoding utf8; npm run start-prod`;
 
     case 'Linux':
       if (mode == 'domain') {
@@ -246,7 +244,7 @@ npm run start-prod-mac`;
 function generateUpdateScript(os: string): string {
   switch (os) {
     case 'Windows':
-      return 'git pull && npm run start-prod';
+      return 'git pull; npm run start-prod';
     case 'Linux':
       return 'git pull && npm run start-prod-linux';
     case 'Mac':

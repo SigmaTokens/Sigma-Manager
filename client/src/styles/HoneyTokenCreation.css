@@ -31,7 +31,6 @@ select {
   font-size: 0.85rem;
 }
 
-/* Under "Grade" text */
 .grade-subtitle {
   font-size: 12px;
   font-weight: 400;
@@ -140,6 +139,7 @@ select:invalid {
   display: flex;
   gap: 0.5rem;
 }
+
 .api-row-icon {
   cursor: pointer;
 }
@@ -148,20 +148,55 @@ select:invalid {
   max-height: 17.5rem;
   overflow-y: auto;
 }
+
 .api-minus-icon {
   cursor: pointer;
 }
+
 .api-minus-icon:hover {
   color: red;
 }
-.api-add-button {
-  text-align: center;
-  margin-top: 0.5rem;
-}
+
 .api-plus-icon {
   cursor: pointer;
   font-size: 1.25rem;
 }
+
 .api-plus-icon:hover {
   color: green;
+}
+
+.api-section {
+  display: flex;
+  flex-direction: column;
+  width: 200%;
+  align-items: center;
+  gap: 0.5rem; /* space between table and button */
+}
+
+.alert-section {
+  display: flex;
+  flex-direction: column;
+  width: 200%;
+}
+
+/* container holds the port field + button */
+.port-plus {
+  display: flex;
+  align-items: flex-end; /* align the “+” with the bottom of the input */
+  gap: 0.5rem; /* space between the input and the icon */
+}
+
+/* let the port field grow to fill available width */
+.port-plus .field {
+  flex: 1;
+  display: flex;
+  flex-direction: column; /* keep its label on top of the input */
+}
+
+/* ensure the button wrapper doesn’t stretch */
+.api-add-button {
+  display: flex;
+  align-items: center; /* center the icon vertically in its own box */
+  margin-bottom: 8px;
 }

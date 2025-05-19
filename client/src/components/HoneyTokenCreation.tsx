@@ -110,8 +110,7 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                 }}
               />
             </p> */}
-
-            <div>
+            <div id="this is type">
               <label>
                 Type <span className="required-star">*</span>
               </label>
@@ -135,26 +134,65 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                 <option value="api">API</option>
               </select>
             </div>
-
-            <div>
+            <div id="this is notes">
               <label>Notes</label>
               <Input type="text" value={notes} onChange={(e) => setNotes(e.target.value)} />
             </div>
+            <div id="this is expiry">
+              <label>
+                Expiration Date <span className="required-star">*</span>
+              </label>
+              <Input
+                type="date"
+                value={expirationDate}
+                onChange={(e) => {
+                  setExpirationDate(e.target.value);
+                  setErrors({});
+                }}
+              />
+            </div>
+            <div id="this is agent">
+              <label>
+                Agent <span className="required-star">*</span>
+              </label>
+              <Select
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                  setAgentID(e.target.value);
+                  setErrors({});
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Agent IP" />
+                </SelectTrigger>
+                <SelectContent>
+                  {agents
+                    .filter((agent) => agent.validated)
+                    .map((agent) => (
+                      <SelectItem key={agent.agent_id} value={agent.agent_id}>
+                        {agent.agent_ip}:{agent.agent_port} | {agent.agent_name}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div id="this is alert" className="alert-section">
+              <label>Alert Severity </label>
+              <small className="grade-subtitle">
+                Set the alert severity for this honeytoken (1 = lowest, 10 = highest)
+              </small>
+              <input
+                type="range"
+                min={1}
+                max={10}
+                value={grade}
+                onChange={(e) => setGrade(Number(e.target.value))}
+                className="custom-slider"
+              />
+              <div className="selected-grade">Selected Grade: {grade}</div>
+            </div>
+            <br></br>
             {selectedType === 'api' && (
-              <>
-                <div className="field">
-                  <label>
-                    Port <span className="required-star">*</span>
-                  </label>
-                  <Input
-                    type="number"
-                    min={0}
-                    max={65535}
-                    value={port}
-                    onChange={(e) => setPort(e.target.value === '' ? '' : Number(e.target.value))}
-                    className={errors.port ? 'input-error' : ''}
-                  />
-                </div>
+              <div className="api-section">
                 <div className="api-table-container">
                   <DragDropContext onDragEnd={onDragEnd}>
                     <Droppable droppableId="apiRows">
@@ -215,13 +253,26 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                     </Droppable>
                   </DragDropContext>
                 </div>
-
-                <div className="api-add-button">
-                  <FiPlus className="api-plus-icon" onClick={addApiRow} />
+                <div className="port-plus">
+                  <div id="this is port" className="field">
+                    <label>
+                      Port <span className="required-star">*</span>
+                    </label>
+                    <Input
+                      type="number"
+                      min={0}
+                      max={65535}
+                      value={port}
+                      onChange={(e) => setPort(e.target.value === '' ? '' : Number(e.target.value))}
+                      className={errors.port ? 'input-error' : ''}
+                    />
+                  </div>
+                  <div className="api-add-button">
+                    <FiPlus className="api-plus-icon" onClick={addApiRow} />
+                  </div>
                 </div>
-              </>
+              </div>
             )}
-
             {selectedType === 'text' && (
               <TextHoneyToken
                 fileName={fileName}
@@ -233,60 +284,6 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                 clearErrors={() => setErrors({})}
               />
             )}
-
-            <div>
-              <label>Alert Severity </label>
-              <small className="grade-subtitle">
-                Set the alert severity for this honeytoken (1 = lowest, 10 = highest)
-              </small>
-              <input
-                type="range"
-                min={1}
-                max={10}
-                value={grade}
-                onChange={(e) => setGrade(Number(e.target.value))}
-                className="custom-slider"
-              />
-              <div className="selected-grade">Selected Grade: {grade}</div>
-            </div>
-
-            <div>
-              <label>
-                Expiration Date <span className="required-star">*</span>
-              </label>
-              <Input
-                type="date"
-                value={expirationDate}
-                onChange={(e) => {
-                  setExpirationDate(e.target.value);
-                  setErrors({});
-                }}
-              />
-            </div>
-            <div>
-              <label>
-                Agent <span className="required-star">*</span>
-              </label>
-              <Select
-                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                  setAgentID(e.target.value);
-                  setErrors({});
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Agent IP" />
-                </SelectTrigger>
-                <SelectContent>
-                  {agents
-                    .filter((agent) => agent.validated)
-                    .map((agent) => (
-                      <SelectItem key={agent.agent_id} value={agent.agent_id}>
-                        {agent.agent_ip}:{agent.agent_port} | {agent.agent_name}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
-            </div>
           </div>
 
           {Object.keys(errors).length > 0 && (

@@ -200,11 +200,12 @@ export function serveHoneytokens() {
 
       if (!agent) {
         console.error(Constants.TEXT_RED_COLOR, 'agent not found', Constants.TEXT_WHITE_COLOR);
-        res.status(500).json({ failure: 'agent not found' });
+        res.status(200).json([]); // returns empty array of honeytokens
         return;
       }
 
       if (agent.validated === 0) {
+        console.error(Constants.TEXT_RED_COLOR, 'agent not found', Constants.TEXT_WHITE_COLOR);
         res.status(200).json([]); // returns empty array of honeytokens
         return;
       }
@@ -220,7 +221,7 @@ export function serveHoneytokens() {
         error,
         Constants.TEXT_WHITE_COLOR,
       );
-      res.status(444).json({ error: 'Internal server error' });
+      res.status(500).json({ error: 'Internal server error' });
       return;
     }
   });

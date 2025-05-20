@@ -27,8 +27,6 @@ export async function create_alert_to_token_id(
   archive: boolean = false,
 ) {
   try {
-    await begin_transaction();
-
     await Globals.app.locals.db.run(
       sql`
         INSERT INTO
@@ -46,10 +44,8 @@ export async function create_alert_to_token_id(
       [uuidv4(), token_id, alert_epoch, accessed_by, log, archive],
     );
 
-    await commit();
     return true;
   } catch (error) {
-    await rollback();
     return false;
   }
 }

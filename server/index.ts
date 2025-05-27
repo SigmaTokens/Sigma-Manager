@@ -1,3 +1,5 @@
+import { createServer } from 'http';
+import { Server as IOServer, Socket } from 'socket.io';
 import express from 'express';
 import cors from 'cors';
 import { serveClient } from './routes/client';
@@ -9,15 +11,56 @@ import { serveAgents } from './routes/agents';
 import { serveHome } from './routes/home';
 import { serveGeneral } from './routes/general';
 import { Constants } from './constants';
+
 main();
 
 function main(): void {
   const app = express();
   app.use(express.json());
-
   app.use(cors());
   app.use(express.urlencoded({ extended: true }));
+
   const port = process.env.PORT || 3000;
+
+  const httpServer = createServer(app);
+
+  const io = new IOServer(httpServer, {
+    cors: { origin: '*' },
+  });
+
+  const agentSockets = new Map<string, Socket>();
+
+  io.on('connection', (socket) => {
+    console.log('connection received...');
+    const agentId = socket.handshake.query.agentId as string;
+
+    if (!agentId) {
+      console.warn('Agent tried to connect without agentId');
+      socket.disconnect();
+      return;
+    }
+
+    console.log(`✅ Agent connected: ${agentId}`);
+    agentSockets.set(agentId, socket);
+
+    socket.on('message', (message) => {
+      console.log(message);
+      io.emit('message', '${socket.id.substr(0,2)} said ${message}');
+    });
+
+    // Handle status updates
+    socket.on('statusUpdate', ({ status }) => {
+      console.log(`📡 Status from ${agentId}:`, status);
+      // You can store or forward this to a dashboard here
+    });
+
+    socket.on('disconnect', () => {
+      console.log(`⛔ Agent disconnected: ${agentId}`);
+      agentSockets.delete(agentId);
+    });
+  });
+
+  Globals.agentSockets = agentSockets;
 
   Globals.app = app;
 
@@ -37,8 +80,12 @@ function main(): void {
       serveAgents();
       serveClient();
 
-      Globals.server = app.listen(port, () => {
-        console.log(Constants.TEXT_MAGENTA_COLOR, `Server running on port ${port}`, Constants.TEXT_WHITE_COLOR);
+      Globals.server = httpServer.listen(port, () => {
+        console.log(
+          Constants.TEXT_MAGENTA_COLOR,
+          `Server + WebSocket running on port ${port}`,
+          Constants.TEXT_WHITE_COLOR,
+        );
       });
     })
     .catch((error) => {

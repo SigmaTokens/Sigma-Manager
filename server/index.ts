@@ -44,14 +44,15 @@ function main(): void {
     agentSockets.set(agentId, socket);
 
     socket.on('message', (message) => {
-      console.log(message);
-      io.emit('message', '${socket.id.substr(0,2)} said ${message}');
+      console.log(`💬 Message from ${agentId}:`, message);
     });
 
-    // Handle status updates
     socket.on('statusUpdate', ({ status }) => {
       console.log(`📡 Status from ${agentId}:`, status);
-      // You can store or forward this to a dashboard here
+    });
+
+    socket.on('alertUpdate', ({ alert }) => {
+      console.log(`⚠️ Alert from ${agentId}:`, alert);
     });
 
     socket.on('disconnect', () => {

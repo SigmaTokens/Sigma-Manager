@@ -42,11 +42,6 @@ export function serveAgents() {
     try {
       const { id, ip, name, port } = req.body;
 
-      console.log('JOKER id:', id);
-      console.log('JOKER ip:', ip);
-      console.log('JOKER name:', name);
-      console.log('JOKER port:', port);
-
       if (!ip || !name || !port || !id) {
         res.status(400).json({ error: 'Missing required fields (id ,ip, name, port)' });
         return;

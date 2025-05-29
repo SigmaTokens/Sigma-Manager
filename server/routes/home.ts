@@ -10,7 +10,9 @@ export function serveHome() {
       const agents = await Globals.app.locals.db.all('SELECT * FROM agents');
       const alerts = await Globals.app.locals.db.all('SELECT * FROM alerts');
       const honeytokens = await Globals.app.locals.db.all('SELECT * FROM honeytokens');
-
+      const grades = await Globals.app.locals.db.all(
+        `SELECT honeytokens.grade FROM alerts LEFT JOIN honeytokens ON alerts.token_id = honeytokens.token_id`,
+      );
       const now = new Date();
       const sevenDays = 7 * 24 * 60 * 60 * 1000;
 
@@ -47,6 +49,18 @@ export function serveHome() {
         .slice(0, 3)
         .map(([token_id, count]) => ({ token_id, alert_count: count }));
 
+      const severityMap: Record<string, number> = {};
+      for (let i = 1; i <= 10; i++) {
+        severityMap[i.toString()] = 0;
+      }
+
+      for (const alert of alerts) {
+        const grade = alert.grade?.toString();
+        if (grade && severityMap.hasOwnProperty(grade)) {
+          severityMap[grade]++;
+        }
+      }
+
       // Count honeytoken types
       const typeMap: Record<string, number> = {};
       for (const token of honeytokens) {
@@ -64,6 +78,8 @@ export function serveHome() {
           resolved: resolvedAlerts,
         },
         token_status: tokenStatus,
+        alert_severity: severityMap,
+        alert_grades: grades.map((g: { grade: number }) => g.grade),
         top_threats: topThreats,
         honeytoken_types: typeMap,
       });

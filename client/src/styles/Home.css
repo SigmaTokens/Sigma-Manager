@@ -5,8 +5,9 @@
 .kpi-cards {
   display: flex;
   flex-wrap: wrap;
-  gap: 2rem;
+  gap: 1rem;
   margin-top: 2rem;
+  justify-content: center;
 }
 
 .kpi-card {
@@ -17,4 +18,45 @@
   font-weight: bold;
   font-size: 1.1rem;
   min-width: 200px;
+  text-align: center;
+}
+
+.section-title {
+  margin-top: 3rem;
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.charts-row {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+  gap: 1.5rem;
+}
+
+.chart-wrapper {
+  width: 300px;
+  height: 350px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.chart-title {
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.chart-wrapper canvas {
+  max-height: 300px !important;
+  max-width: 100% !important;
+}
+
+.chart-wrapper.large {
+  width: 500px;
+  height: 400px;
 }

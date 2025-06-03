@@ -27,6 +27,18 @@ export async function createHoneytokenText(
   });
 }
 
+export async function createHoneytokenApi() {
+  return await fetch('http://localhost:3000/api/honeytokens/api', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      // TODO: write params here
+    }),
+  });
+}
+
 export async function getHoneytokens() {
   try {
     const response = await fetch('http://localhost:3000/api/honeytokens');
@@ -111,9 +123,7 @@ export async function isHoneytokenMonitored(token_id: string): Promise<boolean> 
   }
 }
 
-export async function getHoneytokensMonitorStatuses(): Promise<
-  Record<string, boolean>
-> {
+export async function getHoneytokensMonitorStatuses(): Promise<Record<string, boolean>> {
   try {
     const agents_data: IAgentStatus[] = await areAgentsConnected();
 
@@ -125,16 +135,13 @@ export async function getHoneytokensMonitorStatuses(): Promise<
       return {}; // Early exit if no online agents
     }
 
-    const response = await fetch(
-      'http://localhost:3000/api/honeytokens/monitor_status',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ agents_ids }),
+    const response = await fetch('http://localhost:3000/api/honeytokens/monitor_status', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    );
+      body: JSON.stringify({ agents_ids }),
+    });
 
     if (!response.ok) {
       throw new Error('Failed to fetch monitoring statuses');

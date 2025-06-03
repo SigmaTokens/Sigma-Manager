@@ -63,7 +63,33 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
     return !Object.keys(newErr).length;
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
+    switch (selectedType) {
+      case 'text':
+        handleSubmitText();
+        break;
+      case 'api':
+        handleSubmitApi();
+        break;
+    }
+  };
+
+  const handleSubmitApi = async () => {
+    console.log('test2');
+    //--- TODO: add validation here ---
+    try {
+      const response = await createHoneytokenApi();
+      if (!response.ok) {
+      }
+      onClose();
+      window.location.href = '/honeytokens';
+    } catch (err) {
+      console.error('error: ', err);
+    }
+  };
+
+  const handleSubmitText = async () => {
+    console.log('test1');
     if (!validate()) return;
     try {
       const response = await createHoneytokenText(
@@ -96,21 +122,7 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
           <h2 className="popup-title">Create Honeytoken</h2>
 
           <div className="popup-content">
-            {/* <p>
-              <label>
-                Quantity <span className="required-star">*</span>
-              </label>
-              <Input
-                type="number"
-                min={1}
-                value={quantity}
-                onChange={(e) => {
-                  setQuantity(Number(e.target.value));
-                  setErrors({});
-                }}
-              />
-            </p> */}
-            <div id="this is type">
+            <div id="type">
               <label>
                 Type <span className="required-star">*</span>
               </label>
@@ -131,7 +143,6 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                     {type.name}
                   </option>
                 ))}
-                <option value="api">API</option>
               </select>
             </div>
             <div id="this is notes">

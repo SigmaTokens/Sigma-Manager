@@ -99,12 +99,10 @@ export function serveHoneytokens() {
   });
   router.post('/honeytokens/api', async (req, res) => {
     try {
-      const { type, http_method, route, grade, expiration_date, notes, response, agent_id, api_port } = req.body;
+      const { type, grade, expiration_date, notes, response, agent_id, api_port, apis } = req.body;
 
       const required = {
         type,
-        http_method,
-        route,
         grade,
         expiration_date,
         notes,
@@ -113,6 +111,10 @@ export function serveHoneytokens() {
         api_port,
       };
 
+      const apis_test: any[] = apis;
+
+      console.log('help: ', apis_test);
+
       for (const [field, value] of Object.entries(required)) {
         if (value === undefined || value === null || value === '') {
           res.status(400).json({ failure: `Missing required field: ${field}` });
@@ -120,49 +122,54 @@ export function serveHoneytokens() {
         }
       }
 
-      const agent = await get_agent_by_id(agent_id);
+      // const agent = await get_agent_by_id(agent_id);
 
-      const token_id = uuidv4();
       const group_id = uuidv4();
 
-      await insert_honeytoken(
-        agent_id,
-        token_id,
-        group_id,
-        type,
-        '',
-        '',
-        http_method,
-        route,
-        grade,
-        new Date(),
-        expiration_date,
-        notes,
-        response,
-        '',
-        api_port,
-        '1',
-      );
+      apis_test.forEach(async (api) => {
+        const token_id = uuidv4();
 
-      const response_from_agent = await fetch(
-        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/honeytoken/add',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            token_id: token_id,
-            group_id: group_id,
-            type: type,
-            file_name: http_method,
-            location: route,
-            grade: grade,
-            expiration_date: expiration_date,
-            notes: notes,
-            data: response,
-            // api_port: api_port,
-          }),
-        },
-      );
+        await insert_honeytoken(
+          agent_id,
+          token_id,
+          group_id,
+          type,
+          '',
+          '',
+          api.http_method,
+          api.route,
+          grade,
+          new Date(),
+          expiration_date,
+          notes,
+          api.response,
+          '',
+          api_port,
+          '1',
+        );
+      });
+
+      // TODO: send to agent
+
+      // const response_from_agent = await fetch(
+      //   'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/honeytoken/add',
+      //   {
+      //     method: 'POST',
+      //     headers: { 'Content-Type': 'application/json' },
+      //     body: JSON.stringify({
+      //       token_id: token_id,
+      //       group_id: group_id,
+      //       type: type,
+      //       file_name: http_method,
+      //       location: route,
+      //       grade: grade,
+      //       expiration_date: expiration_date,
+      //       notes: notes,
+      //       data: response,
+      //       // api_port: api_port,
+      //     }),
+      //   },
+      // );
 
       res.status(200).json({ success: 'nice' });
     } catch (error) {

@@ -27,7 +27,10 @@ function Header() {
   const [showCreatePopup, setShowCreatePopup] = useState(false);
   const [showAddAgentPopup, setShowAddAgentPopup] = useState(false);
 
-  const honeytokenTypes = [{ id: 'text', name: 'text file' }];
+  const honeytokenTypes = [
+    { id: 'text', name: 'text file' },
+    { id: 'api', name: 'api' },
+  ];
   const agents = useAgents();
 
   return (
@@ -59,16 +62,10 @@ function Header() {
       </nav>
 
       {showCreatePopup && (
-        <CreateHoneytokenForm
-          types={honeytokenTypes}
-          agents={agents}
-          onClose={() => setShowCreatePopup(false)}
-        />
+        <CreateHoneytokenForm types={honeytokenTypes} agents={agents} onClose={() => setShowCreatePopup(false)} />
       )}
 
-      {showAddAgentPopup && (
-        <AddAgentPopup onClose={() => setShowAddAgentPopup(false)} />
-      )}
+      {showAddAgentPopup && <AddAgentPopup onClose={() => setShowAddAgentPopup(false)} />}
     </header>
   );
 }

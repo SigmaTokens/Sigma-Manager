@@ -2,7 +2,7 @@ import { IAgent, IAgentStatus } from '../../../server/interfaces/agent';
 
 export async function getAgents() {
   try {
-    const response = await fetch('http://localhost:3000/api/agents', {
+    const response = await fetch('/api/agents', {
       method: 'GET',
     });
 

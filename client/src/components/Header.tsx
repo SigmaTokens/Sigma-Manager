@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
-import '../styles/Header.css';
 import logo from '../assets/SigmaTokens.png';
 import CreateHoneytokenForm from './HoneyTokenCreation';
 import AddAgentPopup from '../components/AddAgentPopup';
 import { getAgents } from '../models/Agents';
+import { Globals } from '../utilities/globals';
+
+import '../styles/Header.css';
 
 function useAgents() {
   const [agents, setAgents] = useState([]);
@@ -27,10 +29,6 @@ function Header() {
   const [showCreatePopup, setShowCreatePopup] = useState(false);
   const [showAddAgentPopup, setShowAddAgentPopup] = useState(false);
 
-  const honeytokenTypes = [
-    { id: 'text', name: 'text file' },
-    { id: 'api', name: 'api' },
-  ];
   const agents = useAgents();
 
   return (
@@ -62,7 +60,11 @@ function Header() {
       </nav>
 
       {showCreatePopup && (
-        <CreateHoneytokenForm types={honeytokenTypes} agents={agents} onClose={() => setShowCreatePopup(false)} />
+        <CreateHoneytokenForm
+          types={Globals.honeytokenTypes}
+          agents={agents}
+          onClose={() => setShowCreatePopup(false)}
+        />
       )}
 
       {showAddAgentPopup && <AddAgentPopup onClose={() => setShowAddAgentPopup(false)} />}

@@ -8,6 +8,7 @@ import { IAgent, IHoneytokenType, CreateHoneytokenFormProps } from '../../../ser
 import { FiPlus, FiMinus } from 'react-icons/fi';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { error } from 'console';
+import { HoneytokenType } from '../utilities/typing';
 
 function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
   const [selectedType, setSelectedType] = useState<string>('');
@@ -53,7 +54,7 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
   const validate = () => {
     const newErr: any = {};
     if (!selectedType) newErr.selectedType = true;
-    if (selectedType === 'api') {
+    if (selectedType === HoneytokenType.API) {
       if (port < 0 || port > 65535) newErr.port = true;
       apiRows.forEach((r, i) => {
         if (!/^\/[A-Za-z0-9_/:-]*$/.test(r.route)) newErr[`route${i}`] = true;
@@ -65,10 +66,10 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
 
   const handleSubmit = () => {
     switch (selectedType) {
-      case 'text':
+      case HoneytokenType.Text:
         handleSubmitText();
         break;
-      case 'api':
+      case HoneytokenType.API:
         handleSubmitApi();
         break;
     }
@@ -205,7 +206,7 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
               <div className="selected-grade">Selected Grade: {grade}</div>
             </div>
             <br></br>
-            {selectedType === 'api' && (
+            {selectedType === HoneytokenType.API && (
               <div className="api-section">
                 <div className="api-table-container">
                   <DragDropContext onDragEnd={onDragEnd}>
@@ -287,7 +288,7 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                 </div>
               </div>
             )}
-            {selectedType === 'text' && (
+            {selectedType === HoneytokenType.Text && (
               <TextHoneyToken
                 fileName={fileName}
                 setFileName={setFileName}

@@ -1,4 +1,5 @@
 import { IAgentStatus } from '../../../server/interfaces/agent';
+import { HoneytokenType } from '../utilities/typing';
 import { areAgentsConnected } from './Agents';
 
 export async function createHoneytokenText(
@@ -16,7 +17,7 @@ export async function createHoneytokenText(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      type: 'text',
+      type: HoneytokenType.Text,
       file_name: fileName,
       location: ComponentAddresses,
       grade: grade,
@@ -44,7 +45,7 @@ export async function createHoneytokenApi(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      type: 'api',
+      type: HoneytokenType.API,
       grade: grade,
       expiration_date: expirationDate,
       notes: notes,

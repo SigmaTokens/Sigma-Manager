@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Card } from './popup';
 import { getServerAddress, getAddresses } from '../models/General';
-import '../styles/AddAgentPopup.css';
 import { FaClipboard } from 'react-icons/fa';
 import { generateInstallScript, generateUpdateScript, getOsInstructions } from '../utilities/agent_install_scripts';
 import { Connection, OS } from '../utilities/typing';
+
+import '../styles/AddAgentPopup.css';
 
 interface AddAgentPopupProps {
   onClose: () => void;

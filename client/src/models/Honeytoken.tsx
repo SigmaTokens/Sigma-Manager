@@ -11,7 +11,7 @@ export async function createHoneytokenText(
   fileContent: string,
   agentID: string,
 ) {
-  return await fetch('http://localhost:3000/api/honeytokens/text', {
+  return await fetch('/api/honeytokens/text', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -39,7 +39,7 @@ export async function createHoneytokenApi(
 ) {
   console.log('--test--\n', apis);
 
-  return await fetch('http://localhost:3000/api/honeytokens/api', {
+  return await fetch('/api/honeytokens/api', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ export async function createHoneytokenApi(
 
 export async function getHoneytokens() {
   try {
-    const response = await fetch('http://localhost:3000/api/honeytokens');
+    const response = await fetch('/api/honeytokens');
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -70,7 +70,7 @@ export async function getHoneytokens() {
 
 export async function deleteHoneytoken(token_id: string) {
   try {
-    const response = await fetch(`http://localhost:3000/api/honeytokens/token/${token_id}`, {
+    const response = await fetch(`/api/honeytokens/token/${token_id}`, {
       method: 'DELETE',
     });
     if (!response.ok) {
@@ -83,7 +83,7 @@ export async function deleteHoneytoken(token_id: string) {
 
 export async function startMonitorOnHoneytoken(token_id: string) {
   try {
-    const response = await fetch(`http://localhost:3000/api/honeytokens/start`, {
+    const response = await fetch(`/api/honeytokens/start`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -102,7 +102,7 @@ export async function startMonitorOnHoneytoken(token_id: string) {
 
 export async function stopMonitorOnHoneytoken(token_id: string) {
   try {
-    const response = await fetch(`http://localhost:3000/api/honeytokens/stop`, {
+    const response = await fetch(`/api/honeytokens/stop`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -121,7 +121,7 @@ export async function stopMonitorOnHoneytoken(token_id: string) {
 
 export async function isHoneytokenMonitored(token_id: string): Promise<boolean> {
   try {
-    const response = await fetch(`http://localhost:3000/api/honeytokens/monitor_status`, {
+    const response = await fetch(`/api/honeytokens/monitor_status`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -152,7 +152,7 @@ export async function getHoneytokensMonitorStatuses(): Promise<Record<string, bo
       return {}; // Early exit if no online agents
     }
 
-    const response = await fetch('http://localhost:3000/api/honeytokens/monitor_status', {
+    const response = await fetch('/api/honeytokens/monitor_status', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

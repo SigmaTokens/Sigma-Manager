@@ -20,7 +20,7 @@ export async function getAgents() {
 
 export async function startAgent(agent_id: string) {
   try {
-    const response = await fetch(`http://localhost:3000/api/agents/start`, {
+    const response = await fetch(`/api/agents/start`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -39,7 +39,7 @@ export async function startAgent(agent_id: string) {
 
 export async function stopAgent(agent_id: string) {
   try {
-    const response = await fetch(`http://localhost:3000/api/agents/stop`, {
+    const response = await fetch(`/api/agents/stop`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -57,13 +57,13 @@ export async function stopAgent(agent_id: string) {
 }
 
 export async function areAgentsConnected() {
-  const response = await fetch('http://localhost:3000/api/agents/active_status');
+  const response = await fetch('/api/agents/active_status');
   return await response.json();
 }
 
 export async function isAgentMonitoring(agent_id: string): Promise<boolean> {
   try {
-    const response = await fetch(`http://localhost:3000/api/agents/monitor_status`, {
+    const response = await fetch(`/api/agents/monitor_status`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ export async function isAgentMonitoring(agent_id: string): Promise<boolean> {
 
 export async function deleteAgent(agent_id: string) {
   try {
-    const response = await fetch(`http://localhost:3000/api/agents/agent/${agent_id}`, {
+    const response = await fetch(`/api/agents/agent/${agent_id}`, {
       method: 'DELETE',
     });
     if (!response.ok) {
@@ -97,7 +97,7 @@ export async function deleteAgent(agent_id: string) {
 
 export async function verifyAgent(agent_id: string, setAgents: any, setStatusUpdates: any) {
   try {
-    const response = await fetch(`http://localhost:3000/api/agents/verify/${agent_id}`, {
+    const response = await fetch(`/api/agents/verify/${agent_id}`, {
       method: 'GET',
     });
     fetchAgents(setAgents, setStatusUpdates);

@@ -1,5 +1,6 @@
 import { IAgentStatus } from '../../../server/interfaces/agent';
 import { areAgentsConnected } from './Agents';
+
 export async function createHoneytokenText(
   fileName: string,
   ComponentAddresses: string,
@@ -27,14 +28,29 @@ export async function createHoneytokenText(
   });
 }
 
-export async function createHoneytokenApi() {
+export async function createHoneytokenApi(
+  grade: number,
+  expirationDate: string,
+  notes: string,
+  agentID: string,
+  apiPort: number,
+  apis: any[],
+) {
+  console.log('--test--\n', apis);
+
   return await fetch('http://localhost:3000/api/honeytokens/api', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      // TODO: write params here
+      type: 'api',
+      grade: grade,
+      expiration_date: expirationDate,
+      notes: notes,
+      agent_id: agentID,
+      api_port: apiPort,
+      apis: apis,
     }),
   });
 }

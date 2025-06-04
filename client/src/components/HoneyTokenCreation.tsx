@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Card, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './popup';
 import '../styles/HoneyTokenCreation.css';
 import { getAgents } from '../models/Agents';
-import { createHoneytokenText } from '../models/Honeytoken';
+import { createHoneytokenText, createHoneytokenApi } from '../models/Honeytoken';
 import TextHoneyToken from './TextHoneyToken';
 import { IAgent, IHoneytokenType, CreateHoneytokenFormProps } from '../../../server/interfaces/agent';
 import { FiPlus, FiMinus } from 'react-icons/fi';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
+import { error } from 'console';
 
 function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
-  // const [quantity, setQuantity] = useState<number>(1);
   const [selectedType, setSelectedType] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
   const [componentAddresses, setComponentAddresses] = useState<string>('');
@@ -20,7 +20,7 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
   const [agentID, setAgentID] = useState<string>('');
   const [agents, setAgents] = useState<IAgent[]>([]);
   const [errors, setErrors] = useState<any>({});
-  const [port, setPort] = useState<number | ''>('');
+  const [port, setPort] = useState<number>(9999);
   const [apiRows, setApiRows] = useState([{ method: 'GET', route: '', response: '' }]);
 
   useEffect(() => {
@@ -54,7 +54,7 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
     const newErr: any = {};
     if (!selectedType) newErr.selectedType = true;
     if (selectedType === 'api') {
-      if (port === '' || port < 0 || port > 65535) newErr.port = true;
+      if (port < 0 || port > 65535) newErr.port = true;
       apiRows.forEach((r, i) => {
         if (!/^\/[A-Za-z0-9_/:-]*$/.test(r.route)) newErr[`route${i}`] = true;
       });
@@ -78,8 +78,11 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
     console.log('test2');
     //--- TODO: add validation here ---
     try {
-      const response = await createHoneytokenApi();
+      const response = await createHoneytokenApi(grade, expirationDate, notes, agentID, port, apiRows);
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error creating honeytoken: ', errorText);
+        return;
       }
       onClose();
       window.location.href = '/honeytokens';
@@ -274,7 +277,7 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                       min={0}
                       max={65535}
                       value={port}
-                      onChange={(e) => setPort(e.target.value === '' ? '' : Number(e.target.value))}
+                      onChange={(e) => setPort(Number(e.target.value))}
                       className={errors.port ? 'input-error' : ''}
                     />
                   </div>

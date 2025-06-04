@@ -1,4 +1,4 @@
-import { OS } from './typing';
+import { Connection, OS } from './typing';
 
 export function getOsInstructions(os: string): string {
   switch (os) {
@@ -32,12 +32,12 @@ export function generateInstallScript(
   manager_port?: number,
   agentName?: string,
   manager_domain?: string,
-  mode?: 'domain' | 'ip',
+  mode?: Connection,
 ): string {
   const header = `AGENT_NAME=${agentName || 'NEW AGENT'}`;
   switch (os) {
     case OS.Windows:
-      if (mode == 'domain') {
+      if (mode == Connection.Domain) {
         return `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
 git clone https://github.com/SigmaTokens/Sigma-Agent.git
 Set-Location Sigma-Agent
@@ -56,7 +56,7 @@ ${header}
 "@ | Out-File .env -Encoding utf8; npm run start-prod`;
 
     case OS.Linux:
-      if (mode == 'domain') {
+      if (mode == Connection.Domain) {
         return `git clone https://github.com/SigmaTokens/Sigma-Agent.git && \
 cd Sigma-Agent && \
 printf "MANAGER_DOMAIN=${manager_domain}\n${header}\n" | tee .env > /dev/null && \
@@ -68,7 +68,7 @@ printf "MANAGER_IP=${manager_ip}\nMANAGER_PORT=${manager_port}\n${header}\n" | t
 npm run start-prod-linux`;
 
     case OS.Mac:
-      if (mode == 'domain') {
+      if (mode == Connection.Domain) {
         return `git clone https://github.com/SigmaTokens/Sigma-Agent.git && \
 cd Sigma-Agent && \
 printf "MANAGER_DOMAIN=${manager_domain}\n${header}\n" | tee .env > /dev/null && \

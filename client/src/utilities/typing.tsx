@@ -3,3 +3,8 @@ export enum OS {
   Linux = 'Linux',
   Mac = 'Mac',
 }
+
+export enum Connection {
+  IP = 'ip',
+  Domain = 'domain',
+}

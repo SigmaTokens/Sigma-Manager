@@ -4,14 +4,14 @@ import path from 'path';
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, path.resolve(__dirname, '../'), '');
+  const { VITE_SERVER_URL = 'http://localhost:3000' } = loadEnv(mode, path.resolve(__dirname, '../'), '');
 
   return {
     plugins: [react()],
     server: {
       proxy: {
         '/api': {
-          target: env.VITE_SERVER_URL,
+          target: VITE_SERVER_URL,
           changeOrigin: true,
         },
       },

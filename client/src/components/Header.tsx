@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import '../styles/Header.css';
 import logo from '../assets/SigmaTokens.png';
 import CreateHoneytokenForm from './HoneyTokenCreation';
 import AddAgentPopup from './AddAgentPopup';
 import { getAgents } from '../models/Agents';
 import { useAuth } from '../contexts/UserContext';
+import { Globals } from '../utilities/globals';
+
+import '../styles/Header.css';
 
 function useAgents() {
   const [agents, setAgents] = useState([]);
@@ -25,7 +27,6 @@ export default function Header() {
   const [showCreate, setShowCreate] = useState(false);
   const [showAddAgent, setShowAddAgent] = useState(false);
 
-  const honeytokenTypes = [{ id: 'text', name: 'text file' }];
   const agents = useAgents();
 
   const { currentUser, logout } = useAuth();
@@ -95,7 +96,7 @@ export default function Header() {
 
       {/* pop-ups only when a user is logged in */}
       {currentUser && showCreate && (
-        <CreateHoneytokenForm types={honeytokenTypes} agents={agents} onClose={() => setShowCreate(false)} />
+        <CreateHoneytokenForm types={Globals.honeytokenTypes} agents={agents} onClose={() => setShowCreate(false)} />
       )}
 
       {currentUser && showAddAgent && <AddAgentPopup onClose={() => setShowAddAgent(false)} />}

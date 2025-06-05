@@ -9,10 +9,11 @@ process.on('unhandledRejection', (reason) => {
   }
 });
 
-import { createServer } from 'http';
-import { Server as IOServer, Socket } from 'socket.io';
+import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
+import { createServer } from 'http';
+import { Server as IOServer, Socket } from 'socket.io';
 import { serveClient } from './routes/client';
 import { serveHoneytokens } from './routes/honeytokens';
 import { serveUsers } from './routes/users';
@@ -32,6 +33,9 @@ function main(): void {
   app.use(express.json());
   app.use(cors());
   app.use(express.urlencoded({ extended: true }));
+  dotenv.config({ path: '../.env' });
+
+  console.log(Constants.TEXT_MAGENTA_COLOR, 'SERVER_TEST=' + process.env.SERVER_TEST, Constants.TEXT_WHITE_COLOR);
 
   const port = process.env.PORT || 3000;
 

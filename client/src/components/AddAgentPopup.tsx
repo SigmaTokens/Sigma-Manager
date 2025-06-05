@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Card } from './popup';
 import { getServerAddress, getAddresses } from '../models/General';
-import '../styles/AddAgentPopup.css';
 import { FaClipboard } from 'react-icons/fa';
+import { generateInstallScript, generateUpdateScript, getOsInstructions } from '../utilities/agent_install_scripts';
+import { Connection, OS } from '../utilities/typing';
+
+import '../styles/AddAgentPopup.css';
 
 interface AddAgentPopupProps {
   onClose: () => void;
@@ -14,14 +17,14 @@ interface ServerAddress {
 }
 
 export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
-  const [os, setOs] = useState<'Windows' | 'Linux' | 'Mac'>('Windows');
+  const [os, setOs] = useState<OS>(OS.Windows);
   const [availableIps, setAvailableIps] = useState<string[]>([]);
   const [selectedIp, setSelectedIp] = useState<string>('');
   const [serverAddress, setServerAddress] = useState<ServerAddress>();
   const [agentName, setAgentName] = useState('');
   const [installToast, setInstallToast] = useState(false);
   const [updateToast, setUpdateToast] = useState(false);
-  const [connectionMode, setConnectionMode] = useState<'ip' | 'domain'>('ip');
+  const [connectionMode, setConnectionMode] = useState<Connection>(Connection.IP);
   const [domainName, setDomainName] = useState<string>('');
   const [installScript, setInstallScript] = useState('');
   const [updateScript, setUpdateScript] = useState('');
@@ -36,7 +39,7 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
   }, []);
 
   useEffect(() => {
-    if (connectionMode === 'ip' && selectedIp) {
+    if (connectionMode === Connection.IP && selectedIp) {
       getServerAddress(selectedIp)
         .then((addr) => setServerAddress(addr))
         .catch(console.error);
@@ -45,12 +48,18 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
 
   useEffect(() => {
     let newInstallScript = '';
-    console.log('cool');
-    if (connectionMode === 'ip') {
+    if (connectionMode === Connection.IP) {
       if (!serverAddress) return;
-      newInstallScript = generateInstallScript(os, serverAddress.ip, serverAddress.port, agentName, undefined, 'ip');
+      newInstallScript = generateInstallScript(
+        os,
+        serverAddress.ip,
+        serverAddress.port,
+        agentName,
+        undefined,
+        Connection.IP,
+      );
     } else {
-      newInstallScript = generateInstallScript(os, undefined, undefined, agentName, domainName, 'domain');
+      newInstallScript = generateInstallScript(os, undefined, undefined, agentName, domainName, Connection.Domain);
     }
     setInstallScript(newInstallScript);
     setUpdateScript(generateUpdateScript(os));
@@ -76,9 +85,9 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
               <input
                 type="radio"
                 name="connectionMode"
-                value="ip"
-                checked={connectionMode === 'ip'}
-                onChange={() => setConnectionMode('ip')}
+                value={Connection.IP}
+                checked={connectionMode === Connection.IP}
+                onChange={() => setConnectionMode(Connection.IP)}
               />{' '}
               IP & Port
             </label>
@@ -86,16 +95,16 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
               <input
                 type="radio"
                 name="connectionMode"
-                value="domain"
-                checked={connectionMode === 'domain'}
-                onChange={() => setConnectionMode('domain')}
+                value={Connection.Domain}
+                checked={connectionMode === Connection.Domain}
+                onChange={() => setConnectionMode(Connection.Domain)}
               />{' '}
               Domain
             </label>
           </div>
 
           {/* Domain Input */}
-          {connectionMode === 'domain' && (
+          {connectionMode === Connection.Domain && (
             <div className="instruction1">
               Enter domain:
               <input
@@ -108,8 +117,8 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
             </div>
           )}
 
-          {/* IP & Port Selection */}
-          {connectionMode === 'ip' && (
+          {/* IP selection */}
+          {connectionMode === Connection.Domain && (
             <div className="instruction1">
               Select your manager IP:
               <select className="agent-input" value={selectedIp} onChange={(e) => setSelectedIp(e.target.value)}>
@@ -145,7 +154,7 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
 
           {/* OS Tabs */}
           <div className="tabs">
-            {['Windows', 'Linux', 'Mac'].map((tab) => (
+            {(Object.values(OS) as OS[]).map((tab) => (
               <span key={tab} className={`tab ${os === tab ? 'active' : ''}`} onClick={() => setOs(tab as typeof os)}>
                 {tab}
               </span>
@@ -181,88 +190,4 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
       </div>
     </div>
   );
-}
-
-function generateInstallScript(
-  os: string,
-  manager_ip?: string,
-  manager_port?: number,
-  agentName?: string,
-  manager_domain?: string,
-  mode?: 'domain' | 'ip',
-): string {
-  const header = `AGENT_NAME=${agentName || 'NEW AGENT'}`;
-  switch (os) {
-    case 'Windows':
-      if (mode == 'domain') {
-        return `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
-git clone https://github.com/SigmaTokens/Sigma-Agent.git
-Set-Location Sigma-Agent
-@"
-MANAGER_DOMAIN=${manager_domain}
-${header}
-"@ | Out-File .env -Encoding utf8; npm run start-prod`;
-      }
-      return `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
-git clone https://github.com/SigmaTokens/Sigma-Agent.git
-Set-Location Sigma-Agent
-@"
-MANAGER_IP=${manager_ip}
-MANAGER_PORT=${manager_port}
-${header}
-"@ | Out-File .env -Encoding utf8; npm run start-prod`;
-
-    case 'Linux':
-      if (mode == 'domain') {
-        return `git clone https://github.com/SigmaTokens/Sigma-Agent.git && \
-cd Sigma-Agent && \
-printf "MANAGER_DOMAIN=${manager_domain}\n${header}\n" | tee .env > /dev/null && \
-npm run start-prod-linux`;
-      }
-      return `git clone https://github.com/SigmaTokens/Sigma-Agent.git && \
-cd Sigma-Agent && \
-printf "MANAGER_IP=${manager_ip}\nMANAGER_PORT=${manager_port}\n${header}\n" | tee .env > /dev/null && \
-npm run start-prod-linux`;
-
-    case 'Mac':
-      if (mode == 'domain') {
-        return `git clone https://github.com/SigmaTokens/Sigma-Agent.git && \
-cd Sigma-Agent && \
-printf "MANAGER_DOMAIN=${manager_domain}\n${header}\n" | tee .env > /dev/null && \
-npm run start-prod-mac`;
-      }
-      return `git clone https://github.com/SigmaTokens/Sigma-Agent.git && \
-cd Sigma-Agent && \
-printf "MANAGER_IP=${manager_ip}\nMANAGER_PORT=${manager_port}\n${header}\n" | tee .env > /dev/null && \
-npm run start-prod-mac`;
-
-    default:
-      return 'OS not supported yet';
-  }
-}
-
-function generateUpdateScript(os: string): string {
-  switch (os) {
-    case 'Windows':
-      return 'git pull; npm run start-prod';
-    case 'Linux':
-      return 'git pull && npm run start-prod-linux';
-    case 'Mac':
-      return 'git pull && npm run start-prod-mac';
-    default:
-      return '';
-  }
-}
-
-function getOsInstructions(os: string): string {
-  switch (os) {
-    case 'Windows':
-      return "Please open PowerShell as admin and change to your agent install directory using 'cd'.";
-    case 'Linux':
-      return "Please open Terminal as admin and change to your agent install directory using 'cd'.";
-    case 'Mac':
-      return "Please open Terminal as admin and change to your agent install directory using 'cd'.";
-    default:
-      return 'OS not supported yet.';
-  }
 }

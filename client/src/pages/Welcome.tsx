@@ -1,7 +1,10 @@
 import '../styles/Welcome.css';
 import logo from '../assets/SigmaTokens.png';
+import { useAuth } from '../contexts/UserContext'; // adjust the path if needed
 
 function Welcome() {
+  const { currentUser } = useAuth(); // ← see if someone is logged-in
+
   return (
     <div className="home-container">
       <img src={logo} alt="SigmaTokens Logo" className="welcome-logo" />
@@ -24,22 +27,27 @@ function Welcome() {
           <li>🧪 Deploys honeytokens to catch attackers in action</li>
           <li>🔐 Real-time detection of unauthorized access</li>
           <li>📊 Easy-to-use dashboard with alerts and analytics</li>
-          <li>🚀 Lightweight setup - up and running in minutes</li>
+          <li>🚀 Lightweight setup&nbsp;– up and running in minutes</li>
         </ul>
       </div>
 
-      <p className="join-callout">
-        <strong>Want to get started? Join now and secure your environment.</strong>
-      </p>
+      {/* Render the call-to-action only for guests */}
+      {!currentUser && (
+        <>
+          <p className="join-callout">
+            <strong>Want to get started? Join now and secure your environment.</strong>
+          </p>
 
-      <div className="cta-buttons">
-        <a href="/login" className="btn">
-          Login
-        </a>
-        <a href="/signup" className="btn secondary">
-          Sign Up
-        </a>
-      </div>
+          <div className="cta-buttons">
+            <a href="/login" className="btn">
+              Login
+            </a>
+            <a href="/signup" className="btn secondary">
+              Sign Up
+            </a>
+          </div>
+        </>
+      )}
     </div>
   );
 }

@@ -73,7 +73,7 @@ export function serveHoneytokens() {
       );
 
       const response_from_agent = await fetch(
-        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/honeytoken/add',
+        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/honeytoken/text/add',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -150,7 +150,7 @@ export function serveHoneytokens() {
       });
 
       const response_from_agent = await fetch(
-        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/honeytoken/add',
+        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/honeytoken/api/add',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

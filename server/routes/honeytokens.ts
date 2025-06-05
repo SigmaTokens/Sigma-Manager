@@ -136,7 +136,7 @@ export function serveHoneytokens() {
           type,
           '',
           '',
-          api.http_method,
+          api.method,
           api.route,
           grade,
           new Date(),

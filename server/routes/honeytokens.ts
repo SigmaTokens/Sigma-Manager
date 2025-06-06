@@ -190,7 +190,7 @@ export function serveHoneytokens() {
 
   router.post('/honeytokens/agent', async (req, res) => {
     const { agent_ip, agent_port } = req.body;
-    console.log('caleld /honeytokens/agent', agent_ip, agent_port);
+    console.log('called /honeytokens/agent', agent_ip, agent_port);
     try {
       if (!agent_ip || !agent_port) {
         console.error(Constants.TEXT_RED_COLOR, 'missing params', Constants.TEXT_WHITE_COLOR);

@@ -1,75 +1,105 @@
 import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/SigmaTokens.png';
 import CreateHoneytokenForm from './HoneyTokenCreation';
-import AddAgentPopup from '../components/AddAgentPopup';
+import AddAgentPopup from './AddAgentPopup';
 import { getAgents } from '../models/Agents';
+import { useAuth } from '../contexts/UserContext';
 import { Globals } from '../utilities/globals';
 
 import '../styles/Header.css';
 
 function useAgents() {
   const [agents, setAgents] = useState([]);
-
   useEffect(() => {
-    const fetchAgents = async () => {
+    (async () => {
       try {
-        const agentData = await getAgents();
-        setAgents(agentData);
-      } catch (error) {
-        console.error('Failed to fetch agents:', error);
+        setAgents(await getAgents());
+      } catch (err) {
+        console.error('Failed to fetch agents', err);
       }
-    };
-    fetchAgents();
+    })();
   }, []);
-
   return agents;
 }
 
-function Header() {
-  const [showCreatePopup, setShowCreatePopup] = useState(false);
-  const [showAddAgentPopup, setShowAddAgentPopup] = useState(false);
+export default function Header() {
+  const [showCreate, setShowCreate] = useState(false);
+  const [showAddAgent, setShowAddAgent] = useState(false);
 
   const agents = useAgents();
 
+  const { currentUser, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
+
   return (
     <header className="header">
-      <nav>
-        <div>
-          <img src={logo} alt="Logo" className="logo" />
+      <nav className="nav">
+        <div className="brand">
+          <Link to="/">
+            <img src={logo} alt="SigmaTokens logo" className="logo" />
+          </Link>
         </div>
-        <ul>
+
+        <ul className="menu">
           <li>
-            <a href="/">Home</a>
+            <Link to="/">Home</Link>
           </li>
-          <li>
-            <a href="/honeytokens">Honeytokens</a>
-          </li>
-          <li>
-            <a href="/alerts">Alerts</a>
-          </li>
-          <li>
-            <a href="/agents">Agents</a>
-          </li>
-          <li>
-            <a onClick={() => setShowCreatePopup(true)}>Create</a>
-          </li>
-          <li>
-            <a onClick={() => setShowAddAgentPopup(true)}>Add Agent</a>
-          </li>
+          {/* ---------- logged in ---------- */}
+          {currentUser && (
+            <li>
+              <button onClick={handleLogout} className="link-btn">
+                Logout
+              </button>
+            </li>
+          )}
+
+          {/* ---------- not logged in ---------- */}
+          {!currentUser && (
+            <>
+              <li>
+                <Link to="/login">Login</Link>
+              </li>
+              <li>
+                <Link to="/signup">Sign&nbsp;Up</Link>
+              </li>
+            </>
+          )}
+
+          {/* ---------- logged in extras ---------- */}
+          {currentUser && (
+            <>
+              <li>
+                <Link to="/honeytokens">Honeytokens</Link>
+              </li>
+              <li>
+                <Link to="/alerts">Alerts</Link>
+              </li>
+              <li>
+                <Link to="/agents">Agents</Link>
+              </li>
+              <li>
+                <button onClick={() => setShowCreate(true)}>Create</button>
+              </li>
+              <li>
+                <button onClick={() => setShowAddAgent(true)}>Add Agent</button>
+              </li>
+            </>
+          )}
         </ul>
       </nav>
 
-      {showCreatePopup && (
-        <CreateHoneytokenForm
-          types={Globals.honeytokenTypes}
-          agents={agents}
-          onClose={() => setShowCreatePopup(false)}
-        />
+      {/* pop-ups only when a user is logged in */}
+      {currentUser && showCreate && (
+        <CreateHoneytokenForm types={Globals.honeytokenTypes} agents={agents} onClose={() => setShowCreate(false)} />
       )}
 
-      {showAddAgentPopup && <AddAgentPopup onClose={() => setShowAddAgentPopup(false)} />}
+      {currentUser && showAddAgent && <AddAgentPopup onClose={() => setShowAddAgent(false)} />}
     </header>
   );
 }
-
-export default Header;

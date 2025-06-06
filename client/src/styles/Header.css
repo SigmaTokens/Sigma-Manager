@@ -68,3 +68,7 @@
 .header ul li button:focus {
   outline: none;
 }
+
+.header ul li.logout {
+  margin-left: auto;
+}

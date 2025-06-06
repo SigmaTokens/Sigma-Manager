@@ -155,9 +155,6 @@ function Honeytokens() {
                   Group ID {isReversed ? <FiChevronUp /> : <FiChevronDown />}
                 </th>
                 <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
-                  Type ID {isReversed ? <FiChevronUp /> : <FiChevronDown />}
-                </th>
-                <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
                   Creation Date {isReversed ? <FiChevronUp /> : <FiChevronDown />}
                 </th>
                 <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
@@ -187,7 +184,6 @@ function Honeytokens() {
                     <td>{honeytoken.agent_id}</td>
                     <td>{honeytoken.token_id}</td>
                     <td>{honeytoken.group_id}</td>
-                    <td>{honeytoken.type_id}</td>
                     <td>{new Date(honeytoken.creation_date).toLocaleString()}</td>
                     <td>{new Date(honeytoken.expire_date).toLocaleString()}</td>
                     <td>{honeytoken.location}</td>

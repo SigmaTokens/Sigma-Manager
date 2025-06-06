@@ -44,12 +44,11 @@ export function serveHoneytokens() {
 
       for (const [field, value] of Object.entries(required)) {
         if (value === undefined || value === null || value === '') {
-          res.status(400).json({ failure: `Missing required field: ${field}` });
+          console.log(`Missing required field: ${field}`);
+          res.status(500).json({ success: false });
           return;
         }
       }
-
-      const agent = await get_agent_by_id(agent_id);
 
       const token_id = uuidv4();
       const group_id = uuidv4();
@@ -73,29 +72,35 @@ export function serveHoneytokens() {
         '1',
       );
 
-      const response_from_agent = await fetch(
-        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/honeytoken/text/add',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            token_id: token_id,
-            group_id: group_id,
-            type: type,
-            file_name: file_name,
-            location: location,
-            grade: grade,
-            expiration_date: expiration_date,
-            notes: notes,
-            data: data,
-          }),
-        },
-      );
+      const token_data = {
+        token_id: token_id,
+        group_id: group_id,
+        type: type,
+        file_name: file_name,
+        location: location,
+        grade: grade,
+        expiration_date: expiration_date,
+        notes: notes,
+        data: data,
+      };
 
-      res.status(200).json({ success: 'nice' });
+      const socket = Globals.agentSockets.get(agent_id);
+      if (socket) {
+        socket.emit('CREATE_HONEYTOKEN_TEXT', token_data, async (response: any) => {
+          console.log('check status:', response.status);
+          if (response.status === 'created') {
+            res.status(200).json({ success: true });
+            return;
+          }
+        });
+      } else {
+        console.error(Constants.TEXT_RED_COLOR, 'Failed fetching socket to create honeytoken!');
+        res.status(500).json({ success: false });
+      }
     } catch (error) {
-      console.error({ failure: error });
-      res.status(500).json({ failure: error });
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to create honeytoken text:', error);
+      res.status(500).json({ success: false });
+      return;
     }
   });
 
@@ -118,12 +123,10 @@ export function serveHoneytokens() {
 
       for (const [field, value] of Object.entries(required)) {
         if (value === undefined || value === null || value === '') {
-          res.status(400).json({ failure: `Missing required field: ${field}` });
-          return;
+          console.log(`Missing required field: ${field}`);
+          return void res.status(500).json({ success: false });
         }
       }
-
-      const agent = await get_agent_by_id(agent_id);
 
       const group_id = uuidv4();
 
@@ -150,26 +153,30 @@ export function serveHoneytokens() {
         );
       });
 
-      const response_from_agent = await fetch(
-        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/honeytoken/api/add',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            group_id: group_id,
-            type: type,
-            grade: grade,
-            expiration_date: expiration_date,
-            api_port: api_port,
-            apis: apis_test,
-          }),
-        },
-      );
+      const token_data = {
+        group_id: group_id,
+        type: type,
+        grade: grade,
+        expiration_date: expiration_date,
+        api_port: api_port,
+        apis: apis_test,
+      };
 
-      res.status(200).json({ success: 'nice' });
+      const socket = Globals.agentSockets.get(agent_id);
+      if (socket) {
+        socket.emit('CREATE_HONEYTOKEN_API', token_data, async (response: any) => {
+          console.log('else');
+          console.log(response.status);
+          if (response.status === 'created') return void res.status(200).json({ success: true });
+          else return void res.status(500).json({ success: false });
+        });
+      } else {
+        console.error(Constants.TEXT_RED_COLOR, 'Failed fetching socket to create honeytoken!');
+        return void res.status(500).json({ success: false });
+      }
     } catch (error) {
-      console.error({ failure: error });
-      res.status(500).json({ failure: error });
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to create honeytoken text:', error);
+      return void res.status(500).json({ success: false });
     }
   });
 
@@ -256,32 +263,24 @@ export function serveHoneytokens() {
   });
 
   router.delete('/honeytokens/token/:token_id', async (req, res) => {
-    const { token_id } = req.params;
-
     try {
+      const { token_id } = req.params;
       const token = await get_honeytoken_by_token_id(token_id);
-      if (token == undefined) {
-        res.status(500).json({ failure: 'error' });
+      if (token == undefined) return void res.status(500).json({ success: false });
+
+      const socket = Globals.agentSockets.get(token.agent_id);
+      if (socket) {
+        socket.emit('DELETE_HONEYTOKEN_TEXT', token_id, async (response: any) => {
+          if (response.status === 'deleted') {
+            await delete_honeytoken_by_id(token_id);
+            return void res.status(200).json({ success: true });
+          }
+        });
       }
-      const agent = await get_agent_by_id(token.agent_id);
-      if (agent != undefined) {
-        const response_from_agent = await fetch(
-          'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/honeytoken/remove',
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              token_id: token_id,
-            }),
-          },
-        );
-      }
+      return void res.status(500).json({ success: false });
     } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to delete honeytoken:', error, Constants.TEXT_WHITE_COLOR);
-      res.status(500).json({ failure: error });
-    } finally {
-      await delete_honeytoken_by_id(token_id);
-      res.json({ success: true });
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to erase agent:', error, Constants.TEXT_WHITE_COLOR);
+      return void res.status(500).json({ success: false });
     }
   });
 
@@ -333,109 +332,82 @@ export function serveHoneytokens() {
   });
 
   router.put('/honeytokens/monitor_status', async (req, res) => {
-    const { token_id } = req.body;
     try {
+      const { token_id } = req.body;
       const token = await get_honeytoken_by_token_id(token_id);
       const agent = await get_agent_by_id(token.agent_id);
 
-      if (token == undefined || agent == undefined) {
-        res.status(201).json({ success: 'not monitoring honeytoken' });
-        return;
-      }
+      if (token == undefined || agent == undefined) return void res.status(500).json({ success: false });
 
-      const response_from_agent = await fetch(
-        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/honeytoken/status',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            token_id: token_id,
-          }),
-        },
-      );
-      if (response_from_agent.ok && response_from_agent.status === 200) {
-        res.status(200).json({ success: 'monitoring honeytoken' });
-        return;
-      }
-      res.status(201).json({ success: 'not monitoring honeytoken' });
-      return;
-    } catch (error) {
-      console.error(
-        Constants.TEXT_WHITE_COLOR,
-        'Failed to check monitoring status for honeytoken',
-        error,
-        Constants.TEXT_WHITE_COLOR,
-      );
-      res.status(500).json({ failure: error });
-    }
-  });
-
-  router.post('/honeytokens/monitor_status', async (req, res) => {
-    const { agents_ids } = req.body;
-
-    const statuses: Record<string, boolean> = {};
-
-    try {
-      for (const agent_id of agents_ids) {
-        const agent = await get_agent_by_id(agent_id);
-
-        if (!agent) {
-          continue; // Skip if agent not found
-        }
-
-        try {
-          const response = await fetch(`http://${agent.agent_ip}:${agent.agent_port}/api/honeytoken/statuses`, {
-            method: 'GET',
-          });
-
-          if (response.ok) {
-            const agentTokensStatuses: Record<string, boolean> = await response.json();
-
-            // Merge agentTokensStatuses into the main statuses object
-            Object.assign(statuses, agentTokensStatuses);
-          }
-        } catch (err) {
-          console.warn(`[!] Failed to fetch agentTokensStatuses from agent ${agent_id}:`, err);
-          continue;
-        }
-      }
-
-      res.status(200).json(statuses);
-    } catch (error) {
-      console.error('[-] Failed to check monitoring status for honeytokens:', error);
-      res.status(500).json({ failure: error });
-    }
-  });
-
-  router.put('/honeytokens/start', async (req, res) => {
-    const { token_id } = req.body;
-    try {
-      const token = await get_honeytoken_by_token_id(token_id);
-      const agent = await get_agent_by_id(token.agent_id);
-
-      const response_from_agent = await fetch(
-        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/honeytoken/start',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            token_id: token_id,
-          }),
-        },
-      );
-
-      if (response_from_agent.ok || response_from_agent.status === 200) {
-        res.status(200).json({ success: 'started monitor on honeytoken' });
-        return;
+      const socket = Globals.agentSockets.get(token.agent_id);
+      if (socket) {
+        socket.emit('STATUS_HONEYTOKEN_TEXT', token_id, async (response: any) => {
+          if (response.status === 'monitoring') return void res.status(200).json({ success: true });
+          else return void res.status(500).json({ success: false });
+        });
+      } else {
+        console.error(Constants.TEXT_RED_COLOR, 'failed getting socket for honeytoken text status!');
+        return void res.status(500).json({ success: false });
       }
     } catch (error) {
       console.error(
         Constants.TEXT_RED_COLOR,
-        'Failed to start monitor on honeytoken:',
+        'Failed to get honeytoken text status:',
         error,
         Constants.TEXT_WHITE_COLOR,
       );
-      res.status(500).json({ failure: error });
+      return void res.status(500).json({ success: false });
+    }
+  });
+
+  router.post('/honeytokens/monitor_status', async (req, res) => {
+    try {
+      const { agents_ids } = req.body;
+      let statuses: Record<string, boolean> = {};
+      for (const agent_id of agents_ids) {
+        const socket = Globals.agentSockets.get(agent_id);
+        if (socket) {
+          const response = await socket.emitWithAck('STATUSES_HONEYTOKEN_TEXT');
+          if (response.success === true) {
+            const agentTokensStatuses: Record<string, boolean> = response.message;
+            statuses = { ...statuses, ...agentTokensStatuses };
+          }
+        }
+      }
+      return void res.status(200).json(statuses);
+    } catch (error) {
+      console.error(
+        Constants.TEXT_RED_COLOR,
+        'Failed to get honeytokens text statuses:',
+        error,
+        Constants.TEXT_WHITE_COLOR,
+      );
+      return void res.status(500).json({ success: false });
+    }
+  });
+
+  router.put('/honeytokens/start', async (req, res) => {
+    try {
+      const { token_id } = req.body;
+      const token = await get_honeytoken_by_token_id(token_id);
+      const socket = Globals.agentSockets.get(token.agent_id);
+      if (socket) {
+        socket.emit('START_HONEYTOKEN_TEXT', token_id, async (response: any) => {
+          if (response.status === 'monitoring') return void res.status(200).json({ success: true });
+          else return void res.status(500).json({ success: false });
+        });
+      } else {
+        console.error(Constants.TEXT_RED_COLOR, 'failed getting socket for honeytoken text status!');
+        return void res.status(500).json({ success: false });
+      }
+    } catch (error) {
+      console.error(
+        Constants.TEXT_RED_COLOR,
+        'Failed to start monitor on honeytoken text:',
+        error,
+        Constants.TEXT_WHITE_COLOR,
+      );
+      return void res.status(500).json({ success: false });
     }
   });
 
@@ -484,30 +456,25 @@ export function serveHoneytokens() {
   });
 
   router.put('/honeytokens/stop', async (req, res) => {
-    const { token_id } = req.body;
     try {
+      const { token_id } = req.body;
       const token = await get_honeytoken_by_token_id(token_id);
-      const agent = await get_agent_by_id(token.agent_id);
-
-      const response_from_agent = await fetch(
-        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/honeytoken/stop',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            token_id: token_id,
-          }),
-        },
-      );
-      if (response_from_agent.ok && response_from_agent.status === 200) {
-        res.status(200).json({ success: 'stopped monitor on honeytoken' });
-        return;
+      const socket = Globals.agentSockets.get(token.agent_id);
+      if (socket) {
+        socket.emit('STOP_HONEYTOKEN_TEXT', token_id, async (response: any) => {
+          if (response.status === 'not monitoring') return void res.status(200).json({ success: true });
+        });
       }
-      res.status(201).json({ success: 'nothing to stop' });
-      return;
+      console.error(Constants.TEXT_RED_COLOR, 'failed getting socket for honeytoken text status!');
+      return void res.status(500).json({ success: false });
     } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to stop honeytoken:', error, Constants.TEXT_WHITE_COLOR);
-      res.status(500).json({ failure: error });
+      console.error(
+        Constants.TEXT_RED_COLOR,
+        'Failed to stop monitor on honeytoken text:',
+        error,
+        Constants.TEXT_WHITE_COLOR,
+      );
+      return void res.status(500).json({ success: false });
     }
   });
 

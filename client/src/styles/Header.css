@@ -13,7 +13,16 @@
 .header nav {
   display: flex;
   align-items: center;
-  justify-content: flex-start; /* everything hugs the left */
+  /* justify-content: flex-start; everything hugs the left */
+}
+
+.header .menu {
+  flex: 1; /* <-- this is the key change */
+  display: flex; /* (you already had this, but repeat if needed) */
+  list-style: none;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
 }
 
 /* optional – space between logo and first menu item */
@@ -67,4 +76,25 @@
 /* Remove default button focus outline (optional, keep if a11y concern) */
 .header ul li button:focus {
   outline: none;
+}
+
+.header .menu li {
+  order: 0;
+}
+
+.header .menu .logout {
+  order: 1;
+  margin-left: auto;
+  margin-right: 20px;
+}
+
+.header .menu .signup {
+  order: 1;
+  margin-left: auto;
+  margin-right: 20px;
+}
+
+.header .menu .login {
+  order: 2;
+  margin-right: 20px;
 }

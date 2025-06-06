@@ -2,8 +2,13 @@ import { IAgent, IAgentStatus } from '../../../server/interfaces/agent';
 
 export async function getAgents() {
   try {
+    const token = localStorage.getItem('token');
+
+    console.log('testtest: ', token);
+
     const response = await fetch('/api/agents', {
       method: 'GET',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
 
     if (!response.ok) {

@@ -1,35 +1,25 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import logo from '../assets/SigmaTokens.png';
-import CreateHoneytokenForm from './HoneyTokenCreation';
-import AddAgentPopup from './AddAgentPopup';
 import { getAgents } from '../models/Agents';
 import { useAuth } from '../contexts/UserContext';
 import { Globals } from '../utilities/globals';
-
+import logo from '../assets/SigmaTokens.png';
+import CreateHoneytokenForm from './HoneyTokenCreation';
+import AddAgentPopup from './AddAgentPopup';
 import '../styles/Header.css';
-
-function useAgents() {
-  const [agents, setAgents] = useState([]);
-  useEffect(() => {
-    (async () => {
-      try {
-        setAgents(await getAgents());
-      } catch (err) {
-        console.error('Failed to fetch agents', err);
-      }
-    })();
-  }, []);
-  return agents;
-}
 
 export default function Header() {
   const [showCreate, setShowCreate] = useState(false);
   const [showAddAgent, setShowAddAgent] = useState(false);
-
-  const agents = useAgents();
-
+  const [agents, setAgents] = useState([]);
   const { currentUser, logout } = useAuth();
+
+  useEffect(() => {
+    getAgents().then((agents) => {
+      setAgents(agents);
+    });
+  }, []);
+
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -50,9 +40,10 @@ export default function Header() {
           <li>
             <Link to="/">Home</Link>
           </li>
+
           {/* ---------- logged in ---------- */}
           {currentUser && (
-            <li>
+            <li className="logout">
               <button onClick={handleLogout} className="link-btn">
                 Logout
               </button>
@@ -62,10 +53,10 @@ export default function Header() {
           {/* ---------- not logged in ---------- */}
           {!currentUser && (
             <>
-              <li>
+              <li className="login">
                 <Link to="/login">Login</Link>
               </li>
-              <li>
+              <li className="signup">
                 <Link to="/signup">Sign&nbsp;Up</Link>
               </li>
             </>

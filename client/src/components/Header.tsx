@@ -53,10 +53,10 @@ export default function Header() {
           {/* ---------- not logged in ---------- */}
           {!currentUser && (
             <>
-              <li>
+              <li className="login">
                 <Link to="/login">Login</Link>
               </li>
-              <li>
+              <li className="signup">
                 <Link to="/signup">Sign&nbsp;Up</Link>
               </li>
             </>

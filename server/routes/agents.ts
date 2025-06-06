@@ -13,12 +13,11 @@ import {
 import { Globals } from '../globals';
 import { Constants } from '../constants';
 
-async function checkAgentStatus(ip: string, port: string): Promise<string> {
+async function checkAgentStatus(id: string): Promise<string> {
   try {
-    const response = await fetch('http://' + ip + ':' + port + '/status', {
-      //signal: AbortSignal.timeout(300),
-    });
-    return response.status == 200 ? 'online' : 'offline';
+    const socket = Globals.agentSockets.get(id);
+    if (socket && socket.connected) return 'online';
+    return 'offline';
   } catch (error) {
     return 'offline';
   }
@@ -96,18 +95,15 @@ export function serveAgents() {
       if (socket) {
         socket.emit('CLOSE_AGENT', (response: any) => {
           if (response.status === 'closed') {
-            res.status(200).json({ success: true });
-            return;
+            return void res.status(200).json({ success: true });
           }
         });
-      } else {
-        console.error(Constants.TEXT_RED_COLOR, 'failed getting socket for closing!');
-        res.status(500).json({ success: false });
       }
+      console.warn(Constants.TEXT_YELLOW_COLOR, 'failed getting socket for closing!');
+      return void res.status(200).json({ success: true });
     } catch (error) {
       console.error(Constants.TEXT_RED_COLOR, 'Failed to erase agent:', error, Constants.TEXT_WHITE_COLOR);
-      res.status(500).json({ success: false });
-      return;
+      return void res.status(500).json({ success: false });
     }
   });
 
@@ -117,7 +113,7 @@ export function serveAgents() {
       const statusUpdates = await Promise.all(
         agents.map(async (agent: any) => ({
           agent_id: agent.agent_id,
-          status: await checkAgentStatus(agent.agent_ip, agent.agent_port),
+          status: await checkAgentStatus(agent.agent_id),
         })),
       );
       res.status(200).json(statusUpdates);
@@ -153,26 +149,24 @@ export function serveAgents() {
   });
 
   router.put('/agents/monitor_status', async (req, res) => {
-    const { agent_id } = req.body;
     try {
-      const agent = await get_agent_by_id(agent_id);
+      const { agent_id } = req.body;
 
-      const response_from_agent = await fetch(
-        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/monitor/status',
-        {
-          //signal: AbortSignal.timeout(300),
-          method: 'GET',
-        },
-      );
-      if (response_from_agent.ok && response_from_agent.status === 200) {
-        res.status(200).json({ success: 'monitoring' });
-        return;
-      }
-      res.status(201).json({ success: 'not monitoring' });
-      return;
+      const socket = Globals.agentSockets.get(agent_id);
+      if (socket) {
+        socket.emit('STATUS_AGENT', (response: any) => {
+          if (response.status === 'monitoring') {
+            res.status(200).json({ success: 'monitoring' });
+            return;
+          }
+          res.status(201).json({ success: 'not monitoring' });
+          return;
+        });
+      } else res.status(500).json({ success: 'not monitoring' });
     } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to check monitoring status', error, Constants.TEXT_WHITE_COLOR);
-      res.status(500).json({ failure: error });
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to get agent monitoring status:', error);
+      res.status(500).json({ success: 'not monitoring' });
+      return;
     }
   });
 

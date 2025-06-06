@@ -28,29 +28,12 @@ async function apiFetch<T>(url: string, options: RequestInit = {}): Promise<T> {
 }
 
 /* ---------- Biscuit decode ---------- */
-/**
- *  Replace with the public key that the back-end prints once:
- *    console.log('public →', KeyPair.fromPrivateKey(rootPriv).getPublicKey().toString());
- *  Keep it **64 hex chars**, no prefix.
- */
-function hexToBytes(hex: string): Uint8Array {
-  if (hex.length % 2 !== 0) {
-    throw new Error('hex string must have an even length');
-  }
-  const bytes = new Uint8Array(hex.length / 2);
-  for (let i = 0; i < bytes.length; ++i) {
-    bytes[i] = parseInt(hex.substr(i * 2, 2), 16);
-  }
-  return bytes;
-}
-
-const bytes = hexToBytes('9009afe0a2047edaee54e520047884cf19fe821e1f2390983dcc1e0f71924de5');
-const privateKey = PrivateKey.fromBytes(bytes, SignatureAlgorithm.Ed25519);
-
-console.log('public →', KeyPair.fromPrivateKey(privateKey).getPublicKey().toString());
-
 function userFromToken(token: string): User {
-  const biscuit = Biscuit.fromBase64(token, KeyPair.fromPrivateKey(privateKey).getPublicKey()); // verifies sig
+  console.log('checking public key value:', import.meta.env.VITE_PUBLIC_KEY_BISCUIT);
+  const biscuit = Biscuit.fromBase64(
+    token,
+    PublicKey.fromString(import.meta.env.VITE_PUBLIC_KEY_BISCUIT, SignatureAlgorithm.Ed25519),
+  ); // verifies sig
   const source = biscuit.getBlockSource(0); // authority block as Datalog
 
   // user("<id>")
@@ -89,7 +72,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   /* ---------- actions ---------- */
   const login = async (username: string, password: string) => {
-    const { token } = await apiFetch<{ token: string }>('http://localhost:3000/api/login', {
+    const { token } = await apiFetch<{ token: string }>('/api/login', {
       method: 'POST',
       body: JSON.stringify({ username, password }),
     });
@@ -99,7 +82,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const signup = async (username: string, password: string) => {
-    await apiFetch<void>('http://localhost:3000/api/signup', {
+    await apiFetch<void>('/api/signup', {
       method: 'POST',
       body: JSON.stringify({ username, password }),
     });

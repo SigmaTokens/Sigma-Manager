@@ -1,19 +1,25 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
-import path from 'path';
 import wasm from 'vite-plugin-wasm';
-import topLevelAwait from 'vite-plugin-top-level-await';
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
 
-// https://vite.dev/config/
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const envFolder = resolve(__dirname, '..'); //  .. = parent of vite.config
+
 export default defineConfig(({ mode }) => {
-  const { VITE_SERVER_URL = 'http://localhost:3000' } = loadEnv(mode, path.resolve(__dirname, '../'), '');
-
+  const env = loadEnv(mode, envFolder, '');
   return {
-    plugins: [react(), wasm(), topLevelAwait()],
+    envDir: envFolder,
+    envPrefix: 'VITE_',
+
+    plugins: [react(), wasm()],
+
     server: {
       proxy: {
         '/api': {
-          target: VITE_SERVER_URL,
+          target: env.VITE_SERVER_URL ?? 'http://localhost:3000',
           changeOrigin: true,
         },
       },

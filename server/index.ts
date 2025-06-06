@@ -45,8 +45,6 @@ function main(): void {
     cors: { origin: '*' },
   });
 
-  const agentSockets = new Map<string, Socket>();
-
   io.on('connection', (socket) => {
     console.log('connection received...');
     const agentId = socket.handshake.query.agentId as string;
@@ -57,8 +55,9 @@ function main(): void {
       return;
     }
 
+    //receiving
     console.log(`✅ Agent connected: ${agentId}`);
-    agentSockets.set(agentId, socket);
+    Globals.agentSockets.set(agentId, socket);
 
     socket.on('message', (message) => {
       console.log(`💬 Message from ${agentId}:`, message);
@@ -74,11 +73,14 @@ function main(): void {
 
     socket.on('disconnect', () => {
       console.log(`⛔ Agent disconnected: ${agentId}`);
-      agentSockets.delete(agentId);
+      Globals.agentSockets.delete(agentId);
     });
-  });
+    //
 
-  Globals.agentSockets = agentSockets;
+    //sending
+    socket.emit('command', { action: 'TEST', payload: { title: 'name' } });
+    //
+  });
 
   Globals.app = app;
 

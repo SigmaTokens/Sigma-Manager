@@ -7,8 +7,10 @@ import { Globals } from '../globals';
        types via `import type` so TS is happy.
 ----------------------------------------------------------- */
 import type {
+  Policy as PolicyT,
   Biscuit as BiscuitT,
   BiscuitBuilder as BiscuitBuilderT,
+  BlockBuilder as BlockBuilderT,
   AuthorizerBuilder as AuthorizerBuilderT,
   Fact as FactT,
   Check as CheckT,
@@ -17,8 +19,10 @@ import type {
   SignatureAlgorithm as SignatureAlgorithmT,
 } from '@biscuit-auth/biscuit-wasm';
 
+let Policy: typeof PolicyT;
 let Biscuit: typeof BiscuitT;
 let BiscuitBuilder: typeof BiscuitBuilderT;
+let BlockBuilder!: typeof BlockBuilderT;
 let AuthorizerBuilder: typeof AuthorizerBuilderT;
 let Fact: typeof FactT;
 let Check: typeof CheckT;
@@ -29,7 +33,18 @@ let SignatureAlgorithm: typeof SignatureAlgorithmT;
 async function loadBiscuit() {
   if (Biscuit) return; // already loaded
   const wasm = await import('@biscuit-auth/biscuit-wasm');
-  ({ Biscuit, BiscuitBuilder, AuthorizerBuilder, Fact, Check, PrivateKey, KeyPair, SignatureAlgorithm } = wasm);
+  ({
+    Policy,
+    Biscuit,
+    BiscuitBuilder,
+    AuthorizerBuilder,
+    Fact,
+    Check,
+    PrivateKey,
+    KeyPair,
+    SignatureAlgorithm,
+    BlockBuilder,
+  } = wasm);
 }
 
 /* -----------------------------------------------------------
@@ -38,13 +53,15 @@ async function loadBiscuit() {
 
 const TOKEN_EXP_SECS = 2 * 60 * 60;
 
-/* -----------------------------------------------------------
-   3.  Token helpers (called after loadBiscuit)
------------------------------------------------------------ */
-function issueToken(id: string, username: string): string {
-  /* -------------------------------------------------
-     1.  Build a fresh BiscuitBuilder from scratch
-  ------------------------------------------------- */
+/**
+ * issueToken + a third-party signature
+ * -----------------------------------
+ * @param id        user id
+ * @param username  display name
+ * @returns         base-64 Biscuit token
+ */
+export function issueToken(id: string, username: string): string {
+  /* 1 - Build the authority block */
   const bb = new BiscuitBuilder();
   const exp = Math.floor(Date.now() / 1000) + TOKEN_EXP_SECS;
 
@@ -52,38 +69,58 @@ function issueToken(id: string, username: string): string {
   bb.addFact(Fact.fromString(`username("${username}")`));
   bb.addFact(Fact.fromString(`expiration(${exp})`));
 
-  /* -------------------------------------------------
-     2.  Sign with your (now-valid) Ed25519 private key
-  ------------------------------------------------- */
-  const bytes = Uint8Array.from(Buffer.from('9009afe0a2047edaee54e520047884cf19fe821e1f2390983dcc1e0f71924de5', 'hex'));
-  const privateKey = PrivateKey.fromBytes(bytes, SignatureAlgorithm.Ed25519);
+  /* 2 - Sign with the *root* key */
+  const rootBytes = Uint8Array.from(Buffer.from(process.env.PRIVATE_KEY_BISCUIT!, 'hex'));
+  const rootKey = PrivateKey.fromBytes(rootBytes, SignatureAlgorithm.Ed25519);
 
-  console.log('public →', KeyPair.fromPrivateKey(privateKey).getPublicKey().toString());
+  const token = bb.build(rootKey);
 
-  const token = bb.build(privateKey);
+  /* 3 --- Add a *third-party* block and sign it                *
+   *      (this is what Biscuit calls “adding a signer”)        */
+  const signerBytes = Uint8Array.from(Buffer.from(process.env.PRIVATE_KEY_BISCUIT!, 'hex'));
+  const signerKey = PrivateKey.fromBytes(signerBytes, SignatureAlgorithm.Ed25519);
+  const signerPub = KeyPair.fromPrivateKey(signerKey).getPublicKey();
 
-  //  OPTIONAL: log once, then remove for production
-  console.log('🔑  new token →', token.toBase64());
+  // 3.a The root issuer creates a request for a third-party signature
+  const request = token.getThirdPartyRequest();
 
-  return token.toBase64();
+  // 3.b The third party builds a block that **restricts** the token
+  const bb3 = new BlockBuilder();
+  bb3.addCheck(Check.fromString('check if operation("read")')); // example restriction
+
+  // 3.c The third party converts the request + block into a signed block
+  const thirdPartyBlock = request.createBlock(signerKey, bb3);
+
+  // 3.d Attach the signed block back to the token
+  const finalTok = token.appendThirdPartyBlock(signerPub, thirdPartyBlock);
+
+  /* ─── 4 ▸ return the final, multi-signed token ────────── */
+  return finalTok.toBase64();
 }
 
-function verifyToken(raw: string): BiscuitT {
-  const bytes = Uint8Array.from(Buffer.from('9009afe0a2047edaee54e520047884cf19fe821e1f2390983dcc1e0f71924de5', 'hex'));
-  const privateKey = PrivateKey.fromBytes(bytes, SignatureAlgorithm.Ed25519);
+function verifyToken(raw: string) {
+  /* 1 ▸ load the *public* root key (hex in .env) */
+  const rootBytes = Uint8Array.from(Buffer.from(process.env.PRIVATE_KEY_BISCUIT!, 'hex'));
+  const rootKey = PrivateKey.fromBytes(rootBytes, SignatureAlgorithm.Ed25519);
+  const rootPub = KeyPair.fromPrivateKey(rootKey).getPublicKey();
 
-  console.log('public →', KeyPair.fromPrivateKey(privateKey).getPublicKey().toString());
+  /* 2 ▸ parse + cryptographically verify all signatures */
+  const tok = Biscuit.fromBase64(raw, rootPub);
 
-  const tok = Biscuit.fromBase64(raw, KeyPair.fromPrivateKey(privateKey).getPublicKey());
-
+  /* 3 ▸ build the authorizer with runtime facts & checks */
   const ab = new AuthorizerBuilder();
   const now = Math.floor(Date.now() / 1000);
+
   ab.addFact(Fact.fromString(`now(${now})`));
   ab.addCheck(Check.fromString('check if expiration($e), now($n), $e > $n'));
-  ab.addPolicy(Check.fromString('allow if true'));
 
+  /* 3.a add a *default allow policy* so harmless tokens succeed */
+  ab.addPolicy(Policy.fromString('allow if true')); // ← real policy, not check
+
+  /* 4 ▸ run authorization (throws on failure) */
   ab.buildAuthenticated(tok).authorize();
-  return tok;
+
+  return tok; // safe to use, fully verified & authorized
 }
 
 // utils/asyncHandler.ts

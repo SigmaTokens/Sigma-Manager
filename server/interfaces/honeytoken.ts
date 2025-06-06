@@ -10,4 +10,8 @@ export interface IHoneytoken {
   data: string;
   notes?: string;
   isMonitored: boolean;
+  route?: string;
+  http_method?: string;
+  response?: string;
+  api_port?: string;
 }

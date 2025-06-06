@@ -172,3 +172,50 @@ export async function getHoneytokensMonitorStatuses(): Promise<Record<string, bo
     return {};
   }
 }
+
+export async function deleteHoneytokensByGroupId(group_id: string) {
+  try {
+    const response = await fetch(`http://localhost:3000/api/honeytokens/group/${group_id}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+  } catch (err) {
+    console.error('Error deleting honeytokens group:', err);
+  }
+}
+
+export async function startMonitorByGroupId(group_id: string) {
+  try {
+    const response = await fetch(`http://localhost:3000/api/honeytokens/start/group`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ group_id }),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+  } catch (err) {
+    console.error('Error starting monitor on group:', err);
+  }
+}
+
+export async function stopMonitorByGroupId(group_id: string) {
+  try {
+    const response = await fetch(`http://localhost:3000/api/honeytokens/stop/group`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ group_id }),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+  } catch (err) {
+    console.error('Error stopping monitor on group:', err);
+  }
+}

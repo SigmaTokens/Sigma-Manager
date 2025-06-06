@@ -39,3 +39,11 @@ Please run the following command in powershell: `Set-ExecutionPolicy -Scope Curr
 ### Updated database tables ?
 
 Please delete the file `database.sqlite` so the tables will recreate themself
+
+linux:
+
+git clone https://github.com/SigmaTokens/Sigma-Agent.git && cd Sigma-Agent && printf "MANAGER_IP=192.168.7.6
+MANAGER_PORT=3000
+AGENT_NAME=agent1
+" | tee .env > /dev/null && npm run start-prod-linux
+

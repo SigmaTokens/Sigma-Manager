@@ -15,9 +15,9 @@ export default function Header() {
   const { currentUser, logout } = useAuth();
 
   useEffect(() => {
-    (async () => {
-      setAgents(await getAgents());
-    })();
+    getAgents().then((agents) => {
+      setAgents(agents);
+    });
   }, []);
 
   const navigate = useNavigate();

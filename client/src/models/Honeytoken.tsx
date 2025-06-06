@@ -1,5 +1,7 @@
 import { IAgentStatus } from '../../../server/interfaces/agent';
+import { HoneytokenType } from '../utilities/typing';
 import { areAgentsConnected } from './Agents';
+
 export async function createHoneytokenText(
   fileName: string,
   ComponentAddresses: string,
@@ -9,13 +11,13 @@ export async function createHoneytokenText(
   fileContent: string,
   agentID: string,
 ) {
-  return await fetch('http://localhost:3000/api/honeytokens/text', {
+  return await fetch('/api/honeytokens/text', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      type: 'text',
+      type: HoneytokenType.Text,
       file_name: fileName,
       location: ComponentAddresses,
       grade: grade,
@@ -27,9 +29,36 @@ export async function createHoneytokenText(
   });
 }
 
+export async function createHoneytokenApi(
+  grade: number,
+  expirationDate: string,
+  notes: string,
+  agentID: string,
+  apiPort: number,
+  apis: any[],
+) {
+  console.log('--test--\n', apis);
+
+  return await fetch('/api/honeytokens/api', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      type: HoneytokenType.API,
+      grade: grade,
+      expiration_date: expirationDate,
+      notes: notes,
+      agent_id: agentID,
+      api_port: apiPort,
+      apis: apis,
+    }),
+  });
+}
+
 export async function getHoneytokens() {
   try {
-    const response = await fetch('http://localhost:3000/api/honeytokens');
+    const response = await fetch('/api/honeytokens');
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -41,7 +70,7 @@ export async function getHoneytokens() {
 
 export async function deleteHoneytoken(token_id: string) {
   try {
-    const response = await fetch(`http://localhost:3000/api/honeytokens/token/${token_id}`, {
+    const response = await fetch(`/api/honeytokens/token/${token_id}`, {
       method: 'DELETE',
     });
     if (!response.ok) {
@@ -54,7 +83,7 @@ export async function deleteHoneytoken(token_id: string) {
 
 export async function startMonitorOnHoneytoken(token_id: string) {
   try {
-    const response = await fetch(`http://localhost:3000/api/honeytokens/start`, {
+    const response = await fetch(`/api/honeytokens/start`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -73,7 +102,7 @@ export async function startMonitorOnHoneytoken(token_id: string) {
 
 export async function stopMonitorOnHoneytoken(token_id: string) {
   try {
-    const response = await fetch(`http://localhost:3000/api/honeytokens/stop`, {
+    const response = await fetch(`/api/honeytokens/stop`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -92,7 +121,7 @@ export async function stopMonitorOnHoneytoken(token_id: string) {
 
 export async function isHoneytokenMonitored(token_id: string): Promise<boolean> {
   try {
-    const response = await fetch(`http://localhost:3000/api/honeytokens/monitor_status`, {
+    const response = await fetch(`/api/honeytokens/monitor_status`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -111,9 +140,7 @@ export async function isHoneytokenMonitored(token_id: string): Promise<boolean> 
   }
 }
 
-export async function getHoneytokensMonitorStatuses(): Promise<
-  Record<string, boolean>
-> {
+export async function getHoneytokensMonitorStatuses(): Promise<Record<string, boolean>> {
   try {
     const agents_data: IAgentStatus[] = await areAgentsConnected();
 
@@ -125,16 +152,13 @@ export async function getHoneytokensMonitorStatuses(): Promise<
       return {}; // Early exit if no online agents
     }
 
-    const response = await fetch(
-      'http://localhost:3000/api/honeytokens/monitor_status',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ agents_ids }),
+    const response = await fetch('/api/honeytokens/monitor_status', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    );
+      body: JSON.stringify({ agents_ids }),
+    });
 
     if (!response.ok) {
       throw new Error('Failed to fetch monitoring statuses');

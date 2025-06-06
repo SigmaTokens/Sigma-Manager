@@ -15,7 +15,7 @@ function Home() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/home')
+    fetch('/api/home')
       .then((res) => {
         if (!res.ok) throw new Error('Failed to fetch dashboard data');
         return res.json();

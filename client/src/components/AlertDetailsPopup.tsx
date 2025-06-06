@@ -1,17 +1,15 @@
 import React from 'react';
 import { Button } from './popup';
-import '../styles/AlertDetailsPopup.css';
 import { Alert } from '../../../server/interfaces/alert';
+
+import '../styles/AlertDetailsPopup.css';
 
 interface AlertDetailsPopupProps {
   alert: Alert;
   onClose: () => void;
 }
 
-const AlertDetailsPopup: React.FC<AlertDetailsPopupProps> = ({
-  alert,
-  onClose,
-}) => {
+const AlertDetailsPopup: React.FC<AlertDetailsPopupProps> = ({ alert, onClose }) => {
   const detailsGroups = [
     {
       title: 'Basic Information',
@@ -35,9 +33,7 @@ const AlertDetailsPopup: React.FC<AlertDetailsPopupProps> = ({
     },
     {
       title: 'Agent Information',
-      items: [
-        { label: 'Agent', value: `${alert.agent_ip}:${alert.agent_port}` },
-      ],
+      items: [{ label: 'Agent', value: `${alert.agent_ip}:${alert.agent_port}` }],
     },
   ];
 

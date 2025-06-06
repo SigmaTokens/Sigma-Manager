@@ -87,13 +87,27 @@ export function serveAgents() {
   });
 
   router.delete('/agents/agent/:agent_id', async (req, res) => {
-    const { agent_id } = req.params;
     try {
+      const { agent_id } = req.params;
+
       await delete_agent_by_id(agent_id);
-      res.json({ success: true });
+
+      const socket = Globals.agentSockets.get(agent_id);
+      if (socket) {
+        socket.emit('CLOSE_AGENT', (response: any) => {
+          if (response.status === 'closed') {
+            res.status(200).json({ success: true });
+            return;
+          }
+        });
+      } else {
+        console.error(Constants.TEXT_RED_COLOR, 'failed getting socket for closing!');
+        res.status(500).json({ success: false });
+      }
     } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to delete agent:', error, Constants.TEXT_WHITE_COLOR);
-      res.status(500).json({ failure: error });
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to erase agent:', error, Constants.TEXT_WHITE_COLOR);
+      res.status(500).json({ success: false });
+      return;
     }
   });
 
@@ -119,21 +133,21 @@ export function serveAgents() {
 
       await verify_agent_by_id(agent_id);
 
-      const agent = await get_agent_by_id(agent_id);
-
-      const response_from_agent = await fetch(
-        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/general/init',
-        {
-          //signal: AbortSignal.timeout(300),
-          method: 'GET',
-        },
-      );
-
-      res.json({ success: true });
-      return;
-    } catch (err) {
-      console.error(Constants.TEXT_RED_COLOR, 'Error: ', err);
-      res.json({ success: false });
+      const socket = Globals.agentSockets.get(agent_id);
+      if (socket) {
+        socket.emit('INIT_AGENT', (response: any) => {
+          if (response.status === 'initiated') {
+            res.status(200).json({ success: true });
+            return;
+          }
+        });
+      } else {
+        console.error(Constants.TEXT_RED_COLOR, 'Failed fetching socket to init!');
+        res.status(500).json({ success: false });
+      }
+    } catch (error) {
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to init:', error);
+      res.status(500).json({ success: false });
       return;
     }
   });
@@ -163,46 +177,48 @@ export function serveAgents() {
   });
 
   router.put('/agents/start', async (req, res) => {
-    const { agent_id } = req.body;
     try {
-      const agent = await get_agent_by_id(agent_id);
+      const { agent_id } = req.body;
 
-      const response_from_agent = await fetch(
-        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/monitor/start',
-        {
-          method: 'GET',
-        },
-      );
-      if (response_from_agent.ok || response_from_agent.status === 200) {
-        res.status(200).json({ success: 'started' });
-        return;
+      const socket = Globals.agentSockets.get(agent_id);
+      if (socket) {
+        socket.emit('START_AGENT', (response: any) => {
+          if (response.status === 'started') {
+            res.status(200).json({ success: true });
+            return;
+          }
+        });
+      } else {
+        console.error(Constants.TEXT_RED_COLOR, 'Failed fetching socket to start!');
+        res.status(500).json({ success: false });
       }
     } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to start agent:', error, Constants.TEXT_WHITE_COLOR);
-      res.status(500).json({ failure: error });
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to start agent:', error);
+      res.status(500).json({ success: false });
+      return;
     }
   });
 
   router.put('/agents/stop', async (req, res) => {
-    const { agent_id } = req.body;
     try {
-      const agent = await get_agent_by_id(agent_id);
+      const { agent_id } = req.body;
 
-      const response_from_agent = await fetch(
-        'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/monitor/stop',
-        {
-          method: 'GET',
-        },
-      );
-      if (response_from_agent.ok && response_from_agent.status === 200) {
-        res.status(200).json({ success: 'stopped' });
-        return;
+      const socket = Globals.agentSockets.get(agent_id);
+      if (socket) {
+        socket.emit('STOP_AGENT', (response: any) => {
+          if (response.status === 'stopped') {
+            res.status(200).json({ success: true });
+            return;
+          }
+        });
+      } else {
+        console.error(Constants.TEXT_RED_COLOR, 'Failed fetching socket to stop!');
+        res.status(500).json({ success: false });
       }
-      res.status(201).json({ success: 'nothing to stop' });
-      return;
     } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to stop agent:', error, Constants.TEXT_WHITE_COLOR);
-      res.status(500).json({ failure: error });
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to stop agent:', error);
+      res.status(500).json({ success: false });
+      return;
     }
   });
 

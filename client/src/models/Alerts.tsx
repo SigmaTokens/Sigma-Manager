@@ -1,6 +1,6 @@
 export async function getAlerts() {
   try {
-    const response = await fetch('http://localhost:3000/api/alerts');
+    const response = await fetch('/api/alerts');
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -12,7 +12,7 @@ export async function getAlerts() {
 
 export async function archiveAlert(alertId: string, archive: boolean) {
   try {
-    const response = await fetch('http://localhost:3000/api/alerts/archive/' + alertId, {
+    const response = await fetch('/api/alerts/archive/' + alertId, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

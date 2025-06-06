@@ -2,6 +2,12 @@ import express from 'express';
 import path from 'path';
 import { Globals } from '../globals';
 
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 export const serveClient = () => {
   const clientBuildPath = path.join(__dirname, '../client/dist');
 

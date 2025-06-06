@@ -6,6 +6,12 @@ import { populate_types_table } from './types';
 import { Globals } from '../globals';
 import { Constants } from '../constants';
 
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 export async function startDatabase() {
   try {
     const database_absolute_path = path.join(__dirname, 'database.sqlite');

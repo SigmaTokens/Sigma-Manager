@@ -11,7 +11,7 @@ import AgentsPage from './pages/Agents';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import Welcome from './pages/Welcome';
-
+import {ErrorPopup} from '../../server/utils';
 const isLoggedIn = false; // TODO: Replace with real auth logic
 
 createRoot(document.getElementById('root')!).render(

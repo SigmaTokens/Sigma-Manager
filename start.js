@@ -147,21 +147,24 @@ function setup_vscode_settings(rootDir) {
 }
 function install_deps() {
   try {
+    // Root dependencies
     console.log(Constants.TEXT_YELLOW_COLOR,'Updating deps for root',Constants.TEXT_WHITE_COLOR);
-    execSync('npm install --silent ', { stdio: 'inherit' });
+    execSync('npm install --silent', { stdio: 'inherit' });
 
+    // Client dependencies
+    console.log(Constants.TEXT_YELLOW_COLOR,'Updating deps for client',Constants.TEXT_WHITE_COLOR);
+    execSync('npm install --silent --prefix client', { stdio: 'inherit' });
+
+    // Server dependencies
+    console.log(Constants.TEXT_YELLOW_COLOR,'Updating deps for server',Constants.TEXT_WHITE_COLOR);
+    execSync('npm install --silent --prefix server', { stdio: 'inherit' });
+
+   
     console.log(Constants.TEXT_YELLOW_COLOR, 'Ensuring sweetalert2 is installed', Constants.TEXT_WHITE_COLOR);
     execSync('npm install --silent sweetalert2', { stdio: 'inherit' });
 
-  console.log(Constants.TEXT_YELLOW_COLOR, 'Ensuring animate.css is installed', Constants.TEXT_WHITE_COLOR);
-  execSync('npm install --silent animate.css', { stdio: 'inherit' });
-
-
-    console.log(Constants.TEXT_YELLOW_COLOR,'Updating deps for client',Constants.TEXT_WHITE_COLOR);
-    execSync('npm install --silent  --prefix client', { stdio: 'inherit' });
-
-    console.log(Constants.TEXT_YELLOW_COLOR,'Updating deps for server',Constants.TEXT_WHITE_COLOR);
-    execSync('npm install --silent --prefix server', { stdio: 'inherit' });
+    console.log(Constants.TEXT_YELLOW_COLOR, 'Ensuring animate.css is installed', Constants.TEXT_WHITE_COLOR);
+    execSync('npm install --silent animate.css', { stdio: 'inherit' });
 
     console.log(Constants.TEXT_GREEN_COLOR,'Deps update complete',Constants.TEXT_WHITE_COLOR);
   } catch (error) {
@@ -169,6 +172,7 @@ function install_deps() {
     process.exit(-1);
   }
 }
+
 
 function run_sigmatokens(mode) {
   try {

@@ -5,6 +5,8 @@ import '../styles/Home.css';
 import { IDashboardSummary } from '../../../server/interfaces/summary';
 import { Bar } from 'react-chartjs-2';
 import { CategoryScale, LinearScale, BarElement } from 'chart.js';
+import { ErrorPopup } from '../../popup.tsx';
+//import('sweetalert2').then(Swal => Swal.default.fire('Hello world!'));
 
 ChartJS.register(CategoryScale, LinearScale, BarElement);
 
@@ -105,6 +107,7 @@ function Home() {
   return (
     <div className="home-container">
       <h1>Dashboard Summary</h1>
+ 
 
       <div className="kpi-cards">
         <div className="kpi-card">👥 Total Agents: {summary.total_agents}</div>
@@ -145,6 +148,7 @@ function Home() {
         </div>
       </div>
     </div>
+    
   );
 }
 

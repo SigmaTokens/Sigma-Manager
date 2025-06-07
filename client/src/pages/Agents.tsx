@@ -70,8 +70,6 @@ function AgentsPage() {
           <thead>
             <tr>
               <th>Name</th>
-              <th>IP</th>
-              <th>Port</th>
               <th>ID</th>
               <th>Validated</th>
               <th>Status</th>
@@ -82,8 +80,6 @@ function AgentsPage() {
             {agents.map((agent) => (
               <tr key={agent.agent_id}>
                 <td>{agent.agent_name}</td>
-                <td>{agent.agent_ip}</td>
-                <td>{agent.agent_port}</td>
                 <td>{agent.agent_id}</td>
                 <td>{agent.validated == 0 ? 'no' : 'yes'}</td>
                 <td className={`agents-status-${statusUpdates[agent.agent_id] || 'unknown'}`}>

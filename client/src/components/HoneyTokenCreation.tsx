@@ -181,7 +181,7 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                     .filter((agent) => agent.validated)
                     .map((agent) => (
                       <SelectItem key={agent.agent_id} value={agent.agent_id}>
-                        {agent.agent_ip}:{agent.agent_port} | {agent.agent_name}
+                        {agent.agent_id} | {agent.agent_name}
                       </SelectItem>
                     ))}
                 </SelectContent>

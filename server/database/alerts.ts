@@ -116,8 +116,8 @@ export async function get_all_alerts_join() {
       honeytokens.grade AS grade,
       honeytokens.location AS location,
       honeytokens.file_name AS file_name,
-      agents.agent_ip AS agent_ip,
-      agents.agent_port AS agent_port
+      agents.agent_id AS agent_id,
+      agents.agent_name AS agent_name
     FROM
       alerts
       LEFT JOIN honeytokens ON alerts.token_id = honeytokens.token_id

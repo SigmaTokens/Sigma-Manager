@@ -37,32 +37,6 @@ export function serveAgents() {
     }
   });
 
-  router.post('/agents/add', async (req, res) => {
-    try {
-      const { id, ip, name, port } = req.body;
-
-      if (!ip || !name || !port || !id) {
-        res.status(400).json({ error: 'Missing required fields (id ,ip, name, port)' });
-        return;
-      }
-
-      const agents = await get_all_agents();
-
-      //TODO: change this to a query instead ...
-      const agent_id_exists = agents.some((agent: any) => agent.agent_id === id);
-
-      if (agent_id_exists) {
-        await update_agent(id, ip, name, parseInt(port), 1);
-      } else {
-        await insert_agent(id, ip, name, parseInt(port), 1);
-      }
-      res.sendStatus(200);
-    } catch (error: any) {
-      console.error(Constants.TEXT_RED_COLOR, error);
-      res.status(500).json({ error: error.message });
-    }
-  });
-
   router.get('/agents/agent/:agent_id', async (req, res) => {
     const { agent_id } = req.params;
     try {

@@ -1,5 +1,4 @@
-const sql = (strings: TemplateStringsArray, ...values: any[]) =>
-  String.raw(strings, ...values);
+const sql = (strings: TemplateStringsArray, ...values: any[]) => String.raw(strings, ...values);
 import { Globals } from '../globals';
 import { begin_transaction, commit, rollback } from './helpers';
 export async function init_agents_table() {
@@ -16,31 +15,19 @@ export async function init_agents_table() {
   `);
 }
 
-export async function insert_agent(
-  agent_id: string,
-  ip: string,
-  name: string,
-  port: number,
-  user_id: number,
-) {
+export async function insert_agent(agent_id: string, name: string, user_id: number) {
   await Globals.app.locals.db.run(
     sql`
       INSERT INTO
-        agents (agent_id, agent_ip, agent_name, agent_port, user_id)
+        agents (agent_id, agent_name, user_id)
       VALUES
-        (?, ?, ?, ?, ?)
+        (?, ?, ?)
     `,
-    [agent_id, ip, name, port, user_id],
+    [agent_id, name, user_id],
   );
 }
 
-export async function update_agent(
-  agent_id: string,
-  ip: string,
-  name: string,
-  port: number,
-  user_id: number,
-) {
+export async function update_agent(agent_id: string, ip: string, name: string, port: number, user_id: number) {
   await Globals.app.locals.db.run(
     sql`
       UPDATE agents
@@ -55,7 +42,6 @@ export async function update_agent(
     [ip, name, port, user_id, agent_id],
   );
 }
-
 
 export async function verify_agent_by_id(agent_id: string) {
   await Globals.app.locals.db.run(

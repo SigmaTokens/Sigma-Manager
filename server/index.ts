@@ -27,6 +27,7 @@ import { Constants } from './constants';
 import util from 'node:util';
 import { callback } from 'chart.js/dist/helpers/helpers.core';
 import { get_honeytokens_by_agent_id } from './database/honeytokens';
+import { get_all_agents, insert_agent } from './database/agents';
 
 main();
 
@@ -67,6 +68,18 @@ function main(): void {
         callback({ tokens: honeytokens });
       } catch (err) {
         callback({ tokens: [] });
+      }
+    });
+
+    socket.on('REGISTER_AGENT', async (paylaod) => {
+      const { id, name, user } = paylaod;
+
+      const agents = await get_all_agents();
+
+      const agent_id_exists = agents.some((agent: any) => agent.agent_id === id);
+
+      if (!agent_id_exists) {
+        await insert_agent(id, name, user);
       }
     });
 

@@ -167,6 +167,9 @@ function install_deps() {
     console.log(Constants.TEXT_YELLOW_COLOR, 'Updating deps for server', Constants.TEXT_WHITE_COLOR);
     execSync('npm install --silent --prefix server', { stdio: 'inherit' });
 
+    console.log(Constants.TEXT_YELLOW_COLOR, 'Installing sweetalert2 in client', Constants.TEXT_WHITE_COLOR);
+    execSync('npm install sweetalert2 --silent --prefix client', { stdio: 'inherit' });
+
     console.log(Constants.TEXT_GREEN_COLOR, 'Deps update complete', Constants.TEXT_WHITE_COLOR);
   } catch (error) {
     console.error(Constants.TEXT_RED_COLOR, 'Failed to update deps:', error.message, Constants.TEXT_WHITE_COLOR);

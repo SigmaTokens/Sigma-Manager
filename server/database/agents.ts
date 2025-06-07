@@ -68,7 +68,30 @@ export async function delete_agent_by_id(agent_id: string) {
   try {
     await begin_transaction();
 
-    //TODO: delete associated alerts and tokens
+    await Globals.app.locals.db.run(
+      sql`
+        DELETE FROM alerts
+        WHERE
+          token_id IN (
+            SELECT
+              group_id
+            FROM
+              honeytokens
+            WHERE
+              agent_id = ?
+          )
+      `,
+      [agent_id],
+    );
+
+    await Globals.app.locals.db.run(
+      sql`
+        DELETE FROM honeytokens
+        WHERE
+          agent_id = ?
+      `,
+      [agent_id],
+    );
 
     await Globals.app.locals.db.run(
       sql`

@@ -55,13 +55,13 @@ export function serveAgents() {
       const socket = Globals.agentSockets.get(agent_id);
       if (socket) {
         socket.emit('CLOSE_AGENT', (response: any) => {
-          if (response.status === 'closed') {
-            return void res.status(200).json({ success: true });
-          }
+          socket.disconnect();
+          return void res.status(200).json({ success: true });
         });
+      } else {
+        console.warn(Constants.TEXT_YELLOW_COLOR, 'failed getting socket for closing!');
+        return void res.status(500).json({ success: false });
       }
-      console.warn(Constants.TEXT_YELLOW_COLOR, 'failed getting socket for closing!');
-      return void res.status(200).json({ success: true });
     } catch (error) {
       console.error(Constants.TEXT_RED_COLOR, 'Failed to erase agent:', error, Constants.TEXT_WHITE_COLOR);
       return void res.status(500).json({ success: false });

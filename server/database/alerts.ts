@@ -106,7 +106,7 @@ export async function get_all_alerts() {
 
 export async function get_all_alerts_join() {
   return await Globals.app.locals.db.all(sql`
-    SELECT
+    SELECT DISTINCT
       alerts.alert_id,
       alerts.token_id,
       alerts.alert_epoch,

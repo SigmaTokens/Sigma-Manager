@@ -153,6 +153,10 @@ function install_deps() {
     console.log(Constants.TEXT_YELLOW_COLOR, 'Ensuring sweetalert2 is installed', Constants.TEXT_WHITE_COLOR);
     execSync('npm install --silent sweetalert2', { stdio: 'inherit' });
 
+  console.log(Constants.TEXT_YELLOW_COLOR, 'Ensuring animate.css is installed', Constants.TEXT_WHITE_COLOR);
+  execSync('npm install --silent animate.css', { stdio: 'inherit' });
+
+
     console.log(Constants.TEXT_YELLOW_COLOR,'Updating deps for client',Constants.TEXT_WHITE_COLOR);
     execSync('npm install --silent  --prefix client', { stdio: 'inherit' });
 

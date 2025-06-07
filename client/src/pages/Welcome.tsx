@@ -1,6 +1,6 @@
 import '../styles/Welcome.css';
 import logo from '../assets/SigmaTokens.png';
-import { ErrorPopup } from '../../popup.tsx';
+import { ErrorPopup } from '../../popup.tsx';// by shak6
 import { useEffect, useState } from 'react';
 
 function Welcome() {
@@ -8,13 +8,13 @@ function Welcome() {
 
   useEffect(() => {
    
-    setError('This is a test error from Welcome!');
+    setError('This is a test error haha');
   }, []);
 
   return (
     <>
-  
-      <ErrorPopup open={!!error} message={error} onClose={() => setError('')} />
+ 
+      <ErrorPopup open={!!error} message={error} onClose={() => setError('')} /> 
       <div className="home-container">
         <img src={logo} alt="SigmaTokens Logo" className="welcome-logo" />
 

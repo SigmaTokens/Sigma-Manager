@@ -1,9 +1,12 @@
 import { Express, Router } from 'express';
 import { Globals } from '../globals';
 import { Constants } from '../constants';
+import { auth } from '../middleware/auth';
 
 export function serveHome() {
   const router = Router();
+
+  router.use(auth());
 
   router.get('/home', async (req, res) => {
     try {

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { add_user, check_user_credentials } from '../database/users';
 import { Globals } from '../globals';
+import util from 'util';
 
 /* -----------------------------------------------------------
    1.  Dynamically load Biscuit — values at runtime,
@@ -30,7 +31,7 @@ let PrivateKey: typeof PrivateKeyT;
 let KeyPair: typeof KeyPairT;
 let SignatureAlgorithm: typeof SignatureAlgorithmT;
 
-async function loadBiscuit() {
+export async function loadBiscuit() {
   if (Biscuit) return; // already loaded
   const wasm = await import('@biscuit-auth/biscuit-wasm');
   ({
@@ -86,7 +87,7 @@ export function issueToken(id: string, username: string): string {
 
   // 3.b The third party builds a block that **restricts** the token
   const bb3 = new BlockBuilder();
-  bb3.addCheck(Check.fromString('check if operation("read")')); // example restriction
+  bb3.addCheck(Check.fromString('check if operation("all")')); // example restriction
 
   // 3.c The third party converts the request + block into a signed block
   const thirdPartyBlock = request.createBlock(signerKey, bb3);
@@ -98,29 +99,57 @@ export function issueToken(id: string, username: string): string {
   return finalTok.toBase64();
 }
 
-function verifyToken(raw: string) {
-  /* 1 ▸ load the *public* root key (hex in .env) */
-  const rootBytes = Uint8Array.from(Buffer.from(process.env.PRIVATE_KEY_BISCUIT!, 'hex'));
-  const rootKey = PrivateKey.fromBytes(rootBytes, SignatureAlgorithm.Ed25519);
-  const rootPub = KeyPair.fromPrivateKey(rootKey).getPublicKey();
+export function verifyToken(raw: string) {
+  try {
+    /* 1 ▸ load the *public* root key (hex in .env) */
+    const rootBytes = Uint8Array.from(Buffer.from(process.env.PRIVATE_KEY_BISCUIT!, 'hex'));
+    const rootKey = PrivateKey.fromBytes(rootBytes, SignatureAlgorithm.Ed25519);
+    const rootPub = KeyPair.fromPrivateKey(rootKey).getPublicKey();
+    console.log('[BISCUIT] ✅ Loaded root public key');
 
-  /* 2 ▸ parse + cryptographically verify all signatures */
-  const tok = Biscuit.fromBase64(raw, rootPub);
+    /* 2 ▸ parse + cryptographically verify all signatures */
+    const tok = Biscuit.fromBase64(raw, rootPub);
+    console.log('[BISCUIT] ✅ Token signature verified');
+    console.log('[BISCUIT] 🧱 Authority block:\n' + tok.getBlockSource(0));
+    console.log('[BISCUIT] 🧱 Authority block permissions:\n' + tok.getBlockSource(1));
 
-  /* 3 ▸ build the authorizer with runtime facts & checks */
-  const ab = new AuthorizerBuilder();
-  const now = Math.floor(Date.now() / 1000);
+    /* 3 ▸ build authorizer */
+    const ab = new AuthorizerBuilder();
+    const now = Math.floor(Date.now() / 1000);
+    ab.addFact(Fact.fromString(`now(${now})`));
+    ab.addFact(Fact.fromString('operation("all")')); // 👈 REQUIRED for the check
+    ab.addCheck(Check.fromString('check if expiration($e), now($n), $e > $n'));
+    ab.addPolicy(Policy.fromString('allow if true'));
 
-  ab.addFact(Fact.fromString(`now(${now})`));
-  ab.addCheck(Check.fromString('check if expiration($e), now($n), $e > $n'));
+    console.log('[BISCUIT] 🛠️  Authorizer setup:');
+    console.log('- Fact: now(' + now + ')');
+    console.log('- Check: expiration > now');
 
-  /* 3.a add a *default allow policy* so harmless tokens succeed */
-  ab.addPolicy(Policy.fromString('allow if true')); // ← real policy, not check
+    /* 4 ▸ run authorization (may throw) */
+    const auth = ab.buildAuthenticated(tok);
+    auth.authorize(); // ← might throw
+    console.log('[BISCUIT] ✅ Authorization passed');
 
-  /* 4 ▸ run authorization (throws on failure) */
-  ab.buildAuthenticated(tok).authorize();
+    return tok;
+  } catch (err: any) {
+    console.error('[BISCUIT] ❌ Authorization failed:', err?.message || err);
 
-  return tok; // safe to use, fully verified & authorized
+    // 🌟 Add this to deeply inspect the error object
+    console.error(
+      '[BISCUIT] 🔎 Full error object (util.inspect):\n' + util.inspect(err, { depth: null, colors: true }),
+    );
+    console.dir(err, { depth: null }); // 👈 also logs expanded structure
+
+    // 🍰 Biscuit-specific debug helpers
+    if (err?.print) {
+      console.error('[BISCUIT] ❗ Authorizer print:\n' + err.print());
+    }
+    if (err?.dump) {
+      console.error('[BISCUIT] 📦 Dump:\n' + err.dump());
+    }
+
+    throw err;
+  }
 }
 
 // utils/asyncHandler.ts

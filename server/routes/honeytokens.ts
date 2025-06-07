@@ -15,9 +15,12 @@ import { get_agent_by_id, get_agent_by_uri } from '../database/agents';
 import { v4 as uuidv4 } from 'uuid';
 import { Constants } from '../constants';
 import { IHoneytoken } from '../interfaces/honeytoken';
+import { auth } from '../middleware/auth';
 
 export function serveHoneytokens() {
   const router = Router();
+
+  router.use(auth());
 
   router.get('/honeytokens', async (req, res) => {
     try {

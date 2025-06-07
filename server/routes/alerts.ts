@@ -9,9 +9,12 @@ import {
 } from '../database/alerts';
 import { Globals } from '../globals';
 import { Constants } from '../constants';
+import { auth } from '../middleware/auth';
 
 export function serveAlerts() {
   const router = Router();
+
+  router.use(auth());
 
   router.post('/alerts', async (req, res) => {
     try {

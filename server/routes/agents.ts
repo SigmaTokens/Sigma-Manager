@@ -12,6 +12,7 @@ import {
 } from '../database/agents';
 import { Globals } from '../globals';
 import { Constants } from '../constants';
+import { auth } from '../middleware/auth';
 
 async function checkAgentStatus(id: string): Promise<string> {
   try {
@@ -26,8 +27,11 @@ async function checkAgentStatus(id: string): Promise<string> {
 export function serveAgents() {
   const router = Router();
 
+  router.use(auth());
+
   router.get('/agents', async (req, res) => {
     try {
+      console.log('user fetched data from verified token', (req as any).user);
       const agents = await get_all_agents();
 
       res.json(agents);

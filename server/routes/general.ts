@@ -1,9 +1,12 @@
 import { Router } from 'express';
 import { Globals } from '../globals';
 import { getLocalIPv4s } from '../utils';
+import { auth } from '../middleware/auth';
 
 export function serveGeneral() {
   const router = Router();
+
+  router.use(auth());
 
   router.post('/server', async (req, res) => {
     const { address } = req.body;

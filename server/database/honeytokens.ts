@@ -143,6 +143,7 @@ export async function get_honeytokens_by_group_id(group_id: String) {
       SELECT
         token_id,
         group_id,
+        agent_id,
         type_id,
         grade,
         creation_date,

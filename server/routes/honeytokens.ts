@@ -15,6 +15,7 @@ import { get_agent_by_id, get_agent_by_uri } from '../database/agents';
 import { v4 as uuidv4 } from 'uuid';
 import { Constants } from '../constants';
 import { IHoneytoken } from '../interfaces/honeytoken';
+import { group } from 'console';
 
 export function serveHoneytokens() {
   const router = Router();
@@ -355,14 +356,40 @@ export function serveHoneytokens() {
     }
   });
 
-  router.post('/honeytokens/monitor_status', async (req, res) => {
+  router.post('/honeytokens/monitor_status_text', async (req, res) => {
     try {
       const { agents_ids } = req.body;
       let statuses: Record<string, boolean> = {};
       for (const agent_id of agents_ids) {
         const socket = Globals.agentSockets.get(agent_id);
         if (socket) {
-          const response = await socket.emitWithAck('STATUSES_HONEYTOKEN_TEXT');
+          const response = await socket.emitWithAck('STATUSES_HONEYTOKENS_TEXT');
+          if (response.success === true) {
+            const agentTokensStatuses: Record<string, boolean> = response.message;
+            statuses = { ...statuses, ...agentTokensStatuses };
+          }
+        }
+      }
+      return void res.status(200).json(statuses);
+    } catch (error) {
+      console.error(
+        Constants.TEXT_RED_COLOR,
+        'Failed to get honeytokens text statuses:',
+        error,
+        Constants.TEXT_WHITE_COLOR,
+      );
+      return void res.status(500).json({ success: false });
+    }
+  });
+
+  router.post('/honeytokens/monitor_status_api', async (req, res) => {
+    try {
+      const { agents_ids } = req.body;
+      let statuses: Record<string, boolean> = {};
+      for (const agent_id of agents_ids) {
+        const socket = Globals.agentSockets.get(agent_id);
+        if (socket) {
+          const response = await socket.emitWithAck('STATUSES_HONEYTOKENS_API');
           if (response.success === true) {
             const agentTokensStatuses: Record<string, boolean> = response.message;
             statuses = { ...statuses, ...agentTokensStatuses };
@@ -406,43 +433,25 @@ export function serveHoneytokens() {
     }
   });
 
-  router.put('/honeytokens/start/group', async (req, res) => {
+  router.put('/honeytokens/api/start', async (req, res) => {
     const { group_id } = req.body;
 
     try {
       const tokens = await get_honeytokens_by_group_id(group_id);
 
-      const apiTokens = tokens.filter((token: IHoneytoken) => token.type_id === '2');
-
-      if (apiTokens.length === 0) {
+      if (tokens.length === 0) {
         res.status(404).json({ failure: 'No API tokens found for this group_id' });
         return;
       }
 
-      let atLeastOneSuccess = false;
+      const token = tokens[0];
+      const socket = Globals.agentSockets.get(token.agent_id);
 
-      for (const token of apiTokens) {
-        const agent = await get_agent_by_id(token.agent_id);
-        if (!agent) continue;
-
-        const response_from_agent = await fetch(
-          'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/honeytoken/startgroup',
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token_id: token.token_id }),
-          },
-        );
-
-        if (response_from_agent.ok || response_from_agent.status === 200) {
-          atLeastOneSuccess = true;
-        }
-      }
-
-      if (atLeastOneSuccess) {
-        res.status(200).json({ success: 'Started monitor on API honeytokens in group' });
+      if (socket) {
+        socket.emit('START_HONEYTOKEN_API', group_id);
+        res.status(200).json({ success: 'success' });
       } else {
-        res.status(500).json({ failure: 'No agent responded as expected' });
+        res.status(500).json({ success: 'failure' });
       }
     } catch (error) {
       console.error(Constants.TEXT_RED_COLOR, 'Failed to start monitor on group:', error, Constants.TEXT_WHITE_COLOR);

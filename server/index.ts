@@ -25,6 +25,8 @@ import { serveHome } from './routes/home';
 import { serveGeneral } from './routes/general';
 import { Constants } from './constants';
 import util from 'node:util';
+import { callback } from 'chart.js/dist/helpers/helpers.core';
+import { get_honeytokens_by_agent_id } from './database/honeytokens';
 
 main();
 
@@ -56,6 +58,17 @@ function main(): void {
 
     console.log(Constants.TEXT_GREEN_COLOR, `Agent connected: ${agentId}`, Constants.TEXT_WHITE_COLOR);
     Globals.agentSockets.set(agentId, socket);
+
+    socket.on('GET_HONEYTOKENS', async (payload, callback) => {
+      const agent_id = payload;
+      console.log(agent_id);
+      try {
+        const honeytokens = await get_honeytokens_by_agent_id(agent_id);
+        callback({ tokens: honeytokens });
+      } catch (err) {
+        callback({ tokens: [] });
+      }
+    });
 
     socket.on('disconnect', () => {
       Globals.agentSockets.delete(agentId);

@@ -5,14 +5,16 @@ import {
   deleteHoneytoken,
   startMonitorOnHoneytoken,
   stopMonitorOnHoneytoken,
-  getHoneytokensMonitorStatuses,
+  getHoneytokensMonitorStatusesText,
   deleteHoneytokensByGroupId,
   startMonitorByGroupId,
   stopMonitorByGroupId,
+  getHoneytokensMonitorStatusesAPI,
 } from '../models/Honeytoken';
 import { IHoneytoken } from '../../../server/interfaces/honeytoken';
 import { FaTrash, FaPlay, FaStop } from 'react-icons/fa';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
+import { HoneytokenType } from '../utilities/typing';
 
 function Honeytokens() {
   const [honeytokens, setHoneytokens] = useState<IHoneytoken[]>([]);
@@ -31,12 +33,21 @@ function Honeytokens() {
       try {
         const tokenData = await getHoneytokens();
 
-        const monitoringStatuses = await getHoneytokensMonitorStatuses();
+        const monitoringStatuses_text = await getHoneytokensMonitorStatusesText();
+        const monitoringStatuses_api = await getHoneytokensMonitorStatusesAPI();
 
-        const tokensWithMonitoringStatus = tokenData.map((token: IHoneytoken) => ({
-          ...token,
-          isMonitored: monitoringStatuses[token.token_id] ?? false,
-        }));
+        const tokensWithMonitoringStatus = tokenData.map((token: IHoneytoken) => {
+          if (token.type_id === HoneytokenType.Text)
+            return {
+              ...token,
+              isMonitored: monitoringStatuses_text[token.token_id] ?? false,
+            };
+          if (token.type_id === HoneytokenType.API)
+            return {
+              ...token,
+              isMonitored: monitoringStatuses_api[token.group_id] ?? false,
+            };
+        });
 
         setHoneytokens(tokensWithMonitoringStatus);
       } catch (error) {
@@ -59,7 +70,7 @@ function Honeytokens() {
     }
   };
 
-  const handleStartMonitoring = async (tokenId: string) => {
+  const handleStartMonitoringText = async (tokenId: string) => {
     try {
       setLoadingTokenId(tokenId); // 👈
       await startMonitorOnHoneytoken(tokenId);
@@ -215,7 +226,7 @@ function Honeytokens() {
                           </button>
                         ) : (
                           <button
-                            onClick={() => handleStartMonitoring(honeytoken.token_id)}
+                            onClick={() => handleStartMonitoringText(honeytoken.token_id)}
                             onMouseEnter={() => setHoveredIcon(`start-${honeytoken.token_id}`)}
                             onMouseLeave={() => setHoveredIcon(null)}
                             title="Start Monitoring"

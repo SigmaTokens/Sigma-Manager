@@ -2,7 +2,6 @@ import { Router } from 'express';
 import {
   get_all_honeytokens,
   get_honeytoken_by_token_id,
-  get_honeytokens_by_agent_id,
   get_honeytokens_by_type_id,
   get_honeytokens_by_group_id,
   delete_honeytoken_by_id,
@@ -11,11 +10,9 @@ import {
   insert_honeytoken,
 } from '../database/honeytokens';
 import { Globals } from '../globals';
-import { get_agent_by_id, get_agent_by_uri } from '../database/agents';
+import { get_agent_by_id } from '../database/agents';
 import { v4 as uuidv4 } from 'uuid';
 import { Constants } from '../constants';
-import { IHoneytoken } from '../interfaces/honeytoken';
-import { group } from 'console';
 
 export function serveHoneytokens() {
   const router = Router();
@@ -190,39 +187,6 @@ export function serveHoneytokens() {
         Constants.TEXT_WHITE_COLOR,
       );
       res.status(500).json({ failure: error });
-    }
-  });
-
-  router.post('/honeytokens/agent', async (req, res) => {
-    const { agent_ip, agent_port } = req.body;
-    try {
-      if (!agent_ip || !agent_port) {
-        console.error(Constants.TEXT_RED_COLOR, 'missing params', Constants.TEXT_WHITE_COLOR);
-        res.status(500).json({ failure: 'missing params' });
-        return;
-      }
-
-      const agent = await get_agent_by_uri(agent_ip, agent_port);
-
-      if (!agent) {
-        console.error(Constants.TEXT_RED_COLOR, 'agent not found', Constants.TEXT_WHITE_COLOR);
-        res.status(200).json([]); // returns empty array of honeytokens
-        return;
-      }
-
-      const honeytokens = await get_honeytokens_by_agent_id(agent.agent_id);
-
-      res.status(200).json(honeytokens || []);
-      return;
-    } catch (error) {
-      console.error(
-        Constants.TEXT_RED_COLOR,
-        'Failed to fetch honeytokens by agent_id:',
-        error,
-        Constants.TEXT_WHITE_COLOR,
-      );
-      res.status(500).json({ error: 'Internal server error' });
-      return;
     }
   });
 

@@ -4,10 +4,8 @@ import ping from 'ping';
 import {
   get_all_agents,
   get_agent_by_id,
-  get_agent_by_uri,
   insert_agent,
   delete_agent_by_id,
-  update_agent,
   verify_agent_by_id,
 } from '../database/agents';
 import { Globals } from '../globals';
@@ -41,17 +39,6 @@ export function serveAgents() {
     const { agent_id } = req.params;
     try {
       const agent = await get_agent_by_id(agent_id);
-      res.json(agent);
-    } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to get agent:', error, Constants.TEXT_WHITE_COLOR);
-      res.status(500).json({ failure: error });
-    }
-  });
-
-  router.post('/agents/agent', async (req, res) => {
-    const { agent_ip, agent_port } = req.body;
-    try {
-      const agent = await get_agent_by_uri(agent_ip, agent_port);
       res.json(agent);
     } catch (error) {
       console.error(Constants.TEXT_RED_COLOR, 'Failed to get agent:', error, Constants.TEXT_WHITE_COLOR);

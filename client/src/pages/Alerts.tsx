@@ -20,6 +20,7 @@ function Alerts() {
     const fetchAlerts = async () => {
       try {
         const data = await getAlerts();
+        console.log(data);
         setAlerts(data);
         setFilteredAlerts(data);
       } catch (err) {
@@ -72,6 +73,7 @@ function Alerts() {
   };
 
   const handleMoreDetails = (alert: Alert) => {
+    console.log(alert);
     setSelectedAlert(alert);
   };
 

@@ -29,6 +29,7 @@ export function serveAlerts() {
   router.get('/alerts', async (req, res) => {
     try {
       const alerts = await get_all_alerts_join();
+      console.log(alerts);
       res.json(alerts);
     } catch (error) {
       console.error(Constants.TEXT_RED_COLOR, 'Failed to fetch alerts:', error, Constants.TEXT_WHITE_COLOR);

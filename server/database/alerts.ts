@@ -121,6 +121,7 @@ export async function get_all_alerts_join() {
     FROM
       alerts
       LEFT JOIN honeytokens ON alerts.token_id = honeytokens.token_id
+      OR alerts.token_id = honeytokens.group_id
       LEFT JOIN agents ON honeytokens.agent_id = agents.agent_id
     ORDER BY
       alerts.alert_epoch DESC

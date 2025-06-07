@@ -1,14 +1,12 @@
 import { Router } from 'express';
-import { v4 as uuidv4 } from 'uuid';
-import ping from 'ping';
 import {
-  get_all_agents,
-  get_agent_by_id,
-  get_agent_by_uri,
-  insert_agent,
-  delete_agent_by_id,
-  update_agent,
-  verify_agent_by_id,
+  get_all_user_agents,
+  get_user_agent_by_id,
+  get_user_agent_by_uri,
+  insert_user_agent,
+  delete_user_agent_by_id,
+  update_user_agent,
+  verify_user_agent_by_id,
 } from '../database/agents';
 import { Globals } from '../globals';
 import { Constants } from '../constants';
@@ -32,7 +30,8 @@ export function serveAgents() {
   router.get('/agents', async (req, res) => {
     try {
       console.log('user fetched data from verified token', (req as any).user);
-      const agents = await get_all_agents();
+      const user_id: string = (req as any).user.id;
+      const agents = await get_all_user_agents(user_id);
 
       res.json(agents);
     } catch (error) {
@@ -49,16 +48,15 @@ export function serveAgents() {
         res.status(400).json({ error: 'Missing required fields (id ,ip, name, port)' });
         return;
       }
+      const user_id: string = (req as any).user.id;
+      const agents = await get_all_user_agents(user_id);
 
-      const agents = await get_all_agents();
-
-      //TODO: change this to a query instead ...
       const agent_id_exists = agents.some((agent: any) => agent.agent_id === id);
 
       if (agent_id_exists) {
-        await update_agent(id, ip, name, parseInt(port), 1);
+        await update_user_agent(id, ip, name, parseInt(port), user_id);
       } else {
-        await insert_agent(id, ip, name, parseInt(port), 1);
+        await insert_user_agent(id, ip, name, parseInt(port), user_id);
       }
       res.sendStatus(200);
     } catch (error: any) {
@@ -69,8 +67,9 @@ export function serveAgents() {
 
   router.get('/agents/agent/:agent_id', async (req, res) => {
     const { agent_id } = req.params;
+    const user_id: string = (req as any).user.id;
     try {
-      const agent = await get_agent_by_id(agent_id);
+      const agent = await get_user_agent_by_id(agent_id, user_id);
       res.json(agent);
     } catch (error) {
       console.error(Constants.TEXT_RED_COLOR, 'Failed to get agent:', error, Constants.TEXT_WHITE_COLOR);
@@ -79,9 +78,10 @@ export function serveAgents() {
   });
 
   router.post('/agents/agent', async (req, res) => {
+    const user_id: string = (req as any).user.id;
     const { agent_ip, agent_port } = req.body;
     try {
-      const agent = await get_agent_by_uri(agent_ip, agent_port);
+      const agent = await get_user_agent_by_uri(agent_ip, agent_port, user_id);
       res.json(agent);
     } catch (error) {
       console.error(Constants.TEXT_RED_COLOR, 'Failed to get agent:', error, Constants.TEXT_WHITE_COLOR);
@@ -92,8 +92,8 @@ export function serveAgents() {
   router.delete('/agents/agent/:agent_id', async (req, res) => {
     try {
       const { agent_id } = req.params;
-
-      await delete_agent_by_id(agent_id);
+      const user_id: string = (req as any).user.id;
+      await delete_user_agent_by_id(agent_id, user_id);
 
       const socket = Globals.agentSockets.get(agent_id);
       if (socket) {
@@ -113,7 +113,8 @@ export function serveAgents() {
 
   router.get('/agents/active_status', async (req, res) => {
     try {
-      const agents = await get_all_agents();
+      const user_id: string = (req as any).user.id;
+      const agents = await get_all_user_agents(user_id);
       const statusUpdates = await Promise.all(
         agents.map(async (agent: any) => ({
           agent_id: agent.agent_id,
@@ -130,8 +131,9 @@ export function serveAgents() {
   router.get('/agents/verify/:agent_id', async (req, res) => {
     try {
       const { agent_id } = req.params;
+      const user_id: string = (req as any).user.id;
 
-      await verify_agent_by_id(agent_id);
+      await verify_user_agent_by_id(agent_id, user_id);
 
       const socket = Globals.agentSockets.get(agent_id);
       if (socket) {

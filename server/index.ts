@@ -1,3 +1,13 @@
+process.on('uncaughtException', (err) => {
+  console.error('UNCAUGHT', err);
+  console.error('Type:', err.constructor?.name);
+  console.error('Stack:', err.stack);
+  process.exit(1);
+});
+process.on('unhandledRejection', (reason, p) => {
+  console.error('UNHANDLED PROMISE', p, 'reason:', reason);
+});
+
 process.on('unhandledRejection', (reason) => {
   if (reason instanceof Error) {
     console.error('UNHANDLED REJECTION →', reason.stack); // full stack

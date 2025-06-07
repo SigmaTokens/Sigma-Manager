@@ -11,7 +11,7 @@ import {
   insert_honeytoken,
 } from '../database/honeytokens';
 import { Globals } from '../globals';
-import { get_agent_by_id, get_agent_by_uri } from '../database/agents';
+import { get_user_agent_by_id, get_user_agent_by_uri } from '../database/agents';
 import { v4 as uuidv4 } from 'uuid';
 import { Constants } from '../constants';
 import { IHoneytoken } from '../interfaces/honeytoken';
@@ -23,6 +23,7 @@ export function serveHoneytokens() {
   router.use(auth());
 
   router.get('/honeytokens', async (req, res) => {
+    const user_id: string = (req as any).user.id;
     try {
       const honeytokens = await get_all_honeytokens();
       res.json(honeytokens);
@@ -33,6 +34,7 @@ export function serveHoneytokens() {
   });
 
   router.post('/honeytokens/text', async (req, res) => {
+    const user_id: string = (req as any).user.id;
     try {
       const { type, file_name, location, grade, expiration_date, notes, data, agent_id } = req.body;
 
@@ -108,6 +110,7 @@ export function serveHoneytokens() {
   });
 
   router.post('/honeytokens/api', async (req, res) => {
+    const user_id: string = (req as any).user.id;
     try {
       const { type, grade, expiration_date, notes, agent_id, api_port, apis } = req.body;
 
@@ -184,6 +187,7 @@ export function serveHoneytokens() {
   });
 
   router.get('/honeytokens/token/:token_id', async (req, res) => {
+    const user_id: string = (req as any).user.id;
     const { token_id } = req.params;
     try {
       const honeytoken = await get_honeytoken_by_token_id(token_id);
@@ -200,6 +204,7 @@ export function serveHoneytokens() {
   });
 
   router.post('/honeytokens/agent', async (req, res) => {
+    const user_id: string = (req as any).user.id;
     const { agent_ip, agent_port } = req.body;
     console.log('called /honeytokens/agent', agent_ip, agent_port);
     try {
@@ -209,7 +214,7 @@ export function serveHoneytokens() {
         return;
       }
 
-      const agent = await get_agent_by_uri(agent_ip, agent_port);
+      const agent = await get_user_agent_by_uri(agent_ip, agent_port, user_id);
 
       if (!agent) {
         console.error(Constants.TEXT_RED_COLOR, 'agent not found', Constants.TEXT_WHITE_COLOR);
@@ -234,6 +239,7 @@ export function serveHoneytokens() {
   });
 
   router.get('/honeytokens/type/:type_id', async (req, res) => {
+    const user_id: string = (req as any).user.id;
     const { type_id } = req.params;
     try {
       const honeytokens = await get_honeytokens_by_type_id(type_id);
@@ -250,6 +256,7 @@ export function serveHoneytokens() {
   });
 
   router.get('/honeytokens/group/:group_id', async (req, res) => {
+    const user_id: string = (req as any).user.id;
     const { group_id } = req.params;
     try {
       const honeytokens = await get_honeytokens_by_group_id(group_id);
@@ -266,6 +273,7 @@ export function serveHoneytokens() {
   });
 
   router.delete('/honeytokens/token/:token_id', async (req, res) => {
+    const user_id: string = (req as any).user.id;
     try {
       const { token_id } = req.params;
       const token = await get_honeytoken_by_token_id(token_id);
@@ -288,6 +296,7 @@ export function serveHoneytokens() {
   });
 
   router.delete('/honeytokens/type/:type_id', async (req, res) => {
+    const user_id: string = (req as any).user.id;
     const { type_id } = req.params;
     try {
       await delete_honeytokens_by_type_id(type_id);
@@ -299,6 +308,7 @@ export function serveHoneytokens() {
   });
 
   router.delete('/honeytokens/group/:group_id', async (req, res) => {
+    const user_id: string = (req as any).user.id;
     const { group_id } = req.params;
 
     try {
@@ -306,7 +316,7 @@ export function serveHoneytokens() {
       const apiTokens = tokens.filter((token: IHoneytoken) => token.type_id === '2');
 
       for (const token of apiTokens) {
-        const agent = await get_agent_by_id(token.agent_id);
+        const agent = await get_user_agent_by_id(token.agent_id, user_id);
         if (!agent) continue;
 
         const response_from_agent = await fetch(`http://${agent.agent_ip}:${agent.agent_port}/api/honeytoken/remove`, {
@@ -335,10 +345,11 @@ export function serveHoneytokens() {
   });
 
   router.put('/honeytokens/monitor_status', async (req, res) => {
+    const user_id: string = (req as any).user.id;
     try {
       const { token_id } = req.body;
       const token = await get_honeytoken_by_token_id(token_id);
-      const agent = await get_agent_by_id(token.agent_id);
+      const agent = await get_user_agent_by_id(token.agent_id, user_id);
 
       if (token == undefined || agent == undefined) return void res.status(500).json({ success: false });
 
@@ -364,6 +375,7 @@ export function serveHoneytokens() {
   });
 
   router.post('/honeytokens/monitor_status', async (req, res) => {
+    const user_id: string = (req as any).user.id;
     try {
       const { agents_ids } = req.body;
       let statuses: Record<string, boolean> = {};
@@ -390,6 +402,7 @@ export function serveHoneytokens() {
   });
 
   router.put('/honeytokens/start', async (req, res) => {
+    const user_id: string = (req as any).user.id;
     try {
       const { token_id } = req.body;
       const token = await get_honeytoken_by_token_id(token_id);
@@ -415,6 +428,7 @@ export function serveHoneytokens() {
   });
 
   router.put('/honeytokens/start/group', async (req, res) => {
+    const user_id: string = (req as any).user.id;
     const { group_id } = req.body;
 
     try {
@@ -430,7 +444,7 @@ export function serveHoneytokens() {
       let atLeastOneSuccess = false;
 
       for (const token of apiTokens) {
-        const agent = await get_agent_by_id(token.agent_id);
+        const agent = await get_user_agent_by_id(token.agent_id, user_id);
         if (!agent) continue;
 
         const response_from_agent = await fetch(
@@ -459,6 +473,7 @@ export function serveHoneytokens() {
   });
 
   router.put('/honeytokens/stop', async (req, res) => {
+    const user_id: string = (req as any).user.id;
     try {
       const { token_id } = req.body;
       const token = await get_honeytoken_by_token_id(token_id);
@@ -482,6 +497,7 @@ export function serveHoneytokens() {
   });
 
   router.put('/honeytokens/stop/group', async (req, res) => {
+    const user_id: string = (req as any).user.id;
     const { group_id } = req.body;
 
     try {
@@ -497,7 +513,7 @@ export function serveHoneytokens() {
       let atLeastOneSuccess = false;
 
       for (const token of apiTokens) {
-        const agent = await get_agent_by_id(token.agent_id);
+        const agent = await get_user_agent_by_id(token.agent_id, user_id);
         if (!agent) continue;
 
         const response_from_agent = await fetch(

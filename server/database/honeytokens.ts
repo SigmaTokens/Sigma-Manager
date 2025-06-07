@@ -20,7 +20,7 @@ export async function init_honeytokens_table() {
       notes TEXT,
       agent_id VARCHAR,
       api_port INTEGER,
-      user_id INTEGER,
+      user_id TEXT,
       FOREIGN KEY (type_id) REFERENCES types (type_id) ON DELETE CASCADE,
       FOREIGN KEY (agent_id) REFERENCES agents (agent_id) ON DELETE SET NULL,
       FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE SET NULL

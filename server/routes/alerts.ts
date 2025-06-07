@@ -1,4 +1,4 @@
-import { Router, Express } from 'express';
+import { Router } from 'express';
 import {
   create_alert_to_token_id,
   get_all_alerts_join,
@@ -18,6 +18,7 @@ export function serveAlerts() {
 
   router.post('/alerts', async (req, res) => {
     try {
+      const user_id: string = (req as any).user.id;
       const { token_id, alert_epoch, accessed_by, log } = req.body;
 
       //console.log('alerts data:', req.body);
@@ -33,6 +34,7 @@ export function serveAlerts() {
 
   router.get('/alerts', async (req, res) => {
     try {
+      const user_id: string = (req as any).user.id;
       const alerts = await get_all_alerts_join();
       res.json(alerts);
     } catch (error) {
@@ -42,6 +44,7 @@ export function serveAlerts() {
   });
 
   router.get('/alerts/:alert_id', async (req, res) => {
+    const user_id: string = (req as any).user.id;
     const { alert_id } = req.params;
     try {
       const alert = await get_alert_by_alert_id(alert_id);
@@ -53,6 +56,7 @@ export function serveAlerts() {
   });
 
   router.get('/alerts/token/:token_id', async (req, res) => {
+    const user_id: string = (req as any).user.id;
     const { token_id } = req.params;
     try {
       const alert = await get_alert_by_token_id(token_id);
@@ -64,6 +68,7 @@ export function serveAlerts() {
   });
 
   router.delete('/alerts/:alert_id', async (req, res) => {
+    const user_id: string = (req as any).user.id;
     try {
       const { alert_id } = req.params;
       await delete_alert_by_alert_id(alert_id);
@@ -75,6 +80,7 @@ export function serveAlerts() {
   });
 
   router.post('/alerts/archive/:alert_id', async (req, res) => {
+    const user_id: string = (req as any).user.id;
     try {
       const { alert_id } = req.params;
       const { archive } = req.body;

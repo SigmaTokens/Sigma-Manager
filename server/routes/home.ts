@@ -9,6 +9,7 @@ export function serveHome() {
   router.use(auth());
 
   router.get('/home', async (req, res) => {
+    const user_id: string = (req as any).user.id;
     try {
       const agents = await Globals.app.locals.db.all('SELECT * FROM agents');
       const alerts = await Globals.app.locals.db.all('SELECT * FROM alerts');

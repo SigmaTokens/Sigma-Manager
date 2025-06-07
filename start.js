@@ -156,6 +156,26 @@ function setup_vscode_settings(rootDir) {
 
   create_file(settingsFile, JSON.stringify(settings, null, 2));
 }
+function install_sweetalert2() {
+  try {
+    console.log(Constants.TEXT_YELLOW_COLOR, 'Installing sweetalert2 in root', Constants.TEXT_WHITE_COLOR);
+    execSync('npm install --save sweetalert2', { stdio: 'inherit' });
+
+    console.log(Constants.TEXT_YELLOW_COLOR, 'Installing sweetalert2 in client', Constants.TEXT_WHITE_COLOR);
+    execSync('npm install --save sweetalert2 --prefix client', { stdio: 'inherit' });
+
+    console.log(Constants.TEXT_GREEN_COLOR, 'sweetalert2 installed successfully', Constants.TEXT_WHITE_COLOR);
+  } catch (error) {
+    console.error(
+      Constants.TEXT_RED_COLOR,
+      'Failed to install sweetalert2:',
+      error.message,
+      Constants.TEXT_WHITE_COLOR,
+    );
+    process.exit(-1);
+  }
+}
+
 function install_deps() {
   try {
     console.log(Constants.TEXT_YELLOW_COLOR, 'Updating deps for root', Constants.TEXT_WHITE_COLOR);

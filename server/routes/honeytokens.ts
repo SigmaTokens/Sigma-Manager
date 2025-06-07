@@ -488,40 +488,22 @@ export function serveHoneytokens() {
     try {
       const tokens = await get_honeytokens_by_group_id(group_id);
 
-      const apiTokens = tokens.filter((token: IHoneytoken) => token.type_id === '2');
-
-      if (apiTokens.length === 0) {
+      if (tokens.length === 0) {
         res.status(404).json({ failure: 'No API tokens found for this group_id' });
         return;
       }
 
-      let atLeastOneSuccess = false;
+      const token = tokens[0];
+      const socket = Globals.agentSockets.get(token.agent_id);
 
-      for (const token of apiTokens) {
-        const agent = await get_agent_by_id(token.agent_id);
-        if (!agent) continue;
-
-        const response_from_agent = await fetch(
-          'http://' + agent.agent_ip + ':' + agent.agent_port + '/api/honeytoken/stopgroup',
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token_id: token.token_id }),
-          },
-        );
-
-        if (response_from_agent.ok || response_from_agent.status === 200) {
-          atLeastOneSuccess = true;
-        }
-      }
-
-      if (atLeastOneSuccess) {
-        res.status(200).json({ success: 'Stopped monitor on API honeytokens in group' });
+      if (socket) {
+        socket.emit('STOP_HONEYTOKEN_API', group_id);
+        res.status(200).json({ success: 'success' });
       } else {
-        res.status(500).json({ failure: 'No agent responded as expected' });
+        res.status(500).json({ success: 'failure' });
       }
     } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to stop monitor on group:', error, Constants.TEXT_WHITE_COLOR);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to start monitor on group:', error, Constants.TEXT_WHITE_COLOR);
       res.status(500).json({ failure: error });
     }
   });

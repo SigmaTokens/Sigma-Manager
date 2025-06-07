@@ -296,22 +296,15 @@ export function serveHoneytokens() {
 
     try {
       const tokens = await get_honeytokens_by_group_id(group_id);
-      const apiTokens = tokens.filter((token: IHoneytoken) => token.type_id === '2');
+      const header = tokens[0];
 
-      for (const token of apiTokens) {
-        const agent = await get_agent_by_id(token.agent_id);
-        if (!agent) continue;
+      const socket = Globals.agentSockets.get(header.agent_id);
 
-        const response_from_agent = await fetch(`http://${agent.agent_ip}:${agent.agent_port}/api/honeytoken/remove`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ token_id: token.token_id }),
-        });
-
-        if (!response_from_agent.ok) {
-          console.warn(`[!] Failed to remove token ${token.token_id} from agent ${agent.agent_ip}`);
-        }
+      if (socket) {
+        socket.emit('DELETE_HONEYTOKEN_API', group_id);
       }
+
+      console.log('delete: ', group_id);
 
       await delete_honeytokens_by_group_id(group_id);
 

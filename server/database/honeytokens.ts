@@ -234,7 +234,7 @@ export async function delete_honeytokens_by_group_id(group_id: String) {
       sql`
         DELETE FROM alerts
         WHERE
-          group_id = ?
+          token_id = ?
       `,
       [group_id],
     );

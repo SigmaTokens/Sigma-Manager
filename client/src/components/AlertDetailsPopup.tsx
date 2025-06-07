@@ -33,7 +33,7 @@ const AlertDetailsPopup: React.FC<AlertDetailsPopupProps> = ({ alert, onClose })
     },
     {
       title: 'Agent Information',
-      items: [{ label: 'Agent', value: `${alert.agent_ip}:${alert.agent_port}` }],
+      items: [{ label: 'Agent', value: `${alert.agent_id} | ${alert.agent_name}` }],
     },
   ];
 

@@ -17,8 +17,6 @@ export function serveAlerts() {
     try {
       const { token_id, alert_epoch, accessed_by, log } = req.body;
 
-      //console.log('alerts data:', req.body);
-
       const result = await create_alert_to_token_id(token_id, alert_epoch, accessed_by, log);
 
       res.json({ success: result });
@@ -31,6 +29,7 @@ export function serveAlerts() {
   router.get('/alerts', async (req, res) => {
     try {
       const alerts = await get_all_alerts_join();
+      console.log(alerts);
       res.json(alerts);
     } catch (error) {
       console.error(Constants.TEXT_RED_COLOR, 'Failed to fetch alerts:', error, Constants.TEXT_WHITE_COLOR);

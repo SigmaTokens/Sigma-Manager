@@ -153,9 +153,7 @@ export function serveUsers() {
       const { username, password } = req.body;
       const user = await check_user_credentials(username, password);
       if (!user) return res.status(401).json({ message: 'Invalid credentials' });
-      console.log('start from here!');
       const token = issueToken(user.id, user.username);
-      console.log(token);
       res.json({ token });
     }),
   );

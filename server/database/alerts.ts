@@ -106,7 +106,7 @@ export async function get_all_alerts() {
 
 export async function get_all_alerts_join() {
   return await Globals.app.locals.db.all(sql`
-    SELECT
+    SELECT DISTINCT
       alerts.alert_id,
       alerts.token_id,
       alerts.alert_epoch,
@@ -116,11 +116,12 @@ export async function get_all_alerts_join() {
       honeytokens.grade AS grade,
       honeytokens.location AS location,
       honeytokens.file_name AS file_name,
-      agents.agent_ip AS agent_ip,
-      agents.agent_port AS agent_port
+      agents.agent_id AS agent_id,
+      agents.agent_name AS agent_name
     FROM
       alerts
       LEFT JOIN honeytokens ON alerts.token_id = honeytokens.token_id
+      OR alerts.token_id = honeytokens.group_id
       LEFT JOIN agents ON honeytokens.agent_id = agents.agent_id
     ORDER BY
       alerts.alert_epoch DESC

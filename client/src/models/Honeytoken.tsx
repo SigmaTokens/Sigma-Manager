@@ -37,8 +37,6 @@ export async function createHoneytokenApi(
   apiPort: number,
   apis: any[],
 ) {
-  console.log('--test--\n', apis);
-
   return await fetch('/api/honeytokens/api', {
     method: 'POST',
     headers: {

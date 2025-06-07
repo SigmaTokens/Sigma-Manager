@@ -76,8 +76,6 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
   };
 
   const handleSubmitApi = async () => {
-    console.log('test2');
-    //--- TODO: add validation here ---
     try {
       const response = await createHoneytokenApi(grade, expirationDate, notes, agentID, port, apiRows);
       if (!response.ok) {
@@ -93,7 +91,6 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
   };
 
   const handleSubmitText = async () => {
-    console.log('test1');
     if (!validate()) return;
     try {
       const response = await createHoneytokenText(

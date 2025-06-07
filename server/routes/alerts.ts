@@ -17,8 +17,6 @@ export function serveAlerts() {
     try {
       const { token_id, alert_epoch, accessed_by, log } = req.body;
 
-      //console.log('alerts data:', req.body);
-
       const result = await create_alert_to_token_id(token_id, alert_epoch, accessed_by, log);
 
       res.json({ success: result });

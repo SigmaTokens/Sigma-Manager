@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { Globals } from '../globals';
-import { getLocalIPv4s } from '../utils';
+import { getLocalIPv4s } from '../utilities/utils';
 
 export function serveGeneral() {
   const router = Router();

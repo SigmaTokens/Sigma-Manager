@@ -87,7 +87,6 @@ export function serveHoneytokens() {
       const socket = Globals.agentSockets.get(agent_id);
       if (socket) {
         socket.emit('CREATE_HONEYTOKEN_TEXT', token_data, async (response: any) => {
-          console.log('check status:', response.status);
           if (response.status === 'created') {
             res.status(200).json({ success: true });
             return;
@@ -118,8 +117,6 @@ export function serveHoneytokens() {
       };
 
       const apis_test: any[] = apis;
-
-      console.log('help: ', apis_test);
 
       for (const [field, value] of Object.entries(required)) {
         if (value === undefined || value === null || value === '') {
@@ -165,7 +162,6 @@ export function serveHoneytokens() {
       const socket = Globals.agentSockets.get(agent_id);
       if (socket) {
         socket.emit('CREATE_HONEYTOKEN_API', token_data, async (response: any) => {
-          console.log('else');
           console.log(response.status);
           if (response.status === 'created') return void res.status(200).json({ success: true });
           else return void res.status(500).json({ success: false });
@@ -198,7 +194,6 @@ export function serveHoneytokens() {
 
   router.post('/honeytokens/agent', async (req, res) => {
     const { agent_ip, agent_port } = req.body;
-    console.log('called /honeytokens/agent', agent_ip, agent_port);
     try {
       if (!agent_ip || !agent_port) {
         console.error(Constants.TEXT_RED_COLOR, 'missing params', Constants.TEXT_WHITE_COLOR);

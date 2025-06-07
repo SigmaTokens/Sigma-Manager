@@ -34,7 +34,6 @@ export async function get_all_users() {
  * Hash + insert a new user   (Argon2id)
  */
 export async function add_user(username: string, rawPassword: string) {
-  console.log('trying to add user 1');
   const id = uuidv4();
 
   const hash = await argon2.hash(rawPassword, {
@@ -45,8 +44,6 @@ export async function add_user(username: string, rawPassword: string) {
     // salt is generated automatically
   });
 
-  console.log('trying to add user 2');
-
   await Globals.app.locals.db.run(
     sql`
       INSERT INTO
@@ -56,8 +53,6 @@ export async function add_user(username: string, rawPassword: string) {
     `,
     [id, username, hash],
   );
-
-  console.log('trying to add user 3');
 }
 
 /**

@@ -265,7 +265,6 @@ function Honeytokens() {
 
   const renderApiTable = () => {
     const apiTokens = honeytokens.filter((t) => t.type_id === 'api');
-    console.log('API TOKENS RECEIVED FROM SERVER:', apiTokens);
 
     const groups = apiTokens.reduce(
       (acc, token) => {

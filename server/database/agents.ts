@@ -6,8 +6,6 @@ export async function init_agents_table() {
     CREATE TABLE IF NOT EXISTS agents (
       agent_id VARCHAR PRIMARY KEY,
       agent_name TEXT NOT NULL,
-      agent_ip TEXT NOT NULL,
-      agent_port INTEGER NOT NULL,
       validated INTEGER DEFAULT 0,
       user_id TEXT,
       FOREIGN KEY (user_id) REFERENCES users (user_id)
@@ -15,38 +13,15 @@ export async function init_agents_table() {
   `);
 }
 
-export async function insert_user_agent(agent_id: string, ip: string, name: string, port: number, user_id: string) {
-  return await Globals.app.locals.db.run(
+export async function insert_user_agent(agent_id: string, name: string, user_id: number) {
+  await Globals.app.locals.db.run(
     sql`
       INSERT INTO
-        agents (
-          agent_id,
-          agent_ip,
-          agent_name,
-          agent_port,
-          user_id
-        )
+        agents (agent_id, agent_name, user_id)
       VALUES
-        (?, ?, ?, ?, ?)
+        (?, ?, ?)
     `,
-    [agent_id, ip, name, port, user_id],
-  );
-}
-
-export async function update_user_agent(agent_id: string, ip: string, name: string, port: number, user_id: string) {
-  return await Globals.app.locals.db.run(
-    sql`
-      UPDATE agents
-      SET
-        agent_ip = ?,
-        agent_name = ?,
-        agent_port = ?,
-        user_id = ? -- keep / re-assign ownership
-      WHERE
-        agent_id = ?
-        AND user_id = ?
-    `,
-    [ip, name, port, user_id, agent_id, user_id],
+    [agent_id, name, user_id],
   );
 }
 
@@ -90,8 +65,6 @@ export async function get_user_agent_by_id(agent_id: string, user_id: string) {
       SELECT
         agent_id,
         agent_name,
-        agent_ip,
-        agent_port,
         validated,
         user_id
       FROM
@@ -104,46 +77,81 @@ export async function get_user_agent_by_id(agent_id: string, user_id: string) {
   );
 }
 
-export async function get_user_agent_by_uri(agent_ip: string, agent_port: number, user_id: string) {
-  return Globals.app.locals.db.get(
-    sql`
-      SELECT
-        agent_id,
-        agent_name,
-        agent_ip,
-        agent_port,
-        validated,
-        user_id
-      FROM
-        agents
-      WHERE
-        agent_ip = ?
-        AND agent_port = ?
-        AND user_id = ?
-    `,
-    [agent_ip, agent_port, user_id],
-  );
-}
-
-export async function delete_user_agent_by_id(agent_id: string, user_id: string) {
+export async function delete_user_agent_by_id(agent_id: string, user_id: string): Promise<boolean> {
   try {
     await begin_transaction();
 
-    // TODO: delete associated alerts and tokens here, filtered by agent_id&&user_id
+    //delete alerts of api honeytokens
+    await Globals.app.locals.db.run(
+      sql`
+        DELETE FROM alerts
+        WHERE
+          token_id IN (
+            SELECT
+              h.group_id
+            FROM
+              honeytokens AS h
+              JOIN agents a ON h.agent_id = a.agent_id
+            WHERE
+              h.agent_id = ?
+              AND a.user_id = ?
+          );
+      `,
+      [agent_id, user_id],
+    );
 
+    //delete alerts of text honeytokens
+    await Globals.app.locals.db.run(
+      sql`
+        DELETE FROM alerts
+        WHERE
+          token_id IN (
+            SELECT
+              h.token_id
+            FROM
+              honeytokens AS h
+              JOIN agents a ON h.agent_id = a.agent_id
+            WHERE
+              h.agent_id = ?
+              AND a.user_id = ?
+          );
+      `,
+      [agent_id, user_id],
+    );
+
+    //delete honeytokens
+    await Globals.app.locals.db.run(
+      sql`
+        DELETE FROM honeytokens
+        WHERE
+          agent_id IN (
+            SELECT
+              agent_id
+            FROM
+              agents
+            WHERE
+              agent_id = ?
+              AND user_id = ?
+          );
+      `,
+      [agent_id, user_id],
+    );
+
+    //delete agent
     await Globals.app.locals.db.run(
       sql`
         DELETE FROM agents
         WHERE
           agent_id = ?
-          AND user_id = ?
+          AND user_id = ?;
       `,
       [agent_id, user_id],
     );
 
     await commit();
+    return true;
   } catch (error) {
     await rollback();
-    throw error;
+    return false;
   }
 }

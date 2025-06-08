@@ -47,10 +47,10 @@ export async function create_token_alert(
   }
 }
 
-export async function get_all_token_alerts(token_id: string) {
-  return Globals.app.locals.db.all(
+export async function get_all_user_alerts(user_id: string) {
+  return await Globals.app.locals.db.all(
     sql`
-      SELECT
+      SELECT DISTINCT
         alerts.alert_id,
         alerts.token_id,
         alerts.alert_epoch,
@@ -60,18 +60,19 @@ export async function get_all_token_alerts(token_id: string) {
         honeytokens.grade AS grade,
         honeytokens.location AS location,
         honeytokens.file_name AS file_name,
-        agents.agent_ip AS agent_ip,
-        agents.agent_port AS agent_port
+        agents.agent_id AS agent_id,
+        agents.agent_name AS agent_name
       FROM
         alerts
         LEFT JOIN honeytokens ON alerts.token_id = honeytokens.token_id
+        OR alerts.token_id = honeytokens.group_id
         LEFT JOIN agents ON honeytokens.agent_id = agents.agent_id
       WHERE
-        alerts.token_id = ?
+        agents.user_id = ?
       ORDER BY
-        alerts.alert_epoch DESC;
+        alerts.alert_epoch DESC
     `,
-    [token_id],
+    [user_id],
   );
 }
 

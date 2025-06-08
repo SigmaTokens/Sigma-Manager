@@ -59,7 +59,22 @@ export async function get_agent_honeytokens_by_type_id(agent_id: string, type_id
   return Globals.app.locals.db.all(
     sql`
       SELECT
-        *
+        token_id,
+        group_id,
+        agent_id,
+        type_id,
+        grade,
+        creation_date,
+        expire_date,
+        location,
+        file_name,
+        http_method,
+        route,
+        notes,
+        response,
+        data,
+        api_port,
+        user_id
       FROM
         honeytokens
       WHERE
@@ -167,7 +182,7 @@ export async function delete_agent_honeytokens_by_group_id(agent_id: string, gro
         DELETE FROM alerts
         WHERE
           agent_id = ?
-          AND group_id = ?;
+          AND token_id = ?;
       `,
       [agent_id, group_id],
     );

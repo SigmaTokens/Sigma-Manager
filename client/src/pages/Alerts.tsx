@@ -20,6 +20,7 @@ function Alerts() {
     const fetchAlerts = async () => {
       try {
         const data = await getAlerts();
+        console.log(data);
         setAlerts(data);
         setFilteredAlerts(data);
       } catch (err) {
@@ -72,6 +73,7 @@ function Alerts() {
   };
 
   const handleMoreDetails = (alert: Alert) => {
+    console.log(alert);
     setSelectedAlert(alert);
   };
 
@@ -158,7 +160,7 @@ function Alerts() {
                   </td>
                   <td className="truncate-cell">
                     <span className={expandedDetails === alert.alert_id ? 'expanded' : 'truncated'}>
-                      {`${alert.agent_ip}:${alert.agent_port}`}
+                      {`${alert.agent_id} ${alert.agent_name}`}
                     </span>
                   </td>
                   <td className="truncate-cell">

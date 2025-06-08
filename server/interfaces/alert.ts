@@ -7,7 +7,7 @@ export interface Alert {
   archive: boolean;
   location: string;
   file_name: string;
-  agent_ip: string;
-  agent_port: string;
+  agent_id: string;
+  agent_name: string;
   grade: number;
 }

@@ -35,6 +35,9 @@ import { serveHome } from './routes/home';
 import { serveGeneral } from './routes/general';
 import { Constants } from './constants';
 import util from 'node:util';
+import { callback } from 'chart.js/dist/helpers/helpers.core';
+import { get_honeytokens_by_agent_id } from './database/honeytokens';
+import { get_all_agents, insert_agent } from './database/agents';
 
 main();
 
@@ -56,7 +59,6 @@ function main(): void {
   });
 
   io.on('connection', (socket) => {
-    console.log('connection received...');
     const agentId = socket.handshake.query.agentId as string;
 
     if (!agentId) {
@@ -65,37 +67,41 @@ function main(): void {
       return;
     }
 
-    //receiving
-    console.log(`✅ Agent connected: ${agentId}`);
+    console.log(Constants.TEXT_GREEN_COLOR, `Agent connected: ${agentId}`, Constants.TEXT_WHITE_COLOR);
     Globals.agentSockets.set(agentId, socket);
 
-    socket.on('message', (message) => {
-      console.log(`💬 Message from ${agentId}:`, message);
+    socket.on('GET_HONEYTOKENS', async (payload, callback) => {
+      const agent_id = payload;
+      console.log(agent_id);
+      try {
+        const honeytokens = await get_honeytokens_by_agent_id(agent_id);
+        callback({ tokens: honeytokens });
+      } catch (err) {
+        callback({ tokens: [] });
+      }
     });
 
-    socket.on('statusUpdate', ({ status }) => {
-      console.log(`📡 Status from ${agentId}:`, status);
-    });
+    socket.on('REGISTER_AGENT', async (paylaod) => {
+      const { id, name, user } = paylaod;
 
-    socket.on('alertUpdate', ({ alert }) => {
-      console.log(`⚠️ Alert from ${agentId}:`, alert);
+      const agents = await get_all_agents();
+
+      const agent_id_exists = agents.some((agent: any) => agent.agent_id === id);
+
+      if (!agent_id_exists) {
+        await insert_agent(id, name, user);
+      }
     });
 
     socket.on('disconnect', () => {
-      console.log(`⛔ Agent disconnected: ${agentId}`);
       Globals.agentSockets.delete(agentId);
     });
-    //
-
-    //sending
-    socket.emit('command', { action: 'TEST', payload: { title: 'name' } });
-    //
   });
 
   Globals.app = app;
 
   startDatabase()
-    .then((database) => {
+    .then(() => {
       console.log(
         Constants.TEXT_CYAN_COLOR,
         'Database connection initialized:',
@@ -110,15 +116,6 @@ function main(): void {
       serveAlerts();
       serveAgents();
       serveClient();
-
-      app.use((err: unknown, _req: any, res: any, _next: any) => {
-        if (err instanceof Error) {
-          console.error('API ERROR →', err.stack);
-        } else {
-          console.error('API ERROR →', util.inspect(err, { depth: null }));
-        }
-        res.status(500).json({ message: 'Internal server error' });
-      });
 
       Globals.server = httpServer.listen(port, () => {
         console.log(

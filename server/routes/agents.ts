@@ -2,10 +2,7 @@ import { Router } from 'express';
 import {
   get_all_user_agents,
   get_user_agent_by_id,
-  get_user_agent_by_uri,
-  insert_user_agent,
   delete_user_agent_by_id,
-  update_user_agent,
   verify_user_agent_by_id,
 } from '../database/agents';
 import { Globals } from '../globals';
@@ -42,49 +39,11 @@ export function serveAgents() {
       return void res.status(500).json([]);
     }
   });
-  //❌
-  router.post('/agents/add', async (req, res) => {
-    try {
-      const { id, ip, name, port } = req.body;
-
-      if (!ip || !name || !port || !id) return void res.status(500).json({ success: false });
-
-      const user_id: string = (req as any).user.id;
-      const agents = await get_all_user_agents(user_id);
-
-      const agent_id_exists = agents.some((agent: any) => agent.agent_id === id);
-
-      let result = false;
-
-      if (agent_id_exists) result = await update_user_agent(id, ip, name, parseInt(port), user_id);
-      else result = await insert_user_agent(id, ip, name, parseInt(port), user_id);
-
-      if (!result) return void res.status(500).json({ success: false });
-
-      return void res.status(200).json({ success: true });
-    } catch (error: any) {
-      console.error(Constants.TEXT_RED_COLOR, error);
-      return void res.status(500).json({ success: false });
-    }
-  });
-  //
   router.get('/agents/agent/:agent_id', async (req, res) => {
     const { agent_id } = req.params;
     const user_id: string = (req as any).user.id;
     try {
       const agent = await get_user_agent_by_id(agent_id, user_id);
-      res.json(agent);
-    } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to get agent:', error, Constants.TEXT_WHITE_COLOR);
-      res.status(500).json({ failure: error });
-    }
-  });
-
-  router.post('/agents/agent', async (req, res) => {
-    const user_id: string = (req as any).user.id;
-    const { agent_ip, agent_port } = req.body;
-    try {
-      const agent = await get_user_agent_by_uri(agent_ip, agent_port, user_id);
       res.json(agent);
     } catch (error) {
       console.error(Constants.TEXT_RED_COLOR, 'Failed to get agent:', error, Constants.TEXT_WHITE_COLOR);
@@ -101,13 +60,13 @@ export function serveAgents() {
       const socket = Globals.agentSockets.get(agent_id);
       if (socket) {
         socket.emit('CLOSE_AGENT', (response: any) => {
-          if (response.status === 'closed') {
-            return void res.status(200).json({ success: true });
-          }
+          socket.disconnect();
+          return void res.status(200).json({ success: true });
         });
+      } else {
+        console.warn(Constants.TEXT_YELLOW_COLOR, 'failed getting socket for closing!');
+        return void res.status(500).json({ success: false });
       }
-      console.warn(Constants.TEXT_YELLOW_COLOR, 'failed getting socket for closing!');
-      return void res.status(200).json({ success: true });
     } catch (error) {
       console.error(Constants.TEXT_RED_COLOR, 'Failed to erase agent:', error, Constants.TEXT_WHITE_COLOR);
       return void res.status(500).json({ success: false });

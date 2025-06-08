@@ -1,11 +1,16 @@
 import { Express, Router } from 'express';
 import { Globals } from '../globals';
 import { Constants } from '../constants';
+import { auth } from '../middleware/auth';
 
 export function serveHome() {
   const router = Router();
 
+  router.use(auth());
+
+  //❌
   router.get('/home', async (req, res) => {
+    const user_id: string = (req as any).user.id;
     try {
       const agents = await Globals.app.locals.db.all('SELECT * FROM agents');
       const alerts = await Globals.app.locals.db.all('SELECT * FROM alerts');
@@ -68,7 +73,7 @@ export function serveHome() {
         typeMap[type] = (typeMap[type] || 0) + 1;
       }
 
-      res.json({
+      return void res.status(200).json({
         total_agents: agents.length,
         online_agents: onlineAgents,
         offline_agents: offlineAgents,
@@ -90,7 +95,7 @@ export function serveHome() {
         error.message,
         Constants.TEXT_WHITE_COLOR,
       );
-      res.status(500).json({ failure: error.message });
+      return void res.status(500).json({ failure: error.message });
     }
   });
 

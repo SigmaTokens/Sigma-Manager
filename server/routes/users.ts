@@ -1,11 +1,7 @@
 import { Router } from 'express';
 import { add_user, check_user_credentials } from '../database/users';
 import { Globals } from '../globals';
-
-/* -----------------------------------------------------------
-   1.  Dynamically load Biscuit — values at runtime,
-       types via `import type` so TS is happy.
------------------------------------------------------------ */
+import util from 'util';
 import type {
   Policy as PolicyT,
   Biscuit as BiscuitT,
@@ -30,8 +26,11 @@ let PrivateKey: typeof PrivateKeyT;
 let KeyPair: typeof KeyPairT;
 let SignatureAlgorithm: typeof SignatureAlgorithmT;
 
-async function loadBiscuit() {
-  if (Biscuit) return; // already loaded
+export const asyncHandler = (fn: (...a: any[]) => Promise<any>) => (req: any, res: any, next: any) =>
+  Promise.resolve(fn(req, res, next)).catch(next);
+
+export async function loadBiscuit() {
+  if (Biscuit) return;
   const wasm = await import('@biscuit-auth/biscuit-wasm');
   ({
     Policy,
@@ -47,90 +46,93 @@ async function loadBiscuit() {
   } = wasm);
 }
 
-/* -----------------------------------------------------------
-   2.  Root key: generate once, keep in .env
------------------------------------------------------------ */
-
-const TOKEN_EXP_SECS = 2 * 60 * 60;
-
-/**
- * issueToken + a third-party signature
- * -----------------------------------
- * @param id        user id
- * @param username  display name
- * @returns         base-64 Biscuit token
- */
 export function issueToken(id: string, username: string): string {
-  /* 1 - Build the authority block */
+  // 1 - Build the authority block
   const bb = new BiscuitBuilder();
+  const TOKEN_EXP_SECS = 2 * 60 * 60;
   const exp = Math.floor(Date.now() / 1000) + TOKEN_EXP_SECS;
 
   bb.addFact(Fact.fromString(`user("${id}")`));
   bb.addFact(Fact.fromString(`username("${username}")`));
   bb.addFact(Fact.fromString(`expiration(${exp})`));
 
-  /* 2 - Sign with the *root* key */
+  // 2 - Sign with the *root* key
   const rootBytes = Uint8Array.from(Buffer.from(process.env.PRIVATE_KEY_BISCUIT!, 'hex'));
   const rootKey = PrivateKey.fromBytes(rootBytes, SignatureAlgorithm.Ed25519);
 
   const token = bb.build(rootKey);
 
-  /* 3 --- Add a *third-party* block and sign it                *
-   *      (this is what Biscuit calls “adding a signer”)        */
+  // 3 - Add a *third-party* block and sign it
   const signerBytes = Uint8Array.from(Buffer.from(process.env.PRIVATE_KEY_BISCUIT!, 'hex'));
   const signerKey = PrivateKey.fromBytes(signerBytes, SignatureAlgorithm.Ed25519);
   const signerPub = KeyPair.fromPrivateKey(signerKey).getPublicKey();
 
-  // 3.a The root issuer creates a request for a third-party signature
   const request = token.getThirdPartyRequest();
 
-  // 3.b The third party builds a block that **restricts** the token
   const bb3 = new BlockBuilder();
-  bb3.addCheck(Check.fromString('check if operation("read")')); // example restriction
+  bb3.addCheck(Check.fromString('check if operation("all")'));
 
-  // 3.c The third party converts the request + block into a signed block
   const thirdPartyBlock = request.createBlock(signerKey, bb3);
 
-  // 3.d Attach the signed block back to the token
   const finalTok = token.appendThirdPartyBlock(signerPub, thirdPartyBlock);
 
-  /* ─── 4 ▸ return the final, multi-signed token ────────── */
+  // 4 - return the final, multi-signed token
   return finalTok.toBase64();
 }
 
-function verifyToken(raw: string) {
-  /* 1 ▸ load the *public* root key (hex in .env) */
-  const rootBytes = Uint8Array.from(Buffer.from(process.env.PRIVATE_KEY_BISCUIT!, 'hex'));
-  const rootKey = PrivateKey.fromBytes(rootBytes, SignatureAlgorithm.Ed25519);
-  const rootPub = KeyPair.fromPrivateKey(rootKey).getPublicKey();
+export function verifyToken(raw: string) {
+  try {
+    /* 1 ▸ load the *public* root key (hex in .env) */
+    const rootBytes = Uint8Array.from(Buffer.from(process.env.PRIVATE_KEY_BISCUIT!, 'hex'));
+    const rootKey = PrivateKey.fromBytes(rootBytes, SignatureAlgorithm.Ed25519);
+    const rootPub = KeyPair.fromPrivateKey(rootKey).getPublicKey();
+    console.log('[BISCUIT] ✅ Loaded root public key');
 
-  /* 2 ▸ parse + cryptographically verify all signatures */
-  const tok = Biscuit.fromBase64(raw, rootPub);
+    /* 2 ▸ parse + cryptographically verify all signatures */
+    const tok = Biscuit.fromBase64(raw, rootPub);
+    console.log('[BISCUIT] ✅ Token signature verified');
+    console.log('[BISCUIT] 🧱 Authority block:\n' + tok.getBlockSource(0));
+    console.log('[BISCUIT] 🧱 Authority block permissions:\n' + tok.getBlockSource(1));
 
-  /* 3 ▸ build the authorizer with runtime facts & checks */
-  const ab = new AuthorizerBuilder();
-  const now = Math.floor(Date.now() / 1000);
+    /* 3 ▸ build authorizer */
+    const ab = new AuthorizerBuilder();
+    const now = Math.floor(Date.now() / 1000);
+    ab.addFact(Fact.fromString(`now(${now})`));
+    ab.addFact(Fact.fromString('operation("all")')); // 👈 REQUIRED for the check
+    ab.addCheck(Check.fromString('check if expiration($e), now($n), $e > $n'));
+    ab.addPolicy(Policy.fromString('allow if true'));
 
-  ab.addFact(Fact.fromString(`now(${now})`));
-  ab.addCheck(Check.fromString('check if expiration($e), now($n), $e > $n'));
+    console.log('[BISCUIT] 🛠️  Authorizer setup:');
+    console.log('- Fact: now(' + now + ')');
+    console.log('- Check: expiration > now');
 
-  /* 3.a add a *default allow policy* so harmless tokens succeed */
-  ab.addPolicy(Policy.fromString('allow if true')); // ← real policy, not check
+    /* 4 ▸ run authorization (may throw) */
+    const auth = ab.buildAuthenticated(tok);
+    auth.authorize(); // ← might throw
+    console.log('[BISCUIT] ✅ Authorization passed');
 
-  /* 4 ▸ run authorization (throws on failure) */
-  ab.buildAuthenticated(tok).authorize();
+    return tok;
+  } catch (err: any) {
+    console.error('[BISCUIT] ❌ Authorization failed:', err?.message || err);
 
-  return tok; // safe to use, fully verified & authorized
+    // 🌟 Add this to deeply inspect the error object
+    console.error(
+      '[BISCUIT] 🔎 Full error object (util.inspect):\n' + util.inspect(err, { depth: null, colors: true }),
+    );
+    console.dir(err, { depth: null }); // 👈 also logs expanded structure
+
+    // 🍰 Biscuit-specific debug helpers
+    if (err?.print) {
+      console.error('[BISCUIT] ❗ Authorizer print:\n' + err.print());
+    }
+    if (err?.dump) {
+      console.error('[BISCUIT] 📦 Dump:\n' + err.dump());
+    }
+
+    throw err;
+  }
 }
 
-// utils/asyncHandler.ts
-export const asyncHandler = (fn: (...a: any[]) => Promise<any>) => (req: any, res: any, next: any) =>
-  Promise.resolve(fn(req, res, next)).catch(next);
-
-/* -----------------------------------------------------------
-   4.  Exported route factory
------------------------------------------------------------ */
-await loadBiscuit(); // ensure wasm is ready
 export function serveUsers() {
   const router = Router();
 

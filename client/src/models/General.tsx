@@ -8,6 +8,7 @@ export async function getServerAddress(address?: string): Promise<ServerAddress>
     const res = await fetch('/api/server', {
       method: 'POST',
       headers: {
+        Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ address }),

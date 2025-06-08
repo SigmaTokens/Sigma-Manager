@@ -2,7 +2,6 @@ const sql = (strings: TemplateStringsArray, ...values: any[]) => String.raw(stri
 import { init_alerts_table } from './alerts';
 import { init_honeytokens_table } from './honeytokens';
 import { init_types_table } from './types';
-import { init_whitelist_table } from './whitelist';
 import { init_agents_table } from './agents';
 import { Globals } from '../globals';
 import { Constants } from '../constants';
@@ -39,11 +38,6 @@ export async function init_tables() {
     await init_alerts_table();
     if (process.env.MODE === 'dev')
       console.log(Constants.TEXT_GREEN_COLOR, 'Initiated alerts table successfully', Constants.TEXT_WHITE_COLOR);
-  }
-  if (!(await is_table_exists('whitelist'))) {
-    await init_whitelist_table();
-    if (process.env.MODE === 'dev')
-      console.log(Constants.TEXT_GREEN_COLOR, 'Initiated whitelist table successfully', Constants.TEXT_WHITE_COLOR);
   }
   if (!(await is_table_exists('agents'))) {
     await init_agents_table();

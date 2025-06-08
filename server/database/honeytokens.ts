@@ -2,6 +2,7 @@ const sql = (strings: TemplateStringsArray, ...values: any[]) => String.raw(stri
 import { begin_transaction, commit, rollback } from './helpers';
 import { Globals } from '../globals';
 
+//INIT
 export async function init_honeytokens_table() {
   await Globals.app.locals.db.exec(sql`
     CREATE TABLE IF NOT EXISTS honeytokens (
@@ -20,68 +21,64 @@ export async function init_honeytokens_table() {
       notes TEXT,
       agent_id VARCHAR,
       api_port INTEGER,
-      user_id INTEGER,
       FOREIGN KEY (type_id) REFERENCES types (type_id) ON DELETE CASCADE,
-      FOREIGN KEY (agent_id) REFERENCES agents (agent_id) ON DELETE SET NULL,
-      FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE SET NULL
+      FOREIGN KEY (agent_id) REFERENCES agents (agent_id) ON DELETE SET NULL
     );
   `);
 }
 
-export async function get_all_honeytokens() {
-  return await Globals.app.locals.db.all(sql`
-    SELECT
-      agent_id,
-      token_id,
-      group_id,
-      type_id,
-      grade,
-      creation_date,
-      expire_date,
-      location,
-      file_name,
-      http_method,
-      route,
-      data,
-      response,
-      notes,
-      api_port,
-      user_id
-    FROM
-      honeytokens
-  `);
-}
-
-export async function get_honeytoken_by_token_id(token_id: String) {
-  return await Globals.app.locals.db.get(
+//TEXT
+export async function is_user_honeytoken_exists(user_id: string, token_id: string) {
+  return Globals.app.locals.db.get(
     sql`
       SELECT
-        token_id,
-        agent_id,
-        group_id,
-        type_id,
-        grade,
-        creation_date,
-        expire_date,
-        location,
-        file_name,
-        http_method,
-        route,
-        data,
-        response,
-        notes,
-        api_port,
-        user_id
+        h.token_id
       FROM
-        honeytokens
+        honeytokens AS h
+        JOIN agents AS a ON h.agent_id = a.agent_id
       WHERE
-        token_id = ?;
+        h.token_id = ?
+        AND a.user_id = ?
     `,
-    [token_id],
+    [token_id, user_id],
   );
 }
 
-export async function get_honeytokens_by_agent_id(agent_id: String) {
+//API
+export async function is_user_honeytoken_group_exists(user_id: string, group_id: string) {
+  return Globals.app.locals.db.get(
+    sql`
+      SELECT
+        h.group_id
+      FROM
+        honeytokens AS h
+        JOIN agents AS a ON h.agent_id = a.agent_id
+      WHERE
+        h.group_id = ?
+        AND a.user_id = ?
+    `,
+    [group_id, user_id],
+  );
+}
+
+//ALL
+export async function get_all_user_honeytokens(user_id: string) {
+  return Globals.app.locals.db.all(
+    sql`
+      SELECT
+        h.*
+      FROM
+        honeytokens AS h
+        JOIN agents AS a ON h.agent_id = a.agent_id
+      WHERE
+        a.user_id = ?;
+    `,
+    [user_id],
+  );
+}
+
+//ALL
+export async function get_all_agent_honeytokens(agent_id: string) {
   return await Globals.app.locals.db.all(
     sql`
       SELECT
@@ -98,8 +95,7 @@ export async function get_honeytokens_by_agent_id(agent_id: String) {
         data,
         response,
         notes,
-        api_port,
-        user_id
+        api_port
       FROM
         honeytokens
       WHERE
@@ -109,54 +105,27 @@ export async function get_honeytokens_by_agent_id(agent_id: String) {
   );
 }
 
-export async function get_honeytokens_by_type_id(type_id: String) {
-  return await Globals.app.locals.db.all(
+//TEXT
+export async function get_honeytoken_by_token_id(token_id: string) {
+  return Globals.app.locals.db.get(
     sql`
       SELECT
-        token_id,
-        group_id,
-        type_id,
-        grade,
-        creation_date,
-        expire_date,
-        location,
-        file_name,
-        http_method,
-        route,
-        data,
-        response,
-        notes,
-        api_port,
-        user_id
+        *
       FROM
         honeytokens
       WHERE
-        type_id = ?;
+        token_id = ?;
     `,
-    [type_id],
+    [token_id],
   );
 }
 
-export async function get_honeytokens_by_group_id(group_id: String) {
-  return await Globals.app.locals.db.all(
+//API
+export async function get_honeytokens_by_group_id(group_id: string) {
+  return Globals.app.locals.db.all(
     sql`
       SELECT
-        token_id,
-        group_id,
-        agent_id,
-        type_id,
-        grade,
-        creation_date,
-        expire_date,
-        location,
-        file_name,
-        http_method,
-        route,
-        notes,
-        response,
-        data,
-        api_port,
-        user_id
+        *
       FROM
         honeytokens
       WHERE
@@ -166,11 +135,20 @@ export async function get_honeytokens_by_group_id(group_id: String) {
   );
 }
 
-export async function delete_all_honeytokens() {
-  return await Globals.app.locals.db.run(sql`DELETE FROM honeytokens`);
+//ALL
+export async function delete_all_agent_honeytokens(agent_id: string) {
+  return Globals.app.locals.db.run(
+    sql`
+      DELETE FROM honeytokens
+      WHERE
+        agent_id = ?;
+    `,
+    [agent_id],
+  );
 }
 
-export async function delete_honeytoken_by_id(token_id: String) {
+//TEXT
+export async function delete_honeytoken_by_token_id(token_id: string) {
   try {
     await begin_transaction();
 
@@ -178,7 +156,7 @@ export async function delete_honeytoken_by_id(token_id: String) {
       sql`
         DELETE FROM alerts
         WHERE
-          token_id = ?
+          token_id = ?;
       `,
       [token_id],
     );
@@ -187,18 +165,22 @@ export async function delete_honeytoken_by_id(token_id: String) {
       sql`
         DELETE FROM honeytokens
         WHERE
-          token_id = ?
+          agent_id = ?
+          AND token_id = ?;
       `,
       [token_id],
     );
 
     await commit();
-  } catch (error) {
+    return true;
+  } catch (err) {
     await rollback();
+    return false;
   }
 }
 
-export async function delete_honeytokens_by_type_id(type_id: String) {
+//API
+export async function delete_honeytokens_by_group_id(group_id: string) {
   try {
     await begin_transaction();
 
@@ -206,35 +188,7 @@ export async function delete_honeytokens_by_type_id(type_id: String) {
       sql`
         DELETE FROM alerts
         WHERE
-          type_id = ?
-      `,
-      [type_id],
-    );
-
-    await Globals.app.locals.db.run(
-      sql`
-        DELETE FROM honeytokens
-        WHERE
-          type_id = ?
-      `,
-      [type_id],
-    );
-
-    await commit();
-  } catch (error) {
-    await rollback();
-  }
-}
-
-export async function delete_honeytokens_by_group_id(group_id: String) {
-  try {
-    await begin_transaction();
-
-    await Globals.app.locals.db.run(
-      sql`
-        DELETE FROM alerts
-        WHERE
-          token_id = ?
+          token_id = ?;
       `,
       [group_id],
     );
@@ -243,22 +197,25 @@ export async function delete_honeytokens_by_group_id(group_id: String) {
       sql`
         DELETE FROM honeytokens
         WHERE
-          group_id = ?
+          group_id = ?;
       `,
       [group_id],
     );
 
     await commit();
-  } catch (error) {
+    return true;
+  } catch (err) {
     await rollback();
+    return false;
   }
 }
 
+//ALL
 export async function insert_honeytoken(
   agent_id: string,
   token_id: string,
   group_id: string,
-  type_id: any,
+  type_id: number,
   file_name: string,
   location: string,
   http_method: string,
@@ -270,9 +227,8 @@ export async function insert_honeytoken(
   response: string,
   data: string,
   api_port: number,
-  user_id: string,
 ) {
-  await Globals.app.locals.db.run(
+  return await Globals.app.locals.db.run(
     sql`
       INSERT INTO
         honeytokens (
@@ -290,11 +246,10 @@ export async function insert_honeytoken(
           data,
           response,
           notes,
-          api_port,
-          user_id
+          api_port
         )
       VALUES
-        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
     `,
     [
       agent_id,
@@ -312,7 +267,6 @@ export async function insert_honeytoken(
       response,
       notes,
       api_port,
-      user_id,
     ],
   );
 }

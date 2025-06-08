@@ -2,13 +2,9 @@ import { IAgent, IAgentStatus } from '../../../server/interfaces/agent';
 
 export async function getAgents() {
   try {
-    const token = localStorage.getItem('token');
-
-    console.log('testtest: ', token);
-
     const response = await fetch('/api/agents', {
       method: 'GET',
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
     });
 
     if (!response.ok) {
@@ -28,6 +24,7 @@ export async function startAgent(agent_id: string) {
     const response = await fetch(`/api/agents/start`, {
       method: 'PUT',
       headers: {
+        Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -47,6 +44,7 @@ export async function stopAgent(agent_id: string) {
     const response = await fetch(`/api/agents/stop`, {
       method: 'PUT',
       headers: {
+        Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -62,7 +60,9 @@ export async function stopAgent(agent_id: string) {
 }
 
 export async function areAgentsConnected() {
-  const response = await fetch('/api/agents/active_status');
+  const response = await fetch('/api/agents/active_status', {
+    headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
+  });
   return await response.json();
 }
 
@@ -71,6 +71,7 @@ export async function isAgentMonitoring(agent_id: string): Promise<boolean> {
     const response = await fetch(`/api/agents/monitor_status`, {
       method: 'PUT',
       headers: {
+        Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -91,6 +92,7 @@ export async function deleteAgent(agent_id: string) {
   try {
     const response = await fetch(`/api/agents/agent/${agent_id}`, {
       method: 'DELETE',
+      headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
     });
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -104,6 +106,7 @@ export async function verifyAgent(agent_id: string, setAgents: any, setStatusUpd
   try {
     const response = await fetch(`/api/agents/verify/${agent_id}`, {
       method: 'GET',
+      headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
     });
     fetchAgents(setAgents, setStatusUpdates);
   } catch (err) {

@@ -26,6 +26,22 @@ export async function init_honeytokens_table() {
   `);
 }
 
+export async function is_user_honeytoken_exists(user_id: string, token_id: string) {
+  return Globals.app.locals.db.get(
+    sql`
+      SELECT
+        h.token_id
+      FROM
+        honeytokens AS h
+        JOIN agents AS a ON h.agent_id = a.agent_id
+      WHERE
+        h.token_id = ?
+        AND a.user_id = ?
+    `,
+    [token_id, user_id],
+  );
+}
+
 export async function get_all_agent_honeytokens(agent_id: string) {
   return Globals.app.locals.db.all(
     sql`

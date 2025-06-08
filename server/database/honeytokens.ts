@@ -2,6 +2,7 @@ const sql = (strings: TemplateStringsArray, ...values: any[]) => String.raw(stri
 import { begin_transaction, commit, rollback } from './helpers';
 import { Globals } from '../globals';
 
+//INIT
 export async function init_honeytokens_table() {
   await Globals.app.locals.db.exec(sql`
     CREATE TABLE IF NOT EXISTS honeytokens (
@@ -26,6 +27,7 @@ export async function init_honeytokens_table() {
   `);
 }
 
+//TEXT
 export async function is_user_honeytoken_exists(user_id: string, token_id: string) {
   return Globals.app.locals.db.get(
     sql`
@@ -42,11 +44,58 @@ export async function is_user_honeytoken_exists(user_id: string, token_id: strin
   );
 }
 
-export async function get_all_agent_honeytokens(agent_id: string) {
+//API
+export async function is_user_honeytoken_group_exists(user_id: string, group_id: string) {
+  return Globals.app.locals.db.get(
+    sql`
+      SELECT
+        h.group_id
+      FROM
+        honeytokens AS h
+        JOIN agents AS a ON h.agent_id = a.agent_id
+      WHERE
+        h.group_id = ?
+        AND a.user_id = ?
+    `,
+    [group_id, user_id],
+  );
+}
+
+//ALL
+export async function get_all_user_honeytokens(user_id: string) {
   return Globals.app.locals.db.all(
     sql`
       SELECT
-        *
+        h.*
+      FROM
+        honeytokens AS h
+        JOIN agents AS a ON h.agent_id = a.agent_id
+      WHERE
+        a.user_id = ?;
+    `,
+    [user_id],
+  );
+}
+
+//ALL
+export async function get_all_agent_honeytokens(agent_id: string) {
+  return await Globals.app.locals.db.all(
+    sql`
+      SELECT
+        token_id,
+        group_id,
+        type_id,
+        grade,
+        creation_date,
+        expire_date,
+        location,
+        file_name,
+        http_method,
+        route,
+        data,
+        response,
+        notes,
+        api_port
       FROM
         honeytokens
       WHERE
@@ -56,7 +105,8 @@ export async function get_all_agent_honeytokens(agent_id: string) {
   );
 }
 
-export async function get_agent_honeytoken_by_token_id(agent_id: string, token_id: string) {
+//TEXT
+export async function get_honeytoken_by_token_id(token_id: string) {
   return Globals.app.locals.db.get(
     sql`
       SELECT
@@ -64,44 +114,14 @@ export async function get_agent_honeytoken_by_token_id(agent_id: string, token_i
       FROM
         honeytokens
       WHERE
-        agent_id = ?
-        AND token_id = ?;
+        token_id = ?;
     `,
-    [agent_id, token_id],
+    [token_id],
   );
 }
 
-export async function get_agent_honeytokens_by_type_id(agent_id: string, type_id: string) {
-  return Globals.app.locals.db.all(
-    sql`
-      SELECT
-        token_id,
-        group_id,
-        agent_id,
-        type_id,
-        grade,
-        creation_date,
-        expire_date,
-        location,
-        file_name,
-        http_method,
-        route,
-        notes,
-        response,
-        data,
-        api_port,
-        user_id
-      FROM
-        honeytokens
-      WHERE
-        agent_id = ?
-        AND type_id = ?;
-    `,
-    [agent_id, type_id],
-  );
-}
-
-export async function get_agent_honeytokens_by_group_id(agent_id: string, group_id: string) {
+//API
+export async function get_honeytokens_by_group_id(group_id: string) {
   return Globals.app.locals.db.all(
     sql`
       SELECT
@@ -109,13 +129,13 @@ export async function get_agent_honeytokens_by_group_id(agent_id: string, group_
       FROM
         honeytokens
       WHERE
-        agent_id = ?
-        AND group_id = ?;
+        group_id = ?;
     `,
-    [agent_id, group_id],
+    [group_id],
   );
 }
 
+//ALL
 export async function delete_all_agent_honeytokens(agent_id: string) {
   return Globals.app.locals.db.run(
     sql`
@@ -127,7 +147,8 @@ export async function delete_all_agent_honeytokens(agent_id: string) {
   );
 }
 
-export async function delete_agent_honeytoken_by_id(agent_id: string, token_id: string) {
+//TEXT
+export async function delete_honeytoken_by_token_id(token_id: string) {
   try {
     await begin_transaction();
 
@@ -135,10 +156,9 @@ export async function delete_agent_honeytoken_by_id(agent_id: string, token_id: 
       sql`
         DELETE FROM alerts
         WHERE
-          agent_id = ?
-          AND token_id = ?;
+          token_id = ?;
       `,
-      [agent_id, token_id],
+      [token_id],
     );
 
     await Globals.app.locals.db.run(
@@ -148,17 +168,19 @@ export async function delete_agent_honeytoken_by_id(agent_id: string, token_id: 
           agent_id = ?
           AND token_id = ?;
       `,
-      [agent_id, token_id],
+      [token_id],
     );
 
     await commit();
+    return true;
   } catch (err) {
     await rollback();
-    throw err;
+    return false;
   }
 }
 
-export async function delete_agent_honeytokens_by_type_id(agent_id: string, type_id: string) {
+//API
+export async function delete_honeytokens_by_group_id(group_id: string) {
   try {
     await begin_transaction();
 
@@ -166,61 +188,30 @@ export async function delete_agent_honeytokens_by_type_id(agent_id: string, type
       sql`
         DELETE FROM alerts
         WHERE
-          agent_id = ?
-          AND type_id = ?;
+          token_id = ?;
       `,
-      [agent_id, type_id],
+      [group_id],
     );
 
     await Globals.app.locals.db.run(
       sql`
         DELETE FROM honeytokens
         WHERE
-          agent_id = ?
-          AND type_id = ?;
+          group_id = ?;
       `,
-      [agent_id, type_id],
+      [group_id],
     );
 
     await commit();
+    return true;
   } catch (err) {
     await rollback();
-    throw err;
+    return false;
   }
 }
 
-export async function delete_agent_honeytokens_by_group_id(agent_id: string, group_id: string) {
-  try {
-    await begin_transaction();
-
-    await Globals.app.locals.db.run(
-      sql`
-        DELETE FROM alerts
-        WHERE
-          agent_id = ?
-          AND token_id = ?;
-      `,
-      [agent_id, group_id],
-    );
-
-    await Globals.app.locals.db.run(
-      sql`
-        DELETE FROM honeytokens
-        WHERE
-          agent_id = ?
-          AND group_id = ?;
-      `,
-      [agent_id, group_id],
-    );
-
-    await commit();
-  } catch (err) {
-    await rollback();
-    throw err;
-  }
-}
-
-export async function insert_agent_honeytoken(
+//ALL
+export async function insert_honeytoken(
   agent_id: string,
   token_id: string,
   group_id: string,
@@ -237,7 +228,7 @@ export async function insert_agent_honeytoken(
   data: string,
   api_port: number,
 ) {
-  await Globals.app.locals.db.run(
+  return await Globals.app.locals.db.run(
     sql`
       INSERT INTO
         honeytokens (

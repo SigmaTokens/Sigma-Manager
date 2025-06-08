@@ -35,9 +35,9 @@ import { serveHome } from './routes/home';
 import { serveGeneral } from './routes/general';
 import { Constants } from './constants';
 import util from 'node:util';
-import { callback } from 'chart.js/dist/helpers/helpers.core';
-import { get_honeytokens_by_agent_id } from './database/honeytokens';
-import { get_all_agents, insert_agent } from './database/agents';
+import { create_honeytoken_alert } from './database/alerts';
+import { get_all_user_agents, insert_agent } from './database/agents';
+import { get_all_agent_honeytokens } from './database/honeytokens';
 
 main();
 
@@ -74,22 +74,32 @@ function main(): void {
       const agent_id = payload;
       console.log(agent_id);
       try {
-        const honeytokens = await get_honeytokens_by_agent_id(agent_id);
+        const honeytokens = await get_all_agent_honeytokens(agent_id);
         callback({ tokens: honeytokens });
       } catch (err) {
         callback({ tokens: [] });
       }
     });
 
-    socket.on('REGISTER_AGENT', async (paylaod) => {
-      const { id, name, user } = paylaod;
+    socket.on('REGISTER_AGENT', async (payload) => {
+      const { id, name, user } = payload;
 
-      const agents = await get_all_agents();
+      const agents = await get_all_user_agents(user);
 
       const agent_id_exists = agents.some((agent: any) => agent.agent_id === id);
 
       if (!agent_id_exists) {
         await insert_agent(id, name, user);
+      }
+    });
+
+    socket.on('CREATE_ALERT', async (payload) => {
+      try {
+        const { token_id, alert_epoch, accessed_by, log } = payload;
+
+        await create_honeytoken_alert(token_id, alert_epoch, accessed_by, log);
+      } catch (error: any) {
+        console.error(Constants.TEXT_RED_COLOR, 'Failed to create alert:', error.message, Constants.TEXT_WHITE_COLOR);
       }
     });
 

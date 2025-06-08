@@ -13,7 +13,30 @@ export async function init_agents_table() {
   `);
 }
 
-export async function insert_user_agent(agent_id: string, name: string, user_id: number) {
+export async function is_user_agent(user_id: string, agent_id: string): Promise<boolean> {
+  try {
+    const row = await Globals.app.locals.db.get(
+      sql`
+        SELECT
+          1
+        FROM
+          agents
+        WHERE
+          agent_id = ?
+          AND user_id = ?
+        LIMIT
+          1;
+      `,
+      [agent_id, user_id],
+    );
+
+    return !!row;
+  } catch {
+    return false;
+  }
+}
+
+export async function insert_agent(agent_id: string, name: string, user_id: number) {
   await Globals.app.locals.db.run(
     sql`
       INSERT INTO
@@ -26,7 +49,7 @@ export async function insert_user_agent(agent_id: string, name: string, user_id:
 }
 
 export async function verify_user_agent_by_id(agent_id: string, user_id: string) {
-  await Globals.app.locals.db.run(
+  return await Globals.app.locals.db.run(
     sql`
       UPDATE agents
       SET
@@ -44,8 +67,6 @@ export async function get_all_user_agents(user_id: string) {
     SELECT
       a.agent_id,
       a.agent_name,
-      a.agent_ip,
-      a.agent_port,
       a.validated,
       a.user_id,
       u.username
@@ -57,24 +78,6 @@ export async function get_all_user_agents(user_id: string) {
   `);
 
   return rows;
-}
-
-export async function get_user_agent_by_id(agent_id: string, user_id: string) {
-  return Globals.app.locals.db.get(
-    sql`
-      SELECT
-        agent_id,
-        agent_name,
-        validated,
-        user_id
-      FROM
-        agents
-      WHERE
-        agent_id = ?
-        AND user_id = ?
-    `,
-    [agent_id, user_id],
-  );
 }
 
 export async function delete_user_agent_by_id(agent_id: string, user_id: string): Promise<boolean> {

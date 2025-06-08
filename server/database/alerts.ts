@@ -17,7 +17,7 @@ export async function init_alerts_table() {
   `);
 }
 
-export async function create_token_alert(
+export async function create_honeytoken_alert(
   token_id: string,
   alert_epoch: number,
   accessed_by: string,
@@ -76,7 +76,7 @@ export async function get_all_user_alerts(user_id: string) {
   );
 }
 
-export async function get_token_alert_by_alert_id(token_id: string, alert_id: string) {
+export async function get_honeytoken_alert_by_alert_id(token_id: string, alert_id: string) {
   return Globals.app.locals.db.get(
     sql`
       SELECT
@@ -96,7 +96,7 @@ export async function get_token_alert_by_alert_id(token_id: string, alert_id: st
   );
 }
 
-export async function delete_all_token_alerts(token_id: string) {
+export async function delete_all_honeytoken_alerts(token_id: string) {
   await Globals.app.locals.db.run(
     sql`
       DELETE FROM alerts
@@ -107,7 +107,7 @@ export async function delete_all_token_alerts(token_id: string) {
   );
 }
 
-export async function delete_token_alert_by_alert_id(token_id: string, alert_id: string) {
+export async function delete_honeytoken_alert_by_alert_id(token_id: string, alert_id: string) {
   try {
     await Globals.app.locals.db.run(
       sql`
@@ -124,7 +124,7 @@ export async function delete_token_alert_by_alert_id(token_id: string, alert_id:
   }
 }
 
-export async function set_token_alert_archive_by_alert_id(token_id: string, alert_id: string, archive: boolean) {
+export async function set_honeytoken_alert_archive_by_alert_id(token_id: string, alert_id: string, archive: boolean) {
   try {
     await Globals.app.locals.db.run(
       sql`

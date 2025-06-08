@@ -8,6 +8,7 @@ export function serveHome() {
 
   router.use(auth());
 
+  //❌
   router.get('/home', async (req, res) => {
     const user_id: string = (req as any).user.id;
     try {
@@ -72,7 +73,7 @@ export function serveHome() {
         typeMap[type] = (typeMap[type] || 0) + 1;
       }
 
-      res.json({
+      return void res.status(200).json({
         total_agents: agents.length,
         online_agents: onlineAgents,
         offline_agents: offlineAgents,
@@ -94,7 +95,7 @@ export function serveHome() {
         error.message,
         Constants.TEXT_WHITE_COLOR,
       );
-      res.status(500).json({ failure: error.message });
+      return void res.status(500).json({ failure: error.message });
     }
   });
 

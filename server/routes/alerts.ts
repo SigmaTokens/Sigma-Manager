@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { get_all_user_alerts, set_token_alert_archive_by_alert_id } from '../database/alerts';
+import { get_all_user_alerts, set_honeytoken_alert_archive_by_alert_id } from '../database/alerts';
 import { Globals } from '../globals';
 import { Constants } from '../constants';
 import { auth } from '../middleware/auth';
@@ -37,7 +37,7 @@ export function serveAlerts() {
 
       let result = false;
 
-      if (isToken) result = await set_token_alert_archive_by_alert_id(token_id, alert_id, archive);
+      if (isToken) result = await set_honeytoken_alert_archive_by_alert_id(token_id, alert_id, archive);
 
       if (!result) return void res.status(500).json({ success: false });
 

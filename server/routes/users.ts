@@ -2,11 +2,6 @@ import { Router } from 'express';
 import { add_user, check_user_credentials } from '../database/users';
 import { Globals } from '../globals';
 import util from 'util';
-
-/* -----------------------------------------------------------
-   1.  Dynamically load Biscuit — values at runtime,
-       types via `import type` so TS is happy.
------------------------------------------------------------ */
 import type {
   Policy as PolicyT,
   Biscuit as BiscuitT,
@@ -31,8 +26,11 @@ let PrivateKey: typeof PrivateKeyT;
 let KeyPair: typeof KeyPairT;
 let SignatureAlgorithm: typeof SignatureAlgorithmT;
 
+export const asyncHandler = (fn: (...a: any[]) => Promise<any>) => (req: any, res: any, next: any) =>
+  Promise.resolve(fn(req, res, next)).catch(next);
+
 export async function loadBiscuit() {
-  if (Biscuit) return; // already loaded
+  if (Biscuit) return;
   const wasm = await import('@biscuit-auth/biscuit-wasm');
   ({
     Policy,
@@ -48,54 +46,37 @@ export async function loadBiscuit() {
   } = wasm);
 }
 
-/* -----------------------------------------------------------
-   2.  Root key: generate once, keep in .env
------------------------------------------------------------ */
-
-const TOKEN_EXP_SECS = 2 * 60 * 60;
-
-/**
- * issueToken + a third-party signature
- * -----------------------------------
- * @param id        user id
- * @param username  display name
- * @returns         base-64 Biscuit token
- */
 export function issueToken(id: string, username: string): string {
-  /* 1 - Build the authority block */
+  // 1 - Build the authority block
   const bb = new BiscuitBuilder();
+  const TOKEN_EXP_SECS = 2 * 60 * 60;
   const exp = Math.floor(Date.now() / 1000) + TOKEN_EXP_SECS;
 
   bb.addFact(Fact.fromString(`user("${id}")`));
   bb.addFact(Fact.fromString(`username("${username}")`));
   bb.addFact(Fact.fromString(`expiration(${exp})`));
 
-  /* 2 - Sign with the *root* key */
+  // 2 - Sign with the *root* key
   const rootBytes = Uint8Array.from(Buffer.from(process.env.PRIVATE_KEY_BISCUIT!, 'hex'));
   const rootKey = PrivateKey.fromBytes(rootBytes, SignatureAlgorithm.Ed25519);
 
   const token = bb.build(rootKey);
 
-  /* 3 --- Add a *third-party* block and sign it                *
-   *      (this is what Biscuit calls “adding a signer”)        */
+  // 3 - Add a *third-party* block and sign it
   const signerBytes = Uint8Array.from(Buffer.from(process.env.PRIVATE_KEY_BISCUIT!, 'hex'));
   const signerKey = PrivateKey.fromBytes(signerBytes, SignatureAlgorithm.Ed25519);
   const signerPub = KeyPair.fromPrivateKey(signerKey).getPublicKey();
 
-  // 3.a The root issuer creates a request for a third-party signature
   const request = token.getThirdPartyRequest();
 
-  // 3.b The third party builds a block that **restricts** the token
   const bb3 = new BlockBuilder();
-  bb3.addCheck(Check.fromString('check if operation("all")')); // example restriction
+  bb3.addCheck(Check.fromString('check if operation("all")'));
 
-  // 3.c The third party converts the request + block into a signed block
   const thirdPartyBlock = request.createBlock(signerKey, bb3);
 
-  // 3.d Attach the signed block back to the token
   const finalTok = token.appendThirdPartyBlock(signerPub, thirdPartyBlock);
 
-  /* ─── 4 ▸ return the final, multi-signed token ────────── */
+  // 4 - return the final, multi-signed token
   return finalTok.toBase64();
 }
 
@@ -152,14 +133,6 @@ export function verifyToken(raw: string) {
   }
 }
 
-// utils/asyncHandler.ts
-export const asyncHandler = (fn: (...a: any[]) => Promise<any>) => (req: any, res: any, next: any) =>
-  Promise.resolve(fn(req, res, next)).catch(next);
-
-/* -----------------------------------------------------------
-   4.  Exported route factory
------------------------------------------------------------ */
-await loadBiscuit(); // ensure wasm is ready
 export function serveUsers() {
   const router = Router();
 

@@ -117,27 +117,6 @@ export async function stopMonitorOnHoneytoken(token_id: string) {
   }
 }
 
-export async function isHoneytokenMonitored(token_id: string): Promise<boolean> {
-  try {
-    const response = await fetch(`/api/honeytokens/monitor_status`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        token_id: token_id,
-      }),
-    });
-    if (response.ok && response.status === 200) {
-      return true;
-    }
-    return false;
-  } catch (err) {
-    console.error('Error checking if honeytoken is monitored:', err);
-    return false;
-  }
-}
-
 export async function getHoneytokensMonitorStatusesText(): Promise<Record<string, boolean>> {
   try {
     const agents_data: IAgentStatus[] = await areAgentsConnected();

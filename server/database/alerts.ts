@@ -1,7 +1,5 @@
 const sql = (strings: TemplateStringsArray, ...values: any[]) => String.raw(strings, ...values);
 import { v4 as uuidv4 } from 'uuid';
-import { get_all_honeytokens } from './honeytokens';
-import { get_random_date, get_random_ip, begin_transaction, commit, rollback } from './helpers';
 import { Globals } from '../globals';
 import { Constants } from '../constants';
 
@@ -19,12 +17,12 @@ export async function init_alerts_table() {
   `);
 }
 
-export async function create_alert_to_token_id(
+export async function create_token_alert(
   token_id: string,
   alert_epoch: number,
   accessed_by: string,
   log: string,
-  archive: boolean = false,
+  archive = false,
 ) {
   try {
     await Globals.app.locals.db.run(
@@ -43,119 +41,64 @@ export async function create_alert_to_token_id(
       `,
       [uuidv4(), token_id, alert_epoch, accessed_by, log, archive],
     );
-
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 }
 
-export async function create_alerts_to_token_id(
-  alerts: Array<{
-    token_id: string;
-    alert_epoch: number;
-    accessed_by: string;
-    log: string;
-    archive: boolean;
-  }>,
-) {
-  try {
-    await begin_transaction();
-
-    for (const alert of alerts) {
-      await Globals.app.locals.db.run(
-        sql`
-          INSERT INTO
-            alerts (
-              alert_id,
-              token_id,
-              alert_epoch,
-              accessed_by,
-              log,
-              archive
-            )
-          VALUES
-            (?, ?, ?, ?, ?, ?);
-        `,
-        [uuidv4(), alert.token_id, alert.alert_epoch, alert.accessed_by, alert.log, alert.archive],
-      );
-    }
-
-    await commit();
-    return true;
-  } catch (error) {
-    await rollback();
-    return false;
-  }
-}
-
-export async function get_all_alerts() {
-  return await Globals.app.locals.db.all(sql`
-    SELECT
-      alert_id,
-      token_id,
-      alert_epoch,
-      accessed_by,
-      log
-    FROM
-      alerts
-    ORDER BY
-      alert_epoch DESC
-  `);
-}
-
-export async function get_all_alerts_join() {
-  return await Globals.app.locals.db.all(sql`
-    SELECT
-      alerts.alert_id,
-      alerts.token_id,
-      alerts.alert_epoch,
-      alerts.accessed_by,
-      alerts.log,
-      alerts.archive,
-      honeytokens.grade AS grade,
-      honeytokens.location AS location,
-      honeytokens.file_name AS file_name,
-      agents.agent_ip AS agent_ip,
-      agents.agent_port AS agent_port
-    FROM
-      alerts
-      LEFT JOIN honeytokens ON alerts.token_id = honeytokens.token_id
-      LEFT JOIN agents ON honeytokens.agent_id = agents.agent_id
-    ORDER BY
-      alerts.alert_epoch DESC
-  `);
-}
-
-export async function get_alert_by_alert_id(alert_id: String) {
-  return await Globals.app.locals.db.get(
+export async function get_all_token_alerts(token_id: string) {
+  return Globals.app.locals.db.all(
     sql`
       SELECT
-        alert_id,
-        token_id,
-        alert_epoch,
-        accessed_by,
-        log
+        alerts.alert_id,
+        alerts.token_id,
+        alerts.alert_epoch,
+        alerts.accessed_by,
+        alerts.log,
+        alerts.archive,
+        honeytokens.grade AS grade,
+        honeytokens.location AS location,
+        honeytokens.file_name AS file_name,
+        agents.agent_ip AS agent_ip,
+        agents.agent_port AS agent_port
       FROM
         alerts
+        LEFT JOIN honeytokens ON alerts.token_id = honeytokens.token_id
+        LEFT JOIN agents ON honeytokens.agent_id = agents.agent_id
       WHERE
-        alert_id = ?;
+        alerts.token_id = ?
+      ORDER BY
+        alerts.alert_epoch DESC;
     `,
-    [alert_id],
+    [token_id],
   );
 }
 
-export async function get_alert_by_token_id(token_id: String) {
-  return await Globals.app.locals.db.all(
+export async function get_token_alert_by_alert_id(token_id: string, alert_id: string) {
+  return Globals.app.locals.db.get(
     sql`
       SELECT
         alert_id,
         token_id,
         alert_epoch,
         accessed_by,
-        log
+        log,
+        archive
       FROM
         alerts
+      WHERE
+        token_id = ?
+        AND alert_id = ?;
+    `,
+    [token_id, alert_id],
+  );
+}
+
+export async function delete_all_token_alerts(token_id: string) {
+  await Globals.app.locals.db.run(
+    sql`
+      DELETE FROM alerts
       WHERE
         token_id = ?;
     `,
@@ -163,41 +106,44 @@ export async function get_alert_by_token_id(token_id: String) {
   );
 }
 
-export async function delete_all_alerts() {
-  await Globals.app.locals.db.run(sql` DELETE FROM alerts`);
-}
-
-export async function delete_alert_by_alert_id(alert_id: string) {
+export async function delete_token_alert_by_alert_id(token_id: string, alert_id: string) {
   try {
     await Globals.app.locals.db.run(
       sql`
         DELETE FROM alerts
         WHERE
-          alert_id = ?;
+          token_id = ?
+          AND alert_id = ?;
       `,
-      [alert_id],
+      [token_id, alert_id],
     );
-  } catch (error) {
-    console.error(
-      Constants.TEXT_RED_COLOR,
-      `Failed to delete alert with id ${alert_id}:`,
-      error,
-      Constants.TEXT_WHITE_COLOR,
-    );
-    throw error;
+  } catch (err) {
+    console.error(Constants.TEXT_RED_COLOR, `Failed to delete alert ${alert_id}:`, err, Constants.TEXT_WHITE_COLOR);
+    throw err;
   }
 }
 
-export async function set_archive_by_alert_id(alert_id: string, archive: boolean) {
+export async function set_token_alert_archive_by_alert_id(token_id: string, alert_id: string, archive: boolean) {
   try {
-    await Globals.app.locals.db.run(`UPDATE alerts SET archive = ? WHERE alert_id = ?;`, [archive, alert_id]);
-  } catch (error) {
+    await Globals.app.locals.db.run(
+      sql`
+        UPDATE alerts
+        SET
+          archive = ?
+        WHERE
+          token_id = ?
+          AND alert_id = ?;
+      `,
+      [archive, token_id, alert_id],
+    );
+    return true;
+  } catch (err) {
     console.error(
       Constants.TEXT_RED_COLOR,
-      `Failed to set alert with id ${alert_id}:`,
-      error,
+      `Failed to set archive flag on alert ${alert_id}:`,
+      err,
       Constants.TEXT_WHITE_COLOR,
     );
-    throw error;
+    return false;
   }
 }

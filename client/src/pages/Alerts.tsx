@@ -1,10 +1,5 @@
 import { GiCardboardBoxClosed, GiCardboardBox } from 'react-icons/gi';
-import {
-  FiChevronDown,
-  FiChevronUp,
-  FiChevronRight,
-  FiInfo,
-} from 'react-icons/fi';
+import { FiChevronDown, FiChevronUp, FiChevronRight, FiInfo } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
 import '../styles/Alerts.css';
 import { getAlerts, archiveAlert } from '../models/Alerts';
@@ -62,12 +57,9 @@ function Alerts() {
     setIsReversed((prev) => !prev);
   };
 
-  const handleArchiveToggle = async (
-    alertId: string,
-    currentArchiveStatus: boolean,
-  ) => {
+  const handleArchiveToggle = async (tokenId: string, alertId: string, currentArchiveStatus: boolean) => {
     try {
-      if (await archiveAlert(alertId, !currentArchiveStatus)) {
+      if (await archiveAlert(tokenId, alertId, !currentArchiveStatus)) {
         setIsLoading(true);
       }
     } catch (err) {
@@ -140,93 +132,42 @@ function Alerts() {
               filteredAlerts.map((alert) => (
                 <tr key={alert.alert_id}>
                   <td className="truncate-cell">
-                    <span
-                      className={
-                        expandedDetails === alert.alert_id
-                          ? 'expanded'
-                          : 'truncated'
-                      }
-                    >
+                    <span className={expandedDetails === alert.alert_id ? 'expanded' : 'truncated'}>
                       {alert.alert_id}
                     </span>
                   </td>
                   <td className="truncate-cell">
-                    <span
-                      className={
-                        expandedDetails === alert.alert_id
-                          ? 'expanded'
-                          : 'truncated'
-                      }
-                    >
+                    <span className={expandedDetails === alert.alert_id ? 'expanded' : 'truncated'}>
                       {alert.token_id}
                     </span>
                   </td>
                   <td className="truncate-cell">
-                    <span
-                      className={
-                        expandedDetails === alert.alert_id
-                          ? 'expanded'
-                          : 'truncated'
-                      }
-                    >
+                    <span className={expandedDetails === alert.alert_id ? 'expanded' : 'truncated'}>
                       {formatDate(parseInt(alert.alert_epoch))}
                     </span>
                   </td>
                   <td className="truncate-cell" title={alert.accessed_by}>
-                    <span
-                      className={
-                        expandedDetails === alert.alert_id
-                          ? 'expanded'
-                          : 'truncated'
-                      }
-                    >
+                    <span className={expandedDetails === alert.alert_id ? 'expanded' : 'truncated'}>
                       {alert.accessed_by}
                     </span>
                   </td>
-                  <td
-                    className="truncate-cell"
-                    title={`${alert.location}\\${alert.file_name}`}
-                  >
-                    <span
-                      className={
-                        expandedDetails === alert.alert_id
-                          ? 'expanded'
-                          : 'truncated'
-                      }
-                    >
-                      {expandedDetails === alert.alert_id
-                        ? `${alert.location}\\${alert.file_name}`
-                        : alert.file_name}
+                  <td className="truncate-cell" title={`${alert.location}\\${alert.file_name}`}>
+                    <span className={expandedDetails === alert.alert_id ? 'expanded' : 'truncated'}>
+                      {expandedDetails === alert.alert_id ? `${alert.location}\\${alert.file_name}` : alert.file_name}
                     </span>
                   </td>
                   <td className="truncate-cell">
-                    <span
-                      className={
-                        expandedDetails === alert.alert_id
-                          ? 'expanded'
-                          : 'truncated'
-                      }
-                    >
+                    <span className={expandedDetails === alert.alert_id ? 'expanded' : 'truncated'}>
                       {`${alert.agent_ip}:${alert.agent_port}`}
                     </span>
                   </td>
                   <td className="truncate-cell">
-                    <span
-                      className={
-                        expandedDetails === alert.alert_id
-                          ? 'expanded'
-                          : 'truncated'
-                      }
-                    >
-                      {alert.grade}
-                    </span>
+                    <span className={expandedDetails === alert.alert_id ? 'expanded' : 'truncated'}>{alert.grade}</span>
                   </td>
                   <td>
                     <button
                       className="icon-button"
-                      onClick={() =>
-                        handleArchiveToggle(alert.alert_id, alert.archive)
-                      }
+                      onClick={() => handleArchiveToggle(alert.token_id, alert.alert_id, alert.archive)}
                       title={alert.archive ? 'Unarchive' : 'Archive'}
                     >
                       {alert.archive ? (
@@ -241,11 +182,7 @@ function Alerts() {
                       <button
                         className="details-button"
                         onClick={() => toggleDetails(alert.alert_id)}
-                        title={
-                          expandedDetails === alert.alert_id
-                            ? 'Collapse details'
-                            : 'Expand details'
-                        }
+                        title={expandedDetails === alert.alert_id ? 'Collapse details' : 'Expand details'}
                       >
                         {expandedDetails === alert.alert_id ? (
                           <FiChevronDown className="details-icon" />
@@ -253,11 +190,7 @@ function Alerts() {
                           <FiChevronRight className="details-icon" />
                         )}
                       </button>
-                      <button
-                        className="details-button"
-                        onClick={() => handleMoreDetails(alert)}
-                        title="More details"
-                      >
+                      <button className="details-button" onClick={() => handleMoreDetails(alert)} title="More details">
                         <FiInfo className="details-icon" />
                       </button>
                     </div>
@@ -274,9 +207,7 @@ function Alerts() {
           </tbody>
         </table>
       </div>
-      {selectedAlert && (
-        <AlertDetailsPopup alert={selectedAlert} onClose={handleClosePopup} />
-      )}
+      {selectedAlert && <AlertDetailsPopup alert={selectedAlert} onClose={handleClosePopup} />}
     </div>
   );
 }

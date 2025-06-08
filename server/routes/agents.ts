@@ -27,44 +27,47 @@ export function serveAgents() {
 
   router.use(auth());
 
+  //✔️
   router.get('/agents', async (req, res) => {
     try {
       console.log('user fetched data from verified token', (req as any).user);
       const user_id: string = (req as any).user.id;
       const agents = await get_all_user_agents(user_id);
 
-      res.json(agents);
+      if (!agents) return void res.status(200).json([]);
+
+      return void res.status(200).json(agents);
     } catch (error) {
       console.error(Constants.TEXT_RED_COLOR, 'Failed to fetch agents:', error, Constants.TEXT_WHITE_COLOR);
-      res.status(500).json({ failure: error });
+      return void res.status(500).json([]);
     }
   });
-
+  //❌
   router.post('/agents/add', async (req, res) => {
     try {
       const { id, ip, name, port } = req.body;
 
-      if (!ip || !name || !port || !id) {
-        res.status(400).json({ error: 'Missing required fields (id ,ip, name, port)' });
-        return;
-      }
+      if (!ip || !name || !port || !id) return void res.status(500).json({ success: false });
+
       const user_id: string = (req as any).user.id;
       const agents = await get_all_user_agents(user_id);
 
       const agent_id_exists = agents.some((agent: any) => agent.agent_id === id);
 
-      if (agent_id_exists) {
-        await update_user_agent(id, ip, name, parseInt(port), user_id);
-      } else {
-        await insert_user_agent(id, ip, name, parseInt(port), user_id);
-      }
-      res.sendStatus(200);
+      let result = false;
+
+      if (agent_id_exists) result = await update_user_agent(id, ip, name, parseInt(port), user_id);
+      else result = await insert_user_agent(id, ip, name, parseInt(port), user_id);
+
+      if (!result) return void res.status(500).json({ success: false });
+
+      return void res.status(200).json({ success: true });
     } catch (error: any) {
       console.error(Constants.TEXT_RED_COLOR, error);
-      res.status(500).json({ error: error.message });
+      return void res.status(500).json({ success: false });
     }
   });
-
+  //
   router.get('/agents/agent/:agent_id', async (req, res) => {
     const { agent_id } = req.params;
     const user_id: string = (req as any).user.id;

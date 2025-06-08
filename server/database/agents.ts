@@ -16,7 +16,7 @@ export async function init_agents_table() {
 }
 
 export async function insert_user_agent(agent_id: string, ip: string, name: string, port: number, user_id: string) {
-  await Globals.app.locals.db.run(
+  return await Globals.app.locals.db.run(
     sql`
       INSERT INTO
         agents (
@@ -34,7 +34,7 @@ export async function insert_user_agent(agent_id: string, ip: string, name: stri
 }
 
 export async function update_user_agent(agent_id: string, ip: string, name: string, port: number, user_id: string) {
-  await Globals.app.locals.db.run(
+  return await Globals.app.locals.db.run(
     sql`
       UPDATE agents
       SET

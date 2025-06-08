@@ -10,15 +10,17 @@ export async function getAlerts() {
   }
 }
 
-export async function archiveAlert(alertId: string, archive: boolean) {
+export async function archiveAlert(tokenId: string, alertId: string, archive: boolean): Promise<Boolean> {
   try {
-    const response = await fetch('/api/alerts/archive/' + alertId, {
+    const response = await fetch('/api/alerts/archive', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         archive: archive,
+        token_id: tokenId,
+        alert_id: alertId,
       }),
     });
 

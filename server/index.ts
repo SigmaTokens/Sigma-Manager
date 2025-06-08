@@ -36,7 +36,7 @@ import { serveGeneral } from './routes/general';
 import { Constants } from './constants';
 import util from 'node:util';
 import { create_honeytoken_alert } from './database/alerts';
-import { get_all_user_agents, insert_agent } from './database/agents';
+import { get_all_agents, insert_agent } from './database/agents';
 import { get_all_agent_honeytokens } from './database/honeytokens';
 
 main();
@@ -84,7 +84,7 @@ function main(): void {
     socket.on('REGISTER_AGENT', async (payload) => {
       const { id, name, user } = payload;
 
-      const agents = await get_all_user_agents(user);
+      const agents = await get_all_agents();
 
       const agent_id_exists = agents.some((agent: any) => agent.agent_id === id);
 

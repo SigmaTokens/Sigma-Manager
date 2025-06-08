@@ -22,7 +22,7 @@ export async function init_honeytokens_table() {
       agent_id VARCHAR,
       api_port INTEGER,
       FOREIGN KEY (type_id) REFERENCES types (type_id) ON DELETE CASCADE,
-      FOREIGN KEY (agent_id) REFERENCES agents (agent_id) ON DELETE SET NULL,
+      FOREIGN KEY (agent_id) REFERENCES agents (agent_id) ON DELETE SET NULL
     );
   `);
 }

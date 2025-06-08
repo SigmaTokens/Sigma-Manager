@@ -62,20 +62,32 @@ export async function verify_user_agent_by_id(agent_id: string, user_id: string)
   );
 }
 
-export async function get_all_user_agents(user_id: string) {
-  const rows = await Globals.app.locals.db.all(sql`
+export async function get_all_agents() {
+  return await Globals.app.locals.db.all(sql`
     SELECT
-      a.agent_id,
-      a.agent_name,
-      a.validated,
-      a.user_id,
-      u.username
+      *
     FROM
-      agents a
-      LEFT JOIN users u ON a.user_id = u.user_id
-    WHERE
-      a.user_id = ${user_id};
+      agents
   `);
+}
+
+export async function get_all_user_agents(user_id: string) {
+  const rows = await Globals.app.locals.db.all(
+    sql`
+      SELECT
+        a.agent_id,
+        a.agent_name,
+        a.validated,
+        a.user_id,
+        u.username
+      FROM
+        agents AS a
+        LEFT JOIN users AS u ON a.user_id = u.id
+      WHERE
+        a.user_id = ?;
+    `,
+    [user_id],
+  );
 
   return rows;
 }

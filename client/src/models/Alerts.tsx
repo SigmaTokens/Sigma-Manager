@@ -1,6 +1,8 @@
 export async function getAlerts() {
   try {
-    const response = await fetch('/api/alerts');
+    const response = await fetch('/api/alerts', {
+      headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
+    });
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -15,6 +17,7 @@ export async function archiveAlert(tokenId: string, alertId: string, archive: bo
     const response = await fetch('/api/alerts/archive', {
       method: 'POST',
       headers: {
+        Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({

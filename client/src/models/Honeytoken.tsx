@@ -14,6 +14,7 @@ export async function createHoneytokenText(
   return await fetch('/api/honeytokens/text', {
     method: 'POST',
     headers: {
+      Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -40,6 +41,7 @@ export async function createHoneytokenApi(
   return await fetch('/api/honeytokens/api', {
     method: 'POST',
     headers: {
+      Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -56,7 +58,9 @@ export async function createHoneytokenApi(
 
 export async function getHoneytokens() {
   try {
-    const response = await fetch('/api/honeytokens');
+    const response = await fetch('/api/honeytokens', {
+      headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
+    });
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -70,6 +74,7 @@ export async function deleteHoneytoken(token_id: string) {
   try {
     const response = await fetch(`/api/honeytokens/token/${token_id}`, {
       method: 'DELETE',
+      headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
     });
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -84,6 +89,7 @@ export async function startMonitorOnHoneytoken(token_id: string) {
     const response = await fetch(`/api/honeytokens/start`, {
       method: 'PUT',
       headers: {
+        Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -103,6 +109,7 @@ export async function stopMonitorOnHoneytoken(token_id: string) {
     const response = await fetch(`/api/honeytokens/stop`, {
       method: 'PUT',
       headers: {
+        Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -132,6 +139,7 @@ export async function getHoneytokensMonitorStatusesText(): Promise<Record<string
     const response = await fetch('/api/honeytokens/monitor_status_text', {
       method: 'POST',
       headers: {
+        Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ agents_ids }),
@@ -165,6 +173,7 @@ export async function getHoneytokensMonitorStatusesAPI(): Promise<Record<string,
     const response = await fetch('/api/honeytokens/monitor_status_api', {
       method: 'POST',
       headers: {
+        Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ agents_ids }),
@@ -187,6 +196,7 @@ export async function deleteHoneytokensByGroupId(group_id: string) {
   try {
     const response = await fetch(`/api/honeytokens/group/${group_id}`, {
       method: 'DELETE',
+      headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
     });
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -201,6 +211,7 @@ export async function startMonitorByGroupId(group_id: string) {
     const response = await fetch(`/api/honeytokens/api/start`, {
       method: 'PUT',
       headers: {
+        Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ group_id }),
@@ -218,6 +229,7 @@ export async function stopMonitorByGroupId(group_id: string) {
     const response = await fetch(`/api/honeytokens/stop/group`, {
       method: 'PUT',
       headers: {
+        Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ group_id }),

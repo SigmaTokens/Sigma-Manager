@@ -32,7 +32,6 @@ import { startDatabase } from './database/database';
 import { Globals } from './globals';
 import { serveAgents } from './routes/agents';
 import { serveHome } from './routes/home';
-import { serveGeneral } from './routes/general';
 import { Constants } from './constants';
 import util from 'node:util';
 import { create_honeytoken_alert } from './database/alerts';
@@ -98,7 +97,9 @@ function main(): void {
       try {
         const { token_id, alert_epoch, accessed_by, log } = payload;
 
-        await create_honeytoken_alert(token_id, alert_epoch, accessed_by, log);
+        const result = await create_honeytoken_alert(token_id, alert_epoch, accessed_by, log);
+
+        if (result) console.log('created alert successfully!');
       } catch (error: any) {
         console.error(Constants.TEXT_RED_COLOR, 'Failed to create alert:', error.message, Constants.TEXT_DEFAULT_COLOR);
       }
@@ -121,7 +122,6 @@ function main(): void {
       );
 
       serveUsers();
-      serveGeneral();
       serveHome();
       serveHoneytokens();
       serveAlerts();

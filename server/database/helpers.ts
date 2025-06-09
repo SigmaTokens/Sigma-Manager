@@ -27,28 +27,28 @@ export async function init_tables() {
   if (!(await is_table_exists('types'))) {
     await init_types_table();
     if (process.env.MODE === 'dev')
-      console.log(Constants.TEXT_GREEN_COLOR, 'Initiated types table successfully', Constants.TEXT_WHITE_COLOR);
+      console.log(Constants.TEXT_GREEN_COLOR, 'Initiated types table successfully', Constants.TEXT_DEFAULT_COLOR);
   }
   if (!(await is_table_exists('honeytokens'))) {
     await init_honeytokens_table();
     if (process.env.MODE === 'dev')
-      console.log(Constants.TEXT_GREEN_COLOR, 'Initiated honeytokens table successfully', Constants.TEXT_WHITE_COLOR);
+      console.log(Constants.TEXT_GREEN_COLOR, 'Initiated honeytokens table successfully', Constants.TEXT_DEFAULT_COLOR);
   }
   if (!(await is_table_exists('alerts'))) {
     await init_alerts_table();
     if (process.env.MODE === 'dev')
-      console.log(Constants.TEXT_GREEN_COLOR, 'Initiated alerts table successfully', Constants.TEXT_WHITE_COLOR);
+      console.log(Constants.TEXT_GREEN_COLOR, 'Initiated alerts table successfully', Constants.TEXT_DEFAULT_COLOR);
   }
   if (!(await is_table_exists('agents'))) {
     await init_agents_table();
     if (process.env.MODE === 'dev')
-      console.log(Constants.TEXT_GREEN_COLOR, 'Initiated agents table successfully', Constants.TEXT_WHITE_COLOR);
+      console.log(Constants.TEXT_GREEN_COLOR, 'Initiated agents table successfully', Constants.TEXT_DEFAULT_COLOR);
   }
 
   if (!(await is_table_exists('users'))) {
     await init_users_table();
     if (process.env.MODE === 'dev')
-      console.log(Constants.TEXT_GREEN_COLOR, 'Initiated users table successfully', Constants.TEXT_WHITE_COLOR);
+      console.log(Constants.TEXT_GREEN_COLOR, 'Initiated users table successfully', Constants.TEXT_DEFAULT_COLOR);
   }
 }
 

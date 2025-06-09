@@ -27,7 +27,6 @@ export function serveAgents() {
   //✔️
   router.get('/agents', async (req, res) => {
     try {
-      console.log('user fetched data from verified token', (req as any).user);
       const user_id: string = (req as any).user.id;
       const agents = await get_all_user_agents(user_id);
 
@@ -35,7 +34,7 @@ export function serveAgents() {
 
       return void res.status(200).json(agents);
     } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to fetch agents:', error, Constants.TEXT_WHITE_COLOR);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to fetch agents:', error, Constants.TEXT_DEFAULT_COLOR);
       return void res.status(500).json([]);
     }
   });
@@ -63,7 +62,7 @@ export function serveAgents() {
       }
       return void res.status(200).json({ success: true });
     } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to erase agent:', error, Constants.TEXT_WHITE_COLOR);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to erase agent:', error, Constants.TEXT_DEFAULT_COLOR);
       return void res.status(500).json({ success: false });
     }
   });
@@ -80,7 +79,7 @@ export function serveAgents() {
       );
       return void res.status(200).json(statusUpdates);
     } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to update agent statuses:', error, Constants.TEXT_WHITE_COLOR);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to update agent statuses:', error, Constants.TEXT_DEFAULT_COLOR);
       return void res.status(500).json({});
     }
   });

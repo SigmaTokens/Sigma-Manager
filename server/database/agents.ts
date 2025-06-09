@@ -7,7 +7,7 @@ export async function init_agents_table() {
       agent_id VARCHAR PRIMARY KEY,
       agent_name TEXT NOT NULL,
       validated INTEGER DEFAULT 0,
-      user_id TEXT,
+      user_id TEXT NOT NULL,
       FOREIGN KEY (user_id) REFERENCES users (user_id)
     );
   `);
@@ -36,15 +36,15 @@ export async function is_user_agent(user_id: string, agent_id: string): Promise<
   }
 }
 
-export async function insert_agent(agent_id: string, name: string, user_id: number) {
-  await Globals.app.locals.db.run(
+export async function insert_agent(agent_id: string, agent_name: string, user_id: string) {
+  return await Globals.app.locals.db.run(
     sql`
       INSERT INTO
         agents (agent_id, agent_name, user_id)
       VALUES
         (?, ?, ?)
     `,
-    [agent_id, name, user_id],
+    [agent_id, agent_name, user_id],
   );
 }
 

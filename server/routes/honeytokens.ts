@@ -29,7 +29,7 @@ export function serveHoneytokens() {
       if (honeytokens) return void res.status(200).json(honeytokens);
       return void res.status(200).json([]);
     } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to fetch honeytokens:', error, Constants.TEXT_WHITE_COLOR);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to fetch honeytokens:', error, Constants.TEXT_DEFAULT_COLOR);
       return void res.status(500).json([]);
     }
   });
@@ -217,7 +217,7 @@ export function serveHoneytokens() {
       if (isDeleted) return void res.status(200).json({ success: true });
       return void res.status(500).json({ success: false });
     } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to delete honeytoken text:', error, Constants.TEXT_WHITE_COLOR);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to delete honeytoken text:', error, Constants.TEXT_DEFAULT_COLOR);
       return void res.status(500).json({ success: false });
     }
   });
@@ -252,7 +252,7 @@ export function serveHoneytokens() {
         Constants.TEXT_RED_COLOR,
         'Failed to delete honeytokens in group:',
         error,
-        Constants.TEXT_WHITE_COLOR,
+        Constants.TEXT_DEFAULT_COLOR,
       );
       return void res.status(500).json({ success: false });
     }
@@ -283,7 +283,7 @@ export function serveHoneytokens() {
         Constants.TEXT_RED_COLOR,
         'Failed to get honeytokens text statuses:',
         error,
-        Constants.TEXT_WHITE_COLOR,
+        Constants.TEXT_DEFAULT_COLOR,
       );
       return void res.status(500).json({});
     }
@@ -313,7 +313,7 @@ export function serveHoneytokens() {
         Constants.TEXT_RED_COLOR,
         'Failed to get honeytokens api statuses:',
         error,
-        Constants.TEXT_WHITE_COLOR,
+        Constants.TEXT_DEFAULT_COLOR,
       );
       return void res.status(500).json({ success: false });
     }
@@ -350,7 +350,7 @@ export function serveHoneytokens() {
         Constants.TEXT_RED_COLOR,
         'Failed to start monitor on honeytoken text:',
         error,
-        Constants.TEXT_WHITE_COLOR,
+        Constants.TEXT_DEFAULT_COLOR,
       );
       return void res.status(500).json({ success: false });
     }
@@ -384,7 +384,7 @@ export function serveHoneytokens() {
       if (!isMonitoring) return void res.status(500).json({ success: false });
       return void res.status(200).json({ success: true });
     } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to start monitor on group:', error, Constants.TEXT_WHITE_COLOR);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to start monitor on group:', error, Constants.TEXT_DEFAULT_COLOR);
       res.status(500).json({ failure: error });
     }
   });
@@ -420,7 +420,7 @@ export function serveHoneytokens() {
         Constants.TEXT_RED_COLOR,
         'Failed to stop monitor on honeytoken text:',
         error,
-        Constants.TEXT_WHITE_COLOR,
+        Constants.TEXT_DEFAULT_COLOR,
       );
       return void res.status(500).json({ success: false });
     }
@@ -451,7 +451,7 @@ export function serveHoneytokens() {
         return void res.status(500).json({ success: false });
       }
     } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to start monitor on group:', error, Constants.TEXT_WHITE_COLOR);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to start monitor on group:', error, Constants.TEXT_DEFAULT_COLOR);
       res.status(500).json({ failure: error });
     }
   });

@@ -93,7 +93,7 @@ export function serveHome() {
         Constants.TEXT_RED_COLOR,
         'Failed to fetch dashboard summary:',
         error.message,
-        Constants.TEXT_WHITE_COLOR,
+        Constants.TEXT_DEFAULT_COLOR,
       );
       return void res.status(500).json({ failure: error.message });
     }

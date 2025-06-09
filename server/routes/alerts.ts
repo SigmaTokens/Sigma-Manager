@@ -20,7 +20,7 @@ export function serveAlerts() {
       if (!alerts) return void res.status(200).json([]);
       return void res.status(200).json(alerts);
     } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to fetch alerts:', error, Constants.TEXT_WHITE_COLOR);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to fetch alerts:', error, Constants.TEXT_DEFAULT_COLOR);
       return void res.status(500).json([]);
     }
   });
@@ -43,7 +43,7 @@ export function serveAlerts() {
 
       return void res.status(200).json({ success: true });
     } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to set archive status:', error, Constants.TEXT_WHITE_COLOR);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to set archive status:', error, Constants.TEXT_DEFAULT_COLOR);
       return void res.status(500).json({ success: false });
     }
   });

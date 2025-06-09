@@ -6,5 +6,6 @@ export class Constants {
   static TEXT_MAGENTA_COLOR = '\x1b[35m';
   static TEXT_DEFAULT_COLOR = '\x1b[37m';
   static PRIVATE_KEY_BISCUIT = 'PRIVATE_KEY_BISCUIT';
+  static VITE_MANAGER_HOST = 'VITE_MANAGER_HOST';
   static VITE_PUBLIC_KEY_BISCUIT = 'VITE_PUBLIC_KEY_BISCUIT';
 }

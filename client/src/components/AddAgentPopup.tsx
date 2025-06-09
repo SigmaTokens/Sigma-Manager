@@ -1,69 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import { Card } from './popup';
-import { getServerAddress, getAddresses } from '../models/General';
 import { FaClipboard } from 'react-icons/fa';
 import { generateInstallScript, generateUpdateScript, getOsInstructions } from '../utilities/agent_install_scripts';
-import { Connection, OS } from '../utilities/typing';
-
+import { OS } from '../utilities/typing';
 import '../styles/AddAgentPopup.css';
+import { useAuth } from '../contexts/UserContext';
 
 interface AddAgentPopupProps {
   onClose: () => void;
 }
 
-interface ServerAddress {
-  ip: string;
-  port: number;
-}
-
 export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
   const [os, setOs] = useState<OS>(OS.Windows);
-  const [availableIps, setAvailableIps] = useState<string[]>([]);
-  const [selectedIp, setSelectedIp] = useState<string>('');
-  const [serverAddress, setServerAddress] = useState<ServerAddress>();
+  const [managerHost, setManagerHost] = useState<string>('');
   const [agentName, setAgentName] = useState('');
   const [installToast, setInstallToast] = useState(false);
   const [updateToast, setUpdateToast] = useState(false);
-  const [connectionMode, setConnectionMode] = useState<Connection>(Connection.IP);
-  const [domainName, setDomainName] = useState<string>('');
   const [installScript, setInstallScript] = useState('');
   const [updateScript, setUpdateScript] = useState('');
-
-  useEffect(() => {
-    getAddresses()
-      .then((ips) => {
-        setAvailableIps(ips);
-        if (ips.length > 0) setSelectedIp(ips[0]);
-      })
-      .catch(console.error);
-  }, []);
-
-  useEffect(() => {
-    if (connectionMode === Connection.IP && selectedIp) {
-      getServerAddress(selectedIp)
-        .then((addr) => setServerAddress(addr))
-        .catch(console.error);
-    }
-  }, [connectionMode, selectedIp]);
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     let newInstallScript = '';
-    if (connectionMode === Connection.IP) {
-      if (!serverAddress) return;
-      newInstallScript = generateInstallScript(
-        os,
-        serverAddress.ip,
-        serverAddress.port,
-        agentName,
-        undefined,
-        Connection.IP,
-      );
-    } else {
-      newInstallScript = generateInstallScript(os, undefined, undefined, agentName, domainName, Connection.Domain);
-    }
+    const manager_host = import.meta.env.VITE_MANAGER_HOST;
+    setManagerHost(manager_host);
+    newInstallScript = generateInstallScript(os, managerHost, currentUser!.id, agentName);
+
     setInstallScript(newInstallScript);
     setUpdateScript(generateUpdateScript(os));
-  }, [os, serverAddress, agentName, connectionMode, domainName]);
+  }, [os, agentName, managerHost]);
 
   function copyToClipboard(text: string, setToast: React.Dispatch<React.SetStateAction<boolean>>) {
     navigator.clipboard.writeText(text).then(() => {
@@ -77,60 +42,6 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
       <div className="popup-card-agent" onClick={(e) => e.stopPropagation()}>
         <Card>
           <h2 className="popup-title">Add Agent</h2>
-
-          {/* Connection Mode Selection */}
-          <div className="instruction0">
-            Add agent via:&nbsp;
-            <label>
-              <input
-                type="radio"
-                name="connectionMode"
-                value={Connection.IP}
-                checked={connectionMode === Connection.IP}
-                onChange={() => setConnectionMode(Connection.IP)}
-              />{' '}
-              IP & Port
-            </label>
-            <label style={{ marginLeft: '1rem' }}>
-              <input
-                type="radio"
-                name="connectionMode"
-                value={Connection.Domain}
-                checked={connectionMode === Connection.Domain}
-                onChange={() => setConnectionMode(Connection.Domain)}
-              />{' '}
-              Domain
-            </label>
-          </div>
-
-          {/* Domain Input */}
-          {connectionMode === Connection.Domain && (
-            <div className="instruction1">
-              Enter domain:
-              <input
-                className="agent-input"
-                type="text"
-                placeholder="example.com:8080"
-                value={domainName}
-                onChange={(e) => setDomainName(e.target.value)}
-              />
-            </div>
-          )}
-
-          {/* IP selection */}
-          {connectionMode === Connection.Domain && (
-            <div className="instruction1">
-              Select your manager IP:
-              <select className="agent-input" value={selectedIp} onChange={(e) => setSelectedIp(e.target.value)}>
-                {availableIps.map((ip) => (
-                  <option key={ip} value={ip}>
-                    {ip}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
           {/* Agent Name */}
           <div className="instruction2">
             Name the new agent:

@@ -46,8 +46,6 @@ export function serveHome() {
 
       let onlineAgents = 0;
 
-      console.log('kusemek: ', agents);
-
       if (agents && agents.length > 0) {
         agents.forEach((agent: any) => {
           const socket = Globals.agentSockets.get(agent.agent_id);

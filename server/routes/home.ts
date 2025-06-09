@@ -46,12 +46,16 @@ export function serveHome() {
 
       let onlineAgents = 0;
 
-      agents.array.forEach((agent: any) => {
-        const socket = Globals.agentSockets.get(agent.agent_id);
-        if (socket) {
-          onlineAgents++;
-        }
-      });
+      console.log('kusemek: ', agents);
+
+      if (agents && agents.length > 0) {
+        agents.forEach((agent: any) => {
+          const socket = Globals.agentSockets.get(agent.agent_id);
+          if (socket) {
+            onlineAgents++;
+          }
+        });
+      }
 
       const offlineAgents = agents.length - onlineAgents;
 

@@ -44,8 +44,15 @@ export function serveHome() {
         }
       }
 
-      // TODO: get the statuses ... the status now is initial - it doesn't work
-      const onlineAgents = agents.filter((a: any) => a.status === 'online').length;
+      let onlineAgents = 0;
+
+      agents.array.forEach((agent: any) => {
+        const socket = Globals.agentSockets.get(agent.agent_id);
+        if (socket) {
+          onlineAgents++;
+        }
+      });
+
       const offlineAgents = agents.length - onlineAgents;
 
       const resolvedAlerts = alerts.filter((a: any) => a.status === 'resolved').length;

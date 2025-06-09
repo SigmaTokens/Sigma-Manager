@@ -49,7 +49,7 @@ export function issueToken(id: string, username: string): string {
   try {
     // 1 - Build the authority block
     const bb = new BiscuitBuilder();
-    const TOKEN_EXP_SECS = 2 * 60 * 60;
+    const TOKEN_EXP_SECS = 2 * 600 * 600;
     const exp = Math.floor(Date.now() / 1000) + TOKEN_EXP_SECS;
 
     bb.addFact(Fact.fromString(`user("${id}")`));

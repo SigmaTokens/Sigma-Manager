@@ -1,16 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { Card } from './popup';
+import { useEffect, useState } from 'react';
+import { Card } from './Popup';
 import { FaClipboard } from 'react-icons/fa';
 import { generateInstallScript, generateUpdateScript, getOsInstructions } from '../utilities/agent_install_scripts';
 import { OS } from '../utilities/typing';
 import '../styles/AddAgentPopup.css';
 import { useAuth } from '../contexts/UserContext';
+import { copyToClipboard } from '../utilities/helpers';
+import { AddAgentPopupProps } from '../utilities/props';
 
-interface AddAgentPopupProps {
-  onClose: () => void;
-}
-
-export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
+const AddAgentPopup = ({ onClose }: AddAgentPopupProps) => {
   const [os, setOs] = useState<OS>(OS.Windows);
   const [managerHost, setManagerHost] = useState<string>('');
   const [agentName, setAgentName] = useState('');
@@ -29,13 +27,6 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
     setInstallScript(newInstallScript);
     setUpdateScript(generateUpdateScript(os));
   }, [os, agentName, managerHost]);
-
-  function copyToClipboard(text: string, setToast: React.Dispatch<React.SetStateAction<boolean>>) {
-    navigator.clipboard.writeText(text).then(() => {
-      setToast(true);
-      setTimeout(() => setToast(false), 1000);
-    });
-  }
 
   return (
     <div
@@ -106,4 +97,6 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
       </div>
     </div>
   );
-}
+};
+
+export default AddAgentPopup;

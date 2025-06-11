@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { getAgents } from '../models/Agents';
 import { useAuth } from '../contexts/UserContext';
 import { Globals } from '../utilities/globals';
@@ -8,13 +8,14 @@ import CreateHoneytokenForm from './HoneyTokenCreation';
 import AddAgentPopup from './AddAgentPopup';
 import '../styles/Header.css';
 import { useRef } from 'react';
+import { useLogout } from '../utilities/helpers';
 
-export default function Header() {
+const Header = () => {
   const [showCreate, setShowCreate] = useState(false);
   const [showAddAgent, setShowAddAgent] = useState(false);
   const [agents, setAgents] = useState([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { currentUser, logout } = useAuth();
+  const { currentUser } = useAuth();
   const menuRef = useRef<HTMLUListElement>(null);
   const hamburgerRef = useRef<HTMLButtonElement>(null);
 
@@ -42,13 +43,6 @@ export default function Header() {
     };
   }, []);
 
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    await logout();
-    navigate('/login');
-  };
-
   return (
     <header className="header">
       <nav className="nav">
@@ -69,7 +63,7 @@ export default function Header() {
 
           {currentUser && (
             <li className="logout">
-              <button onClick={handleLogout} className="link-btn">
+              <button onClick={useLogout} className="link-btn">
                 Logout
               </button>
             </li>
@@ -169,7 +163,7 @@ export default function Header() {
                 <li>
                   <button
                     onClick={() => {
-                      handleLogout();
+                      useLogout();
                       setMobileMenuOpen(false);
                     }}
                   >
@@ -189,4 +183,6 @@ export default function Header() {
       {currentUser && showAddAgent && <AddAgentPopup onClose={() => setShowAddAgent(false)} />}
     </header>
   );
-}
+};
+
+export default Header;

@@ -99,7 +99,7 @@ function main(): void {
 
         const result = await create_honeytoken_alert(token_id, alert_epoch, accessed_by, log);
 
-        if (result) console.log('created alert successfully!');
+        if (!result) console.log('Failed to create alert!');
       } catch (error: any) {
         console.error(Constants.TEXT_RED_COLOR, 'Failed to create alert:', error.message, Constants.TEXT_DEFAULT_COLOR);
       }

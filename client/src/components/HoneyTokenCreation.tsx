@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './popup';
-import '../styles/HoneyTokenCreation.css';
+import { Card, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './Popup';
 import { getAgents } from '../models/Agents';
 import { createHoneytokenText, createHoneytokenApi } from '../models/Honeytoken';
-
 import { IAgent, IHoneytokenType, CreateHoneytokenFormProps } from '../../../server/interfaces/agent';
 import { FiPlus, FiMinus } from 'react-icons/fi';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
-import { error } from 'console';
 import { HoneytokenType } from '../utilities/typing';
+import '../styles/HoneyTokenCreation.css';
 
-function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
+const CreateHoneytokenForm = ({ types, onClose }: CreateHoneytokenFormProps) => {
   const [selectedType, setSelectedType] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
   const [componentAddresses, setComponentAddresses] = useState<string>('');
@@ -351,6 +349,6 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
       </div>
     </div>
   );
-}
+};
 
 export default CreateHoneytokenForm;

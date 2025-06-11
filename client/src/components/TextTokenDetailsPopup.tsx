@@ -1,13 +1,8 @@
 import React from 'react';
 import '../styles/TextTokenDetailsPopup.css';
-import { IHoneytoken } from '../../../server/interfaces/honeytoken';
+import { TextTokenDetailsPopupProps } from '../utilities/props';
 
-interface Props {
-  token: IHoneytoken;
-  onClose: () => void;
-}
-
-const TextTokenDetailsPopup: React.FC<Props> = ({ token, onClose }) => {
+const TextTokenDetailsPopup: React.FC<TextTokenDetailsPopupProps> = ({ token, onClose }) => {
   return (
     <div className="popup-overlay">
       <div className="popup-box">

@@ -1,13 +1,7 @@
-import React from 'react';
 import '../styles/ApiTokenDetailsPopup.css';
-import { IHoneytoken } from '../../../server/interfaces/honeytoken';
+import { ApiTokenDetailsPopupProps } from '../utilities/props';
 
-interface Props {
-  token: IHoneytoken;
-  onClose: () => void;
-}
-
-const ApiTokenDetailsPopup = ({ token, onClose }: Props) => {
+const ApiTokenDetailsPopup = ({ token, onClose }: ApiTokenDetailsPopupProps) => {
   return (
     <div className="popup-overlay">
       <div className="popup-box">

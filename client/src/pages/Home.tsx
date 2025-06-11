@@ -5,6 +5,7 @@ import '../styles/Home.css';
 import { IDashboardSummary } from '../../../server/interfaces/summary';
 import { Bar } from 'react-chartjs-2';
 import { CategoryScale, LinearScale, BarElement } from 'chart.js';
+import { getHome } from '../models/Home';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement);
 
@@ -15,20 +16,7 @@ function Home() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetch('/api/home', {
-      headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error('Failed to fetch dashboard data');
-        return res.json();
-      })
-      .then((data) => {
-        setSummary(data);
-      })
-      .catch((err) => {
-        console.error(err);
-        setError('Failed to load dashboard data.');
-      });
+    getHome(setSummary, setError);
   }, []);
 
   if (error) return <div>{error}</div>;

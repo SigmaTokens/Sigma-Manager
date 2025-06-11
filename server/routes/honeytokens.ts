@@ -140,6 +140,12 @@ export function serveHoneytokens() {
 
       if (!isOwner) return void res.status(500).json({ success: false });
 
+      const api_honeytokens = await get_all_user_honeytokens(user_id);
+
+      const exists = api_honeytokens.find((token: any) => token.api_port === api_port && token.agent_id === agent_id);
+
+      if (exists) return void res.status(500).json({ success: false });
+
       const group_id = uuidv4();
 
       apis_test.forEach(async (api) => {

@@ -163,7 +163,10 @@ export function serveHoneytokens() {
           api_port,
         );
 
-        if (!result) return void res.status(500).json({ success: false });
+        if (!result) {
+          console.log('here1');
+          return void res.status(500).json({ success: false });
+        }
       });
 
       const token_data = {
@@ -175,20 +178,19 @@ export function serveHoneytokens() {
         apis: apis_test,
       };
 
-      let isCreated = false;
-
       const socket = Globals.agentSockets.get(agent_id);
       if (socket)
         socket.emit('CREATE_HONEYTOKEN_API', token_data, async (response: any) => {
           console.log(response.status);
-          if (response.status === 'created') isCreated = true;
+          if (response.status === 'created') {
+            return void res.status(200).json({ success: true });
+          }
+          return void res.status(500).json({ success: false });
         });
       else {
         console.error(Constants.TEXT_RED_COLOR, 'Failed fetching socket to create honeytoken!');
         return void res.status(500).json({ success: false });
       }
-      if (!isCreated) return void res.status(500).json({ success: false });
-      return void res.status(200).json({ success: true });
     } catch (error) {
       console.error(Constants.TEXT_RED_COLOR, 'Failed to create honeytoken api:', error);
       return void res.status(500).json({ success: false });

@@ -78,6 +78,7 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
   const handleSubmitApi = async () => {
     try {
       const response = await createHoneytokenApi(grade, expirationDate, notes, agentID, port, apiRows);
+      console.log(response);
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Error creating honeytoken: ', errorText);

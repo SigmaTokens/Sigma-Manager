@@ -7,11 +7,11 @@ export function auth(mustBeSelf = false): RequestHandler {
     try {
       await loadBiscuit();
 
-      const authHeader = req.headers.authorization;
+      let raw = req.headers.authorization?.startsWith('Bearer ') ? req.headers.authorization.split(' ')[1] : undefined;
 
-      if (!authHeader || !authHeader.startsWith('Bearer ')) return void res.status(500).json({ action: denyAccess });
+      if (!raw && (req as any).cookies?.token) raw = (req as any).cookies.token;
 
-      const raw = authHeader.split(' ')[1];
+      if (!raw) return void res.status(500).json({ action: denyAccess });
 
       const tok = verifyToken(raw);
       if (tok === '') return void res.status(500).json({ action: denyAccess });

@@ -1,29 +1,21 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getAgents } from '../models/Agents';
 import { useAuth } from '../contexts/UserContext';
 import { Globals } from '../utilities/globals';
+import { useRef } from 'react';
 import logo from '../assets/SigmaTokens.png';
 import CreateHoneytokenForm from './HoneyTokenCreation';
 import AddAgentPopup from './AddAgentPopup';
 import '../styles/Header.css';
-import { useRef } from 'react';
 import { useLogout } from '../utilities/helpers';
 
 const Header = () => {
   const [showCreate, setShowCreate] = useState(false);
   const [showAddAgent, setShowAddAgent] = useState(false);
-  const [agents, setAgents] = useState([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { currentUser } = useAuth();
   const menuRef = useRef<HTMLUListElement>(null);
   const hamburgerRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    getAgents().then((agents) => {
-      setAgents(agents);
-    });
-  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -177,7 +169,7 @@ const Header = () => {
       </nav>
 
       {currentUser && showCreate && (
-        <CreateHoneytokenForm types={Globals.honeytokenTypes} agents={agents} onClose={() => setShowCreate(false)} />
+        <CreateHoneytokenForm types={Globals.honeytokenTypes} onClose={() => setShowCreate(false)} />
       )}
 
       {currentUser && showAddAgent && <AddAgentPopup onClose={() => setShowAddAgent(false)} />}

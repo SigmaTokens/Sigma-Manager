@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Card, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './Popup';
-import { getAgents } from '../models/Agents';
+import React, { useState } from 'react';
+import { Card, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './popup';
 import { createHoneytokenText, createHoneytokenApi } from '../models/Honeytoken';
-import { IAgent, IHoneytokenType, CreateHoneytokenFormProps } from '../../../server/interfaces/agent';
+import { IHoneytokenType, CreateHoneytokenFormProps } from '../../../server/interfaces/agent';
 import { FiPlus, FiMinus } from 'react-icons/fi';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { HoneytokenType } from '../utilities/typing';
+import { useAgents } from '../contexts/AgentsContext';
 import '../styles/HoneyTokenCreation.css';
 
 const CreateHoneytokenForm = ({ types, onClose }: CreateHoneytokenFormProps) => {
@@ -17,17 +17,11 @@ const CreateHoneytokenForm = ({ types, onClose }: CreateHoneytokenFormProps) => 
   const [fileName, setFileName] = useState<string>('');
   const [fileContent, setFileContent] = useState<string>('');
   const [agentID, setAgentID] = useState<string>('');
-  const [agents, setAgents] = useState<IAgent[]>([]);
   const [errors, setErrors] = useState<any>({});
   const [port, setPort] = useState<number>(9999);
   const [apiRows, setApiRows] = useState([{ method: 'GET', route: '', response: '' }]);
 
-  useEffect(() => {
-    getAgents().then((data) => {
-      setAgents(data);
-      if (data.length) setAgentID(data[0].agent_id);
-    });
-  }, []);
+  const { agents } = useAgents();
 
   const addApiRow = () => {
     setApiRows((rows) => [{ method: 'GET', route: '', response: '' }, ...rows]);
@@ -76,6 +70,7 @@ const CreateHoneytokenForm = ({ types, onClose }: CreateHoneytokenFormProps) => 
   const handleSubmitApi = async () => {
     try {
       const response = await createHoneytokenApi(grade, expirationDate, notes, agentID, port, apiRows);
+      console.log(response);
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Error creating honeytoken: ', errorText);

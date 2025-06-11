@@ -106,8 +106,6 @@ function Home() {
 
   return (
     <div className="home-container">
-      <h1>Dashboard Summary</h1>
-
       <div className="kpi-cards">
         <div className="kpi-card">👥 Total Agents: {summary.total_agents}</div>
         <div className="kpi-card">🟢 Online Agents: {summary.online_agents}</div>

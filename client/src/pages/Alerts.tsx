@@ -5,6 +5,7 @@ import '../styles/Alerts.css';
 import { getAlerts, archiveAlert } from '../models/Alerts';
 import { Alert } from '../../../server/interfaces/alert';
 import AlertDetailsPopup from '../components/AlertDetailsPopup';
+import VolumeBar from '../components/VolumeBar';
 
 function Alerts() {
   const [alerts, setAlerts] = useState<Alert[]>([]);
@@ -129,7 +130,7 @@ function Alerts() {
                     <td>
                       <button
                         className="icon-button"
-                        onClick={() => handleArchiveToggle(alert.alert_id, alert.archive)}
+                        onClick={() => handleArchiveToggle(alert.token_id, alert.alert_id, alert.archive)}
                         title={alert.archive ? 'Unarchive' : 'Archive'}
                       >
                         {alert.archive ? (
@@ -249,9 +250,12 @@ function Alerts() {
                       {`${alert.agent_id} ${alert.agent_name}`}
                     </span>
                   </td>
-                  <td className="truncate-cell" title={String(alert.grade)}>
-                    <span className={expandedDetails === alert.alert_id ? 'expanded' : 'truncated'}>{alert.grade}</span>
+                  <td className="truncate-cell" title={`Grade: ${alert.grade}`}>
+                    <span className={expandedDetails === alert.alert_id ? 'expanded' : 'truncated'}>
+                      <VolumeBar grade={alert.grade} />
+                    </span>
                   </td>
+
                   <td>
                     <button
                       className="icon-button"

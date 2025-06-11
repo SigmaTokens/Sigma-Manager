@@ -1,3 +1,6 @@
+* {
+  font-family: 'Inter', sans-serif;
+}
 .login-page {
   height: 100vh;
   overflow: hidden;

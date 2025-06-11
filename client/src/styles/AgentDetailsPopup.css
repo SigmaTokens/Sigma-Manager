@@ -1,3 +1,7 @@
+* {
+  font-family: 'Inter', sans-serif;
+}
+
 .agent-popup-overlay {
   position: fixed;
   top: 0;

@@ -1,4 +1,9 @@
 /* Container Styles */
+
+* {
+  font-family: 'Inter', sans-serif;
+}
+
 .alerts-container {
   padding: 1.5rem;
   background-color: white;
@@ -6,6 +11,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-y: auto;
+  padding-bottom: 3rem;
 }
 
 .alerts-title {
@@ -67,7 +74,7 @@
 }
 
 .alerts-table tbody tr:hover {
-  background-color: #f9fafb; /* היה #f3f4f6 בטעות */
+  background-color: #f9fafb;
 }
 
 .alerts-table tr.expanded-row td {

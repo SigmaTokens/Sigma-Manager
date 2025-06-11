@@ -3,7 +3,7 @@ import { Card, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectI
 import '../styles/HoneyTokenCreation.css';
 import { getAgents } from '../models/Agents';
 import { createHoneytokenText, createHoneytokenApi } from '../models/Honeytoken';
-import TextHoneyToken from './TextHoneyToken';
+
 import { IAgent, IHoneytokenType, CreateHoneytokenFormProps } from '../../../server/interfaces/agent';
 import { FiPlus, FiMinus } from 'react-icons/fi';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
@@ -202,74 +202,9 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
               />
               <div className="selected-grade">Selected Grade: {grade}</div>
             </div>
-            <br></br>
+
             {selectedType === HoneytokenType.API && (
               <div className="api-section">
-                <div className="api-table-container">
-                  <div className="api-table-scroll">
-                    <DragDropContext onDragEnd={onDragEnd}>
-                      <Droppable droppableId="apiRows">
-                        {(provided) => (
-                          <table className="api-table" {...provided.droppableProps} ref={provided.innerRef}>
-                            <thead>
-                              <tr>
-                                <th>Method</th>
-                                <th>Route</th>
-                                <th>Response</th>
-                                <th></th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {apiRows.map((row, index) => (
-                                <Draggable key={index} draggableId={`row-${index}`} index={index}>
-                                  {(prov) => (
-                                    <tr ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps}>
-                                      <td>
-                                        <select
-                                          value={row.method}
-                                          onChange={(e) => handleApiChange(index, 'method', e.target.value)}
-                                        >
-                                          {['GET', 'POST', 'PUT', 'DELETE'].map((m) => (
-                                            <option key={m}>{m}</option>
-                                          ))}
-                                        </select>
-                                      </td>
-                                      <td>
-                                        <input
-                                          type="text"
-                                          pattern="^/[A-Za-z0-9_/:-]*$"
-                                          title="Must start with / and contain only letters, numbers, /, -, _, :"
-                                          value={row.route}
-                                          onChange={(e) => handleApiChange(index, 'route', e.target.value)}
-                                          className={errors[`route${index}`] ? 'input-error' : ''}
-                                          required
-                                        />
-                                      </td>
-                                      <td>
-                                        <input
-                                          type="text"
-                                          value={row.response}
-                                          onChange={(e) => handleApiChange(index, 'response', e.target.value)}
-                                        />
-                                      </td>
-                                      <td className="api-action-cell">
-                                        <FiMinus className="api-minus-icon" onClick={() => removeApiRow(index)} />
-                                        {index === apiRows.length - 1 && (
-                                          <FiPlus className="api-plus-icon" onClick={addApiRow} />
-                                        )}
-                                      </td>
-                                    </tr>
-                                  )}
-                                </Draggable>
-                              ))}
-                              {provided.placeholder}
-                            </tbody>
-                          </table>
-                        )}
-                      </Droppable>
-                    </DragDropContext>
-                  </div>
-                </div>
                 <div id="this is port" className="field">
                   <label>
                     Port <span className="required-star">*</span>
@@ -283,21 +218,118 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
                     className={errors.port ? 'input-error' : ''}
                   />
                 </div>
+                <div className="api-table-wrapper">
+                  <div className="api-table-container">
+                    <div className="api-table-scroll">
+                      <DragDropContext onDragEnd={onDragEnd}>
+                        <Droppable droppableId="apiRows">
+                          {(provided) => (
+                            <table className="api-table" {...provided.droppableProps} ref={provided.innerRef}>
+                              <thead>
+                                <tr>
+                                  <th>Method</th>
+                                  <th>Route</th>
+                                  <th>Response</th>
+                                  <th></th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {apiRows.map((row, index) => (
+                                  <Draggable key={index} draggableId={`row-${index}`} index={index}>
+                                    {(prov) => (
+                                      <tr ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps}>
+                                        <td>
+                                          <select
+                                            value={row.method}
+                                            onChange={(e) => handleApiChange(index, 'method', e.target.value)}
+                                          >
+                                            {['GET', 'POST', 'PUT', 'DELETE'].map((m) => (
+                                              <option key={m}>{m}</option>
+                                            ))}
+                                          </select>
+                                        </td>
+                                        <td>
+                                          <input
+                                            type="text"
+                                            pattern="^/[A-Za-z0-9_/:-]*$"
+                                            title="Must start with / and contain only letters, numbers, /, -, _, :"
+                                            value={row.route}
+                                            onChange={(e) => handleApiChange(index, 'route', e.target.value)}
+                                            className={errors[`route${index}`] ? 'input-error' : ''}
+                                            required
+                                          />
+                                        </td>
+                                        <td>
+                                          <input
+                                            type="text"
+                                            value={row.response}
+                                            onChange={(e) => handleApiChange(index, 'response', e.target.value)}
+                                          />
+                                        </td>
+                                        <td className="api-action-cell">
+                                          <FiMinus className="api-minus-icon" onClick={() => removeApiRow(index)} />
+
+                                          <FiPlus className="api-plus-icon" onClick={addApiRow} />
+                                        </td>
+                                      </tr>
+                                    )}
+                                  </Draggable>
+                                ))}
+                                {provided.placeholder}
+                              </tbody>
+                            </table>
+                          )}
+                        </Droppable>
+                      </DragDropContext>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
 
             {selectedType === HoneytokenType.Text && (
-              <div className="text-honeytoken-wrapper">
-                <TextHoneyToken
-                  fileName={fileName}
-                  setFileName={setFileName}
-                  fileContent={fileContent}
-                  setFileContent={setFileContent}
-                  fileLocation={componentAddresses}
-                  setFileLocation={setComponentAddresses}
-                  clearErrors={() => setErrors({})}
-                />
-              </div>
+              <>
+                <div className="full-width-row">
+                  <label>File Content</label>
+                  <textarea
+                    className="input"
+                    placeholder="Enter the content of the file"
+                    value={fileContent}
+                    onChange={(e) => {
+                      setFileContent(e.target.value);
+                      setErrors({});
+                    }}
+                  />
+                </div>
+                <div id="this is file name">
+                  <label>
+                    File Name <span className="required-star">*</span>
+                  </label>
+                  <Input
+                    type="text"
+                    placeholder="Enter file name"
+                    value={fileName}
+                    onChange={(e) => {
+                      setFileName(e.target.value);
+                      setErrors({});
+                    }}
+                  />
+                </div>
+                <div id="this is file location">
+                  <label>
+                    File Location <span className="required-star">*</span>
+                  </label>
+                  <Input
+                    type="text"
+                    placeholder="Enter file path"
+                    value={componentAddresses}
+                    onChange={(e) => {
+                      setComponentAddresses(e.target.value);
+                      setErrors({});
+                    }}
+                  />
+                </div>
+              </>
             )}
           </div>
 

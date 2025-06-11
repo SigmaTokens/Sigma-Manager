@@ -1,5 +1,7 @@
 /* AddAgentPopup.css */
-
+* {
+  font-family: 'Inter', sans-serif;
+}
 .overlay {
   position: fixed;
   top: 0;

@@ -22,6 +22,7 @@ process.on('unhandledRejection', (reason) => {
 import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import { createServer } from 'http';
 import { Server as IOServer, Socket } from 'socket.io';
 import { serveClient } from './routes/client';
@@ -37,6 +38,7 @@ import util from 'node:util';
 import { create_honeytoken_alert } from './database/alerts';
 import { get_all_agents, insert_agent } from './database/agents';
 import { get_all_agent_honeytokens } from './database/honeytokens';
+import { serveSSE, sseUpdateAgents } from './routes/sse';
 
 main();
 
@@ -46,6 +48,7 @@ function main(): void {
   app.use(cors());
   app.use(express.urlencoded({ extended: true }));
   dotenv.config({ path: '../.env' });
+  app.use(cookieParser());
 
   console.log(Constants.TEXT_MAGENTA_COLOR, 'SERVER_TEST=' + process.env.SERVER_TEST, Constants.TEXT_DEFAULT_COLOR);
 
@@ -91,6 +94,8 @@ function main(): void {
         const result = await insert_agent(agent_id, agent_name, user_id);
         if (result) console.log(`created agent ${agent_name} successfully`);
       }
+
+      sseUpdateAgents();
     });
 
     socket.on('CREATE_ALERT', async (payload) => {
@@ -121,6 +126,7 @@ function main(): void {
         app.locals.db,
       );
 
+      serveSSE();
       serveUsers();
       serveHome();
       serveHoneytokens();

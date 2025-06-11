@@ -54,7 +54,7 @@ const UserContext = createContext<UserContextValue>({
   logout: () => {},
 });
 
-export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const UserContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
     const token = localStorage.getItem('token');
     if (!token) return null;

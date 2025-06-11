@@ -1,24 +1,3 @@
-import { IAgent, IAgentStatus } from '../../../server/interfaces/agent';
-
-export async function getAgents() {
-  try {
-    const response = await fetch('/api/agents', {
-      method: 'GET',
-      headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Error:', errorText);
-    } else {
-      const data = await response.json();
-      return data;
-    }
-  } catch (err) {
-    console.error('Request failed:', err);
-  }
-}
-
 export async function startAgent(agent_id: string) {
   try {
     const response = await fetch(`/api/agents/start`, {
@@ -59,35 +38,6 @@ export async function stopAgent(agent_id: string) {
   }
 }
 
-export async function areAgentsConnected() {
-  const response = await fetch('/api/agents/active_status', {
-    headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
-  });
-  return await response.json();
-}
-
-export async function isAgentMonitoring(agent_id: string): Promise<boolean> {
-  try {
-    const response = await fetch(`/api/agents/monitor_status`, {
-      method: 'PUT',
-      headers: {
-        Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        agent_id: agent_id,
-      }),
-    });
-    if (response.ok && response.status === 200) {
-      return true;
-    }
-    return false;
-  } catch (err) {
-    console.error('Error stopping agent:', err);
-    return false;
-  }
-}
-
 export async function deleteAgent(agent_id: string) {
   try {
     const response = await fetch(`/api/agents/agent/${agent_id}`, {
@@ -102,52 +52,13 @@ export async function deleteAgent(agent_id: string) {
   }
 }
 
-export async function verifyAgent(agent_id: string, setAgents: any, setStatusUpdates: any) {
+export async function verifyAgent(agent_id: string) {
   try {
     const response = await fetch(`/api/agents/verify/${agent_id}`, {
       method: 'GET',
       headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
     });
-    fetchAgents(setAgents, setStatusUpdates);
   } catch (err) {
     console.error('Error verifying agent: ', err);
-  }
-}
-
-export async function refreshStatuses(setStatusUpdates: any) {
-  try {
-    const data: IAgentStatus[] = await areAgentsConnected();
-    const newStatuses: Record<string, string> = {};
-    data.forEach(({ agent_id, status }) => {
-      newStatuses[agent_id] = status;
-    });
-
-    setStatusUpdates(newStatuses);
-  } catch (error) {
-    console.error('Failed to refresh statuses:', error);
-  }
-}
-
-export async function fetchAgents(setAgents: any, setStatusUpdates: any) {
-  try {
-    const agentData = await getAgents();
-
-    const agentDataWithRunningStatus = await Promise.all(
-      agentData.map(async (agent: IAgent) => {
-        try {
-          const isMonitoring = await isAgentMonitoring(agent.agent_id);
-
-          return { ...agent, isMonitoring: isMonitoring };
-        } catch (err) {
-          console.error(`Failed to check monitoring for agent ${agent.agent_id}:`, err);
-          return { ...agent, isMonitoring: false };
-        }
-      }),
-    );
-
-    setAgents(agentDataWithRunningStatus);
-    await refreshStatuses(setStatusUpdates);
-  } catch (error) {
-    console.error('Failed to fetch agents:', error);
   }
 }

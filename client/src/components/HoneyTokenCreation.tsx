@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Card, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './popup';
 import '../styles/HoneyTokenCreation.css';
-import { getAgents } from '../models/Agents';
 import { createHoneytokenText, createHoneytokenApi } from '../models/Honeytoken';
 
-import { IAgent, IHoneytokenType, CreateHoneytokenFormProps } from '../../../server/interfaces/agent';
+import { IHoneytokenType, CreateHoneytokenFormProps } from '../../../server/interfaces/agent';
 import { FiPlus, FiMinus } from 'react-icons/fi';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
-import { error } from 'console';
 import { HoneytokenType } from '../utilities/typing';
+import { useAgents } from '../contexts/AgentsContext';
 
 function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
   const [selectedType, setSelectedType] = useState<string>('');
@@ -19,17 +18,11 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
   const [fileName, setFileName] = useState<string>('');
   const [fileContent, setFileContent] = useState<string>('');
   const [agentID, setAgentID] = useState<string>('');
-  const [agents, setAgents] = useState<IAgent[]>([]);
   const [errors, setErrors] = useState<any>({});
   const [port, setPort] = useState<number>(9999);
   const [apiRows, setApiRows] = useState([{ method: 'GET', route: '', response: '' }]);
 
-  useEffect(() => {
-    getAgents().then((data) => {
-      setAgents(data);
-      if (data.length) setAgentID(data[0].agent_id);
-    });
-  }, []);
+  const { agents } = useAgents();
 
   const addApiRow = () => {
     setApiRows((rows) => [{ method: 'GET', route: '', response: '' }, ...rows]);

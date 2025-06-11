@@ -1,6 +1,5 @@
-import { IAgentStatus } from '../../../server/interfaces/agent';
+import { IAgent } from '../../../server/interfaces/agent';
 import { HoneytokenType } from '../utilities/typing';
-import { areAgentsConnected } from './Agents';
 
 export async function createHoneytokenText(
   fileName: string,
@@ -124,13 +123,9 @@ export async function stopMonitorOnHoneytoken(token_id: string) {
   }
 }
 
-export async function getHoneytokensMonitorStatusesText(): Promise<Record<string, boolean>> {
+export async function getHoneytokensMonitorStatusesText(agents: IAgent[]): Promise<Record<string, boolean>> {
   try {
-    const agents_data: IAgentStatus[] = await areAgentsConnected();
-
-    const agents_ids: string[] = agents_data
-      .filter(({ status }) => status === 'online')
-      .map(({ agent_id }) => agent_id);
+    const agents_ids: string[] = agents.filter(({ status }) => status === 'online').map(({ agent_id }) => agent_id);
 
     if (agents_ids.length === 0) {
       return {}; // Early exit if no online agents
@@ -158,12 +153,10 @@ export async function getHoneytokensMonitorStatusesText(): Promise<Record<string
   }
 }
 
-export async function getHoneytokensMonitorStatusesAPI(): Promise<Record<string, boolean>> {
+export async function getHoneytokensMonitorStatusesAPI(agents: IAgent[]): Promise<Record<string, boolean>> {
   try {
-    const agents_data: IAgentStatus[] = await areAgentsConnected();
-
-    const agents_ids: string[] = agents_data
-      .filter(({ status }) => status === 'online')
+    const agents_ids: string[] = agents
+      .filter((agent: IAgent) => agent.status === 'online')
       .map(({ agent_id }) => agent_id);
 
     if (agents_ids.length === 0) {

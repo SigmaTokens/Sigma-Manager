@@ -1,6 +1,9 @@
 export interface IAgent {
   agent_id: string;
   agent_name: string;
+  status: string;
+  user_id: string;
+  username: string;
   validated: number;
   isMonitoring: boolean;
 }
@@ -17,6 +20,5 @@ export interface IHoneytokenType {
 
 export interface CreateHoneytokenFormProps {
   types: IHoneytokenType[];
-  agents: IAgent[];
   onClose: () => void;
 }

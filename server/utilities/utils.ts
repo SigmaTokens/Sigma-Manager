@@ -1,51 +1,37 @@
-import { networkInterfaces } from 'os';
+import { get_all_user_agents } from '../database/agents';
+import { Globals } from '../globals';
+import { IAgent } from '../interfaces/agent';
 
-export function getLocalIPv4s(): string[] {
-  const ifaces = networkInterfaces();
-  const virtualInterfaceRegex =
-    /^(lo|docker|vmnet|veth|br-|tun|utun|vEthernet)/i;
+async function checkAgentStatus(id: string): Promise<string> {
+  try {
+    const socket = Globals.agentSockets.get(id);
+    if (socket && socket.connected) return 'online';
+    return 'offline';
+  } catch (error) {
+    return 'offline';
+  }
+}
 
-  // 1) Find the “priority” address: first wifi, otherwise first non-virtual
-  let priority: string | null = null;
-  for (const [name, list] of Object.entries(ifaces)) {
-    if (!list) continue;
-    if (/wifi/i.test(name)) {
-      const wifiAddr = list.find((i) => i.family === 'IPv4' && !i.internal);
-      if (wifiAddr) {
-        priority = wifiAddr.address;
-        break;
-      }
+async function checkAgentMonitoring(agent_id: string): Promise<boolean> {
+  const socket = Globals.agentSockets.get(agent_id);
+  if (socket) {
+    const response = await socket.emitWithAck('STATUS_AGENT');
+    if (response.status === 'monitoring') {
+      return true;
     }
+    return false;
   }
-  if (!priority) {
-    for (const [name, list] of Object.entries(ifaces)) {
-      if (!list || virtualInterfaceRegex.test(name)) continue;
-      const addr = list.find((i) => i.family === 'IPv4' && !i.internal);
-      if (addr) {
-        priority = addr.address;
-        break;
-      }
-    }
-  }
+  return false;
+}
 
-  // 2) Collect _all_ non-internal IPv4s (from every interface)
-  const allAddrs: string[] = [];
-  for (const list of Object.values(ifaces)) {
-    if (!list) continue;
-    for (const i of list) {
-      if (i.family === 'IPv4' && !i.internal) {
-        allAddrs.push(i.address);
-      }
-    }
-  }
-
-  // 3) De-duplicate and reorder so `priority` is first
-  const uniques = Array.from(new Set(allAddrs));
-  if (priority) {
-    const withoutPri = uniques.filter((ip) => ip !== priority);
-    return [priority, ...withoutPri];
-  }
-
-  // 4) Fallback: if nothing found, return loopback
-  return uniques.length > 0 ? uniques : ['127.0.0.1'];
+export async function getAgents(user_id: string) {
+  const agents: IAgent[] = await get_all_user_agents(user_id);
+  const statusUpdates: IAgent[] = await Promise.all(
+    agents.map(async (agent: IAgent) => ({
+      ...agent,
+      status: await checkAgentStatus(agent.agent_id),
+      isMonitoring: await checkAgentMonitoring(agent.agent_id),
+    })),
+  );
+  return statusUpdates;
 }

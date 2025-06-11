@@ -21,6 +21,7 @@ import { HoneytokenType } from '../utilities/typing';
 import TextTokenDetailsPopup from '../components/TextTokenDetailsPopup.tsx';
 import ApiTokenDetailsPopup from '../components/ApiTokenDetailsPopup.tsx';
 import { FiInfo } from 'react-icons/fi';
+import { useAgents } from '../contexts/AgentsContext.tsx';
 
 function Honeytokens() {
   const [honeytokens, setHoneytokens] = useState<IHoneytoken[]>([]);
@@ -32,16 +33,16 @@ function Honeytokens() {
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
   const [selectedToken, setSelectedToken] = useState<IHoneytoken | null>(null);
   const [selectedGroupToken, setSelectedGroupToken] = useState<IHoneytoken | null>(null);
-  // 👇 NEW STATE
   const [loadingTokenId, setLoadingTokenId] = useState<string | null>(null);
+  const { agents } = useAgents();
 
   useEffect(() => {
     const fetchHoneytokens = async () => {
       try {
         const tokenData = await getHoneytokens();
 
-        const monitoringStatuses_text = await getHoneytokensMonitorStatusesText();
-        const monitoringStatuses_api = await getHoneytokensMonitorStatusesAPI();
+        const monitoringStatuses_text = await getHoneytokensMonitorStatusesText(agents);
+        const monitoringStatuses_api = await getHoneytokensMonitorStatusesAPI(agents);
 
         const tokensWithMonitoringStatus = tokenData.map((token: IHoneytoken) => {
           if (token.type_id === HoneytokenType.Text)
@@ -63,7 +64,7 @@ function Honeytokens() {
     };
 
     fetchHoneytokens();
-  }, [refreshCounter]);
+  }, [agents, refreshCounter]);
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 

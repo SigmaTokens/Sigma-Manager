@@ -1,0 +1,15 @@
+.volume-bar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+  height: 60px;
+  width: 50px;
+  margin: auto;
+}
+
+.bar {
+  width: 4px;
+  border-radius: 1px;
+  transition: background-color 0.3s ease;
+}

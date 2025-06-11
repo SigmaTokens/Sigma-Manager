@@ -1,3 +1,6 @@
+* {
+  font-family: 'Inter', sans-serif;
+}
 .popup-overlay {
   position: fixed;
   top: 0;

@@ -7,6 +7,7 @@ import logo from '../assets/SigmaTokens.png';
 import CreateHoneytokenForm from './HoneyTokenCreation';
 import AddAgentPopup from './AddAgentPopup';
 import '../styles/Header.css';
+import { useRef } from 'react';
 
 export default function Header() {
   const [showCreate, setShowCreate] = useState(false);
@@ -14,11 +15,31 @@ export default function Header() {
   const [agents, setAgents] = useState([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { currentUser, logout } = useAuth();
+  const menuRef = useRef<HTMLUListElement>(null);
+  const hamburgerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     getAgents().then((agents) => {
       setAgents(agents);
     });
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target as Node) &&
+        hamburgerRef.current &&
+        !hamburgerRef.current.contains(event.target as Node)
+      ) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
   }, []);
 
   const navigate = useNavigate();
@@ -37,7 +58,7 @@ export default function Header() {
           </Link>
         </div>
 
-        <button className="hamburger-icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+        <button className="hamburger-icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} ref={hamburgerRef}>
           ☰
         </button>
 
@@ -87,7 +108,7 @@ export default function Header() {
         </ul>
 
         {mobileMenuOpen && (
-          <ul className="mobile-menu">
+          <ul className="mobile-menu" ref={menuRef}>
             <li>
               <Link to="/" onClick={() => setMobileMenuOpen(false)}>
                 Home

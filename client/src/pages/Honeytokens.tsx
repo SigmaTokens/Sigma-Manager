@@ -342,6 +342,24 @@ function Honeytokens() {
   const renderApiTable = () => {
     const apiTokens = honeytokens.filter((t) => t.type_id === 'api');
 
+    if (apiTokens.length === 0) {
+      return (
+        <div className="api-honeytokens-container">
+          <div className="api-table-container">
+            <table className="api-honeytokens-table">
+              <tbody>
+                <tr>
+                  <td colSpan={12} className="no-honeytokens">
+                    No honeytokens found
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      );
+    }
+
     const groups = apiTokens.reduce(
       (acc, token) => {
         if (!acc[token.group_id]) acc[token.group_id] = [];

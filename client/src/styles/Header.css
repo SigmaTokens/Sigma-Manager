@@ -1,3 +1,7 @@
+* {
+  font-family: 'Inter', sans-serif;
+}
+
 /* ---------- HEADER ---------- */
 .header {
   position: sticky; /* stay visible while scrolling             */
@@ -14,8 +18,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: nowrap; /* ✅ שומר על תפריט בשורה אחת */
-  overflow-x: auto; /* ✅ גלילה אם אין מקום */
+  flex-wrap: nowrap;
+  overflow-x: auto;
 
   /* justify-content: flex-start; everything hugs the left */
 }
@@ -111,7 +115,6 @@
   flex: 0 0 auto;
 }
 
-/* --- Hamburger icon (פלאפון בלבד) --- */
 .hamburger-icon {
   display: none;
   font-size: 1.6rem;
@@ -119,9 +122,9 @@
   background: none;
   border: none;
   cursor: pointer;
+  margin-right: 15px;
 }
 
-/* --- תפריט צדדי (פלאפון) --- */
 .mobile-menu {
   position: absolute;
   top: 60px;
@@ -154,8 +157,6 @@
   display: none !important;
 }
 
-/* --- תצוגה רק בפלאפון --- */
-/* הסתרת תפריט רגיל במסך קטן */
 @media (max-width: 768px) {
   .desktop-only {
     display: none !important;

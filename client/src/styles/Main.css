@@ -1,0 +1,84 @@
+:root {
+  --color-bg: #ffffff;
+  --color-text: #111111;
+  --color-muted: #888888;
+  --color-primary: #000000;
+  --color-accent: #555555;
+  --border-radius: 8px;
+  --transition: all 0.3s ease;
+}
+
+body {
+  font-family: sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+a:hover {
+  color: var(--color-accent);
+}
+
+button,
+.btn {
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 10px 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn {
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+}
+
+.btn.secondary {
+  background-color: var(--color-text);
+  color: var(--color-bg);
+}
+
+.btn:hover {
+  opacity: 0.85;
+}
+
+@media (max-width: 768px) {
+  .home-container {
+    padding: 1rem;
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .welcome-title {
+    font-size: 24px;
+  }
+
+  .welcome-description {
+    font-size: 14px;
+  }
+}
+
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+#root {
+  width: 100%;
+  max-width: 100%;
+}

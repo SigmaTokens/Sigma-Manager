@@ -8,6 +8,8 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   position: relative;
   overflow-x: hidden;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 label {
@@ -29,6 +31,20 @@ select {
   outline: none;
   transition: border-color 0.3s;
   font-size: 0.85rem;
+}
+
+.overlay {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .grade-subtitle {
@@ -145,8 +161,8 @@ select:invalid {
 }
 
 .api-table-container {
-  max-height: 17.5rem;
-  overflow-y: auto;
+  max-height: unset !important;
+  overflow-y: unset !important;
 }
 
 .api-minus-icon {
@@ -169,15 +185,18 @@ select:invalid {
 .api-section {
   display: flex;
   flex-direction: column;
-  width: 200%;
+  width: 100%;
   align-items: center;
-  gap: 0.5rem; /* space between table and button */
+  gap: 0.5rem;
+  grid-column: 1 / -1;
+  /* space between table and button */
 }
 
 .alert-section {
   display: flex;
   flex-direction: column;
-  width: 200%;
+  width: 100%;
+  grid-column: 1 / -1;
 }
 
 /* container holds the port field + button */
@@ -199,4 +218,129 @@ select:invalid {
   display: flex;
   align-items: center; /* center the icon vertically in its own box */
   margin-bottom: 8px;
+}
+.double-field-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+}
+
+.double-field-row > div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.text-honeytoken-wrapper {
+  display: contents;
+}
+
+@media (max-width: 768px) {
+  .popup-card-token {
+    width: 95vw;
+    min-width: unset;
+    max-width: 95vw;
+    padding: 16px;
+    border-radius: 8px;
+    overflow-y: auto;
+    padding-inline: 1rem;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  input,
+  textarea,
+  select {
+    max-width: 100%;
+    font-size: 0.85rem;
+    padding: 6px 8px;
+  }
+
+  .alert-section {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    grid-column: 1 / -1;
+  }
+
+  .api-section {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    grid-column: 1 / -1;
+  }
+
+  .api-section,
+  .alert-section {
+    align-items: stretch;
+  }
+
+  .api-table-container {
+    width: 100%;
+    overflow-x: hidden;
+    max-height: unset;
+    overflow-y: hidden;
+  }
+
+  .api-table {
+    width: 100%;
+    table-layout: fixed;
+    font-size: 0.8rem;
+  }
+
+  .api-table th,
+  .api-table td {
+    padding: 6px;
+    text-align: center;
+  }
+
+  .api-table input,
+  .api-table select {
+    width: 100%;
+    font-size: 0.75rem;
+  }
+
+  .api-action-cell {
+    display: flex;
+    justify-content: center;
+    gap: 0.3rem;
+  }
+
+  .button-container {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  .button-container .button,
+  .button-container .button-primary,
+  .button-container .button-outline {
+    width: 100%;
+    min-width: unset;
+    padding: 10px;
+  }
+
+  .selected-grade {
+    width: 100%;
+    text-align: center;
+    padding-inline: 4px;
+    box-sizing: border-box;
+    margin-top: 8px;
+    font-size: 14px;
+    color: #333;
+  }
+
+  .alert-section input[type='range'] {
+    width: 100%;
+  }
+
+  .api-table-scroll {
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin-bottom: 1rem;
+  }
 }

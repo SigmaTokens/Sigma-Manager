@@ -171,3 +171,49 @@
   background: #c1c1c1;
   border-radius: 3px;
 }
+
+@media (max-width: 768px) {
+  .popup-card {
+    width: 95%;
+    padding: 16px;
+    max-height: 85vh;
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr; /* טור אחד במקום שתיים */
+    gap: 6px 10px;
+    margin-left: 0;
+  }
+
+  .detail-label {
+    font-size: 0.9rem;
+  }
+
+  .detail-value {
+    font-size: 0.9rem;
+  }
+
+  .full-width-group {
+    margin-top: 25px;
+    width: 100%;
+  }
+  .full-width-value {
+    margin-left: 0;
+    margin-right: 0;
+    padding: 12px;
+    border: none;
+  }
+
+  .popup-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .popup-footer {
+    justify-content: center;
+  }
+
+  .button-primary {
+    width: 100%;
+    font-size: 1rem;
+  }
+}

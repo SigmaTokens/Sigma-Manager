@@ -206,95 +206,98 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
             {selectedType === HoneytokenType.API && (
               <div className="api-section">
                 <div className="api-table-container">
-                  <DragDropContext onDragEnd={onDragEnd}>
-                    <Droppable droppableId="apiRows">
-                      {(provided) => (
-                        <table className="api-table" {...provided.droppableProps} ref={provided.innerRef}>
-                          <thead>
-                            <tr>
-                              <th>Method</th>
-                              <th>Route</th>
-                              <th>Response</th>
-                              <th></th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {apiRows.map((row, index) => (
-                              <Draggable key={index} draggableId={`row-${index}`} index={index}>
-                                {(prov) => (
-                                  <tr ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps}>
-                                    <td>
-                                      <select
-                                        value={row.method}
-                                        onChange={(e) => handleApiChange(index, 'method', e.target.value)}
-                                      >
-                                        {['GET', 'POST', 'PUT', 'DELETE'].map((m) => (
-                                          <option key={m}>{m}</option>
-                                        ))}
-                                      </select>
-                                    </td>
-                                    <td>
-                                      <input
-                                        type="text"
-                                        pattern="^/[A-Za-z0-9_/:-]*$"
-                                        title="Must start with / and contain only letters, numbers, /, -, _, :"
-                                        value={row.route}
-                                        onChange={(e) => handleApiChange(index, 'route', e.target.value)}
-                                        className={errors[`route${index}`] ? 'input-error' : ''}
-                                        required
-                                      />
-                                    </td>
-                                    <td>
-                                      <input
-                                        type="text"
-                                        value={row.response}
-                                        onChange={(e) => handleApiChange(index, 'response', e.target.value)}
-                                      />
-                                    </td>
-                                    <td className="api-minus-cell">
-                                      <FiMinus className="api-minus-icon" onClick={() => removeApiRow(index)} />
-                                    </td>
-                                  </tr>
-                                )}
-                              </Draggable>
-                            ))}
-                            {provided.placeholder}
-                          </tbody>
-                        </table>
-                      )}
-                    </Droppable>
-                  </DragDropContext>
+                  <div className="api-table-scroll">
+                    <DragDropContext onDragEnd={onDragEnd}>
+                      <Droppable droppableId="apiRows">
+                        {(provided) => (
+                          <table className="api-table" {...provided.droppableProps} ref={provided.innerRef}>
+                            <thead>
+                              <tr>
+                                <th>Method</th>
+                                <th>Route</th>
+                                <th>Response</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {apiRows.map((row, index) => (
+                                <Draggable key={index} draggableId={`row-${index}`} index={index}>
+                                  {(prov) => (
+                                    <tr ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps}>
+                                      <td>
+                                        <select
+                                          value={row.method}
+                                          onChange={(e) => handleApiChange(index, 'method', e.target.value)}
+                                        >
+                                          {['GET', 'POST', 'PUT', 'DELETE'].map((m) => (
+                                            <option key={m}>{m}</option>
+                                          ))}
+                                        </select>
+                                      </td>
+                                      <td>
+                                        <input
+                                          type="text"
+                                          pattern="^/[A-Za-z0-9_/:-]*$"
+                                          title="Must start with / and contain only letters, numbers, /, -, _, :"
+                                          value={row.route}
+                                          onChange={(e) => handleApiChange(index, 'route', e.target.value)}
+                                          className={errors[`route${index}`] ? 'input-error' : ''}
+                                          required
+                                        />
+                                      </td>
+                                      <td>
+                                        <input
+                                          type="text"
+                                          value={row.response}
+                                          onChange={(e) => handleApiChange(index, 'response', e.target.value)}
+                                        />
+                                      </td>
+                                      <td className="api-action-cell">
+                                        <FiMinus className="api-minus-icon" onClick={() => removeApiRow(index)} />
+                                        {index === apiRows.length - 1 && (
+                                          <FiPlus className="api-plus-icon" onClick={addApiRow} />
+                                        )}
+                                      </td>
+                                    </tr>
+                                  )}
+                                </Draggable>
+                              ))}
+                              {provided.placeholder}
+                            </tbody>
+                          </table>
+                        )}
+                      </Droppable>
+                    </DragDropContext>
+                  </div>
                 </div>
-                <div className="port-plus">
-                  <div id="this is port" className="field">
-                    <label>
-                      Port <span className="required-star">*</span>
-                    </label>
-                    <Input
-                      type="number"
-                      min={0}
-                      max={65535}
-                      value={port}
-                      onChange={(e) => setPort(Number(e.target.value))}
-                      className={errors.port ? 'input-error' : ''}
-                    />
-                  </div>
-                  <div className="api-add-button">
-                    <FiPlus className="api-plus-icon" onClick={addApiRow} />
-                  </div>
+                <div id="this is port" className="field">
+                  <label>
+                    Port <span className="required-star">*</span>
+                  </label>
+                  <Input
+                    type="number"
+                    min={0}
+                    max={65535}
+                    value={port}
+                    onChange={(e) => setPort(Number(e.target.value))}
+                    className={errors.port ? 'input-error' : ''}
+                  />
                 </div>
               </div>
             )}
+
             {selectedType === HoneytokenType.Text && (
-              <TextHoneyToken
-                fileName={fileName}
-                setFileName={setFileName}
-                fileContent={fileContent}
-                setFileContent={setFileContent}
-                fileLocation={componentAddresses}
-                setFileLocation={setComponentAddresses}
-                clearErrors={() => setErrors({})}
-              />
+              <div className="text-honeytoken-wrapper">
+                <TextHoneyToken
+                  fileName={fileName}
+                  setFileName={setFileName}
+                  fileContent={fileContent}
+                  setFileContent={setFileContent}
+                  fileLocation={componentAddresses}
+                  setFileLocation={setComponentAddresses}
+                  clearErrors={() => setErrors({})}
+                />
+              </div>
             )}
           </div>
 

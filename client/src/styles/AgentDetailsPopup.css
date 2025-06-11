@@ -1,0 +1,67 @@
+.agent-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.agent-popup-box {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 400px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.agent-popup-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.agent-popup-content p {
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
+  word-break: break-word;
+}
+
+.agent-popup-box h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  text-align: center;
+}
+.status-green {
+  color: #10b981;
+  font-weight: bold;
+}
+
+.status-red {
+  color: #ef4444;
+  font-weight: bold;
+}
+
+.status-online {
+  color: #10b981;
+}
+
+.status-offline {
+  color: #ef4444;
+}
+
+.status-unknown {
+  color: #9ca3af;
+}

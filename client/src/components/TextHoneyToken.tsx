@@ -27,51 +27,52 @@ function TextHoneyToken({
 }: TextHoneyTokenProps) {
   return (
     <>
-      <p>
-        <label>
-          File Name <span className="required-star">*</span>
-        </label>
-        <Input
-          type="text"
-          placeholder="Enter file name"
-          value={fileName}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setFileName(e.target.value);
-            clearErrors();
-          }}
-        />
-        {errors.fileName && <div className="error-text">{errors.fileName}</div>}
-      </p>
+      <div className="double-field-row">
+        <div id="this is filename">
+          <label>
+            File Name <span className="required-star">*</span>
+          </label>
+          <Input
+            type="text"
+            placeholder="Enter file name"
+            value={fileName}
+            onChange={(e) => {
+              setFileName(e.target.value);
+              clearErrors();
+            }}
+          />
+          {errors.fileName && <div className="error-text">{errors.fileName}</div>}
+        </div>
 
-      <p>
+        <div id="this is filelocation">
+          <label>
+            File Location <span className="required-star">*</span>
+          </label>
+          <Input
+            type="text"
+            placeholder="Enter file path"
+            value={fileLocation}
+            onChange={(e) => {
+              setFileLocation(e.target.value);
+              clearErrors();
+            }}
+          />
+          {errors.fileLocation && <div className="error-text">{errors.fileLocation}</div>}
+        </div>
+      </div>
+
+      <div id="this is filecontent" style={{ gridColumn: '1 / -1' }}>
         <label>File Content</label>
         <Input
           type="text"
           placeholder="Enter the content of the file"
           value={fileContent}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setFileContent(e.target.value)
-          }
-        />
-      </p>
-
-      <p>
-        <label>
-          File Location <span className="required-star">*</span>
-        </label>
-        <Input
-          type="text"
-          placeholder="Enter file path"
-          value={fileLocation}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setFileLocation(e.target.value);
+          onChange={(e) => {
+            setFileContent(e.target.value);
             clearErrors();
           }}
         />
-        {errors.fileLocation && (
-          <div className="error-text">{errors.fileLocation}</div>
-        )}
-      </p>
+      </div>
     </>
   );
 }

@@ -219,3 +219,44 @@ input[type='number'] {
     transform: translateY(-10px);
   }
 }
+
+@media (max-width: 768px) {
+  .popup-card-agent {
+    width: 100vw;
+    max-height: 80vh;
+    min-width: unset;
+    padding: 16px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    overflow-y: auto;
+  }
+
+  .agent-input {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .script-with-button textarea {
+    font-size: 0.75rem;
+    min-height: 80px;
+  }
+
+  .instruction0,
+  .instruction1,
+  .instruction2,
+  .instruction3,
+  .instruction4,
+  .instruction6 {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tabs {
+    gap: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .popup-title {
+    font-size: 1.2rem;
+  }
+}

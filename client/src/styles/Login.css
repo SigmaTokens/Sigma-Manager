@@ -1,3 +1,18 @@
+.login-page {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  padding: 0;
+}
+
 .login-container {
   background-color: #fff;
   padding: 40px 30px;
@@ -5,7 +20,7 @@
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
-  margin: 100px auto;
+  margin: 0 auto;
   text-align: center;
 }
 
@@ -40,7 +55,13 @@
   background-color: #0056b3;
 }
 
-.login-container p {
-  margin-top: 20px;
-  font-size: 14px;
+@media (max-width: 768px) {
+  .login-wrapper {
+    align-items: flex-start;
+    padding-top: 40px;
+  }
+
+  .login-container {
+    margin: 0 auto;
+  }
 }

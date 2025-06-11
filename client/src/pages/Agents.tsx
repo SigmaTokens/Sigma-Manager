@@ -3,6 +3,9 @@ import '../styles/Agents.css';
 import { deleteAgent, verifyAgent, startAgent, stopAgent, fetchAgents } from '../models/Agents';
 import { IAgent } from '../../../server/interfaces/agent';
 import { FaTrash, FaPlay, FaStop, FaCheckSquare } from 'react-icons/fa';
+import { FaInfo } from 'react-icons/fa';
+import AgentDetailsPopup from '../components/AgentDetailsPopup';
+import { FaInfoCircle } from 'react-icons/fa';
 
 function AgentsPage() {
   const [agents, setAgents] = useState<IAgent[]>([]);
@@ -10,6 +13,15 @@ function AgentsPage() {
   const [statusUpdates, setStatusUpdates] = useState<Record<string, string>>({});
   const [loadingAgentId, setLoadingAgentId] = useState<string | null>(null);
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
+  const [selectedAgent, setSelectedAgent] = useState<IAgent | null>(null);
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleDelete = async (agentId: string) => {
     try {
@@ -55,36 +67,122 @@ function AgentsPage() {
     fetchAgents(setAgents, setStatusUpdates);
   }, [refreshCounter]);
 
+  if (isMobile) {
+    return (
+      <div className="agents-container">
+        <h2 className="agents-title">Agent List</h2>
+
+        <div className="table-container">
+          <table className="agents-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Actions</th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              {agents.map((agent) => (
+                <tr key={agent.agent_id}>
+                  <td>{agent.agent_name}</td>
+                  <td className={`agents-status-${statusUpdates[agent.agent_id] || 'unknown'}`}>
+                    {statusUpdates[agent.agent_id] || 'unknown'}
+                  </td>
+                  <td>
+                    <div className="action-icons">
+                      <button
+                        onClick={() => handleDelete(agent.agent_id)}
+                        disabled={loadingAgentId === agent.agent_id}
+                        title="Delete Agent"
+                      >
+                        <FaTrash className="action-icon delete" />
+                      </button>
+                      {agent.validated === 0 && (
+                        <button
+                          onClick={() => verifyAgent(agent.agent_id, setAgents, setStatusUpdates)}
+                          disabled={loadingAgentId === agent.agent_id}
+                          title="Verify Agent"
+                        >
+                          <FaCheckSquare className="action-icon verify" />
+                        </button>
+                      )}
+                      {agent.validated === 1 &&
+                        statusUpdates[agent.agent_id] !== 'unknown' &&
+                        statusUpdates[agent.agent_id] !== 'offline' &&
+                        (agent.isMonitoring ? (
+                          <button
+                            onClick={() => handleStop(agent.agent_id)}
+                            disabled={loadingAgentId === agent.agent_id}
+                            title="Stop Agent"
+                          >
+                            <FaStop className="action-icon stop" />
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleStart(agent.agent_id)}
+                            disabled={loadingAgentId === agent.agent_id}
+                            title="Start Agent"
+                          >
+                            <FaPlay className="action-icon start" />
+                          </button>
+                        ))}
+                    </div>
+                  </td>
+                  <td>
+                    <button className="details-icon-button" onClick={() => setSelectedAgent(agent)} title="Details">
+                      <FaInfoCircle className="details-icon" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {selectedAgent && (
+          <AgentDetailsPopup
+            agent={selectedAgent}
+            status={statusUpdates[selectedAgent.agent_id] || 'unknown'}
+            onClose={() => setSelectedAgent(null)}
+          />
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="agents-container">
       <h2 className="agents-title">Agent List</h2>
-
-      <div className="agents-refresh-button-wrapper">
-        <button className="agents-refresh-statuses-button" onClick={() => setRefreshCounter((prev) => prev + 1)}>
-          Refresh Statuses
-        </button>
-      </div>
 
       <div className="table-container">
         <table className="agents-table">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>ID</th>
-              <th>Validated</th>
-              <th>Status</th>
-              <th>Actions</th>
+              <th title="Agent Name">Name</th>
+              <th title="Agent ID">ID</th>
+              <th title="Validation Status">Validated</th>
+              <th title="Agent Status">Status</th>
+              <th title="Actions">Actions</th>
             </tr>
           </thead>
+
           <tbody>
             {agents.map((agent) => (
               <tr key={agent.agent_id}>
-                <td>{agent.agent_name}</td>
-                <td>{agent.agent_id}</td>
-                <td>{agent.validated == 0 ? 'no' : 'yes'}</td>
-                <td className={`agents-status-${statusUpdates[agent.agent_id] || 'unknown'}`}>
+                <td title={agent.agent_name}>{agent.agent_name}</td>
+
+                <td title={agent.agent_id}>{agent.agent_id}</td>
+
+                <td title={agent.validated == 0 ? 'no' : 'yes'}>{agent.validated == 0 ? 'no' : 'yes'}</td>
+
+                <td
+                  className={`agents-status-${statusUpdates[agent.agent_id] || 'unknown'}`}
+                  title={statusUpdates[agent.agent_id] || 'unknown'}
+                >
                   {statusUpdates[agent.agent_id] || 'unknown'}
                 </td>
+
                 <td>
                   <div className="action-icons">
                     {agent.validated == 1 &&

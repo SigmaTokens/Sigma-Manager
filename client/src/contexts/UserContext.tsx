@@ -55,20 +55,16 @@ const UserContext = createContext<UserContextValue>({
 });
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-
-  /* ---------- boot: parse token from storage ---------- */
-  useEffect(() => {
+  const [currentUser, setCurrentUser] = useState<User | null>(() => {
     const token = localStorage.getItem('token');
-    if (!token) return;
-
+    if (!token) return null;
     try {
-      const user = userFromToken(token);
-      setCurrentUser(user);
+      return userFromToken(token);
     } catch {
       localStorage.removeItem('token');
+      return null;
     }
-  }, []);
+  });
 
   /* ---------- actions ---------- */
   const login = async (username: string, password: string) => {

@@ -4,11 +4,6 @@ export enum OS {
   Mac = 'Mac',
 }
 
-export enum Connection {
-  IP = 'ip',
-  Domain = 'domain',
-}
-
 export enum HoneytokenType {
   Text = 'text',
   API = 'api',

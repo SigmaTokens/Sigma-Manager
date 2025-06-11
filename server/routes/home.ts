@@ -1,18 +1,29 @@
 import { Express, Router } from 'express';
 import { Globals } from '../globals';
 import { Constants } from '../constants';
+import { auth } from '../middleware/auth';
+import { get_all_user_agents } from '../database/agents';
+import { get_all_user_alerts } from '../database/alerts';
+import { get_all_user_honeytokens } from '../database/honeytokens';
+
+const sql = (strings: TemplateStringsArray, ...values: any[]) => String.raw(strings, ...values);
 
 export function serveHome() {
   const router = Router();
 
+  router.use(auth());
+
+  //✔️
   router.get('/home', async (req, res) => {
+    const user_id: string = (req as any).user.id;
     try {
-      const agents = await Globals.app.locals.db.all('SELECT * FROM agents');
-      const alerts = await Globals.app.locals.db.all('SELECT * FROM alerts');
-      const honeytokens = await Globals.app.locals.db.all('SELECT * FROM honeytokens');
-      const grades = await Globals.app.locals.db.all(
-        `SELECT honeytokens.grade FROM alerts LEFT JOIN honeytokens ON alerts.token_id = honeytokens.token_id`,
-      );
+      const agents = await get_all_user_agents(user_id);
+      const alerts = await get_all_user_alerts(user_id);
+
+      const honeytokens = await get_all_user_honeytokens(user_id);
+
+      const grades = alerts.map((alert: any) => alert.grade);
+
       const now = new Date();
       const sevenDays = 7 * 24 * 60 * 60 * 1000;
 
@@ -33,8 +44,17 @@ export function serveHome() {
         }
       }
 
-      // TODO: get the statuses ... the status now is initial - it doesn't work
-      const onlineAgents = agents.filter((a: any) => a.status === 'online').length;
+      let onlineAgents = 0;
+
+      if (agents && agents.length > 0) {
+        agents.forEach((agent: any) => {
+          const socket = Globals.agentSockets.get(agent.agent_id);
+          if (socket) {
+            onlineAgents++;
+          }
+        });
+      }
+
       const offlineAgents = agents.length - onlineAgents;
 
       const resolvedAlerts = alerts.filter((a: any) => a.status === 'resolved').length;
@@ -68,7 +88,7 @@ export function serveHome() {
         typeMap[type] = (typeMap[type] || 0) + 1;
       }
 
-      res.json({
+      return void res.status(200).json({
         total_agents: agents.length,
         online_agents: onlineAgents,
         offline_agents: offlineAgents,
@@ -88,9 +108,9 @@ export function serveHome() {
         Constants.TEXT_RED_COLOR,
         'Failed to fetch dashboard summary:',
         error.message,
-        Constants.TEXT_WHITE_COLOR,
+        Constants.TEXT_DEFAULT_COLOR,
       );
-      res.status(500).json({ failure: error.message });
+      return void res.status(500).json({ failure: error.message });
     }
   });
 

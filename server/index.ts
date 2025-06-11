@@ -1,3 +1,13 @@
+process.on('uncaughtException', (err) => {
+  console.error('UNCAUGHT', err);
+  console.error('Type:', err.constructor?.name);
+  console.error('Stack:', err.stack);
+  process.exit(1);
+});
+process.on('unhandledRejection', (reason, p) => {
+  console.error('UNHANDLED PROMISE', p, 'reason:', reason);
+});
+
 process.on('unhandledRejection', (reason) => {
   if (reason instanceof Error) {
     console.error('UNHANDLED REJECTION →', reason.stack); // full stack
@@ -22,12 +32,11 @@ import { startDatabase } from './database/database';
 import { Globals } from './globals';
 import { serveAgents } from './routes/agents';
 import { serveHome } from './routes/home';
-import { serveGeneral } from './routes/general';
 import { Constants } from './constants';
 import util from 'node:util';
-import { callback } from 'chart.js/dist/helpers/helpers.core';
-import { get_honeytokens_by_agent_id } from './database/honeytokens';
+import { create_honeytoken_alert } from './database/alerts';
 import { get_all_agents, insert_agent } from './database/agents';
+import { get_all_agent_honeytokens } from './database/honeytokens';
 
 main();
 
@@ -38,7 +47,7 @@ function main(): void {
   app.use(express.urlencoded({ extended: true }));
   dotenv.config({ path: '../.env' });
 
-  console.log(Constants.TEXT_MAGENTA_COLOR, 'SERVER_TEST=' + process.env.SERVER_TEST, Constants.TEXT_WHITE_COLOR);
+  console.log(Constants.TEXT_MAGENTA_COLOR, 'SERVER_TEST=' + process.env.SERVER_TEST, Constants.TEXT_DEFAULT_COLOR);
 
   const port = process.env.PORT || 3000;
 
@@ -57,29 +66,42 @@ function main(): void {
       return;
     }
 
-    console.log(Constants.TEXT_GREEN_COLOR, `Agent connected: ${agentId}`, Constants.TEXT_WHITE_COLOR);
+    console.log(Constants.TEXT_GREEN_COLOR, `Agent connected: ${agentId}`, Constants.TEXT_DEFAULT_COLOR);
     Globals.agentSockets.set(agentId, socket);
 
     socket.on('GET_HONEYTOKENS', async (payload, callback) => {
       const agent_id = payload;
-      console.log(agent_id);
+      console.log('agent id:', agent_id);
       try {
-        const honeytokens = await get_honeytokens_by_agent_id(agent_id);
+        const honeytokens = await get_all_agent_honeytokens(agent_id);
         callback({ tokens: honeytokens });
       } catch (err) {
         callback({ tokens: [] });
       }
     });
 
-    socket.on('REGISTER_AGENT', async (paylaod) => {
-      const { id, name, user } = paylaod;
+    socket.on('REGISTER_AGENT', async (payload) => {
+      const { agent_id, agent_name, user_id } = payload;
 
       const agents = await get_all_agents();
 
-      const agent_id_exists = agents.some((agent: any) => agent.agent_id === id);
+      const agent_id_exists = agents.some((agent: any) => agent.agent_id === agent_id);
 
       if (!agent_id_exists) {
-        await insert_agent(id, name, user);
+        const result = await insert_agent(agent_id, agent_name, user_id);
+        if (result) console.log(`created agent ${agent_name} successfully`);
+      }
+    });
+
+    socket.on('CREATE_ALERT', async (payload) => {
+      try {
+        const { token_id, alert_epoch, accessed_by, log } = payload;
+
+        const result = await create_honeytoken_alert(token_id, alert_epoch, accessed_by, log);
+
+        if (result) console.log('created alert successfully!');
+      } catch (error: any) {
+        console.error(Constants.TEXT_RED_COLOR, 'Failed to create alert:', error.message, Constants.TEXT_DEFAULT_COLOR);
       }
     });
 
@@ -95,12 +117,11 @@ function main(): void {
       console.log(
         Constants.TEXT_CYAN_COLOR,
         'Database connection initialized:',
-        Constants.TEXT_WHITE_COLOR,
+        Constants.TEXT_DEFAULT_COLOR,
         app.locals.db,
       );
 
       serveUsers();
-      serveGeneral();
       serveHome();
       serveHoneytokens();
       serveAlerts();
@@ -111,12 +132,12 @@ function main(): void {
         console.log(
           Constants.TEXT_MAGENTA_COLOR,
           `Server + WebSocket running on port ${port}`,
-          Constants.TEXT_WHITE_COLOR,
+          Constants.TEXT_DEFAULT_COLOR,
         );
       });
     })
     .catch((error) => {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to initialize server:', error, Constants.TEXT_WHITE_COLOR);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to initialize server:', error, Constants.TEXT_DEFAULT_COLOR);
       process.exit(1);
     });
 }

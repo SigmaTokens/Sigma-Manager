@@ -9,7 +9,7 @@
   "scripts": {
     "format": "prettier --write \"**/*.{js,ts,jsx,tsx,json,md}\"",
     "start": "cross-env NODE_ENV=production ts-node index.ts",
-    "dev": "nodemon  --ext ts     --exec \"node         --experimental-wasm-modules         --loader ts-node/esm         --experimental-specifier-resolution=node\"     index.ts"
+    "dev": "nodemon  --ext ts     --exec \"node         --experimental-wasm-modules         --loader ts-node/esm         --experimental-specifier-resolution=node         --trace-uncaught\"     index.ts"
   },
   "keywords": [],
   "author": "",

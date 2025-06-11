@@ -2,7 +2,7 @@ import express from 'express';
 import path from 'path';
 import { Globals } from '../globals';
 
-import { dirname, join } from 'node:path';
+import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);

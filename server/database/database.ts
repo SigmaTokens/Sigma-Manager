@@ -24,7 +24,7 @@ export async function startDatabase() {
     await populate_types_table();
   } catch (error) {
     if (process.env.MODE === 'dev')
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to initialize database:', error, Constants.TEXT_WHITE_COLOR);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to initialize database:', error, Constants.TEXT_DEFAULT_COLOR);
     process.exit(-1);
   }
 }

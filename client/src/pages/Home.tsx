@@ -15,7 +15,9 @@ function Home() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetch('/api/home')
+    fetch('/api/home', {
+      headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
+    })
       .then((res) => {
         if (!res.ok) throw new Error('Failed to fetch dashboard data');
         return res.json();

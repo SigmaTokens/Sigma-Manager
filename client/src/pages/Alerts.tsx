@@ -66,9 +66,9 @@ function Alerts() {
     setIsReversed((prev) => !prev);
   };
 
-  const handleArchiveToggle = async (alertId: string, currentArchiveStatus: boolean) => {
+  const handleArchiveToggle = async (tokenId: string, alertId: string, currentArchiveStatus: boolean) => {
     try {
-      if (await archiveAlert(alertId, !currentArchiveStatus)) {
+      if (await archiveAlert(tokenId, alertId, !currentArchiveStatus)) {
         setIsLoading(true);
       }
     } catch (err) {
@@ -255,7 +255,7 @@ function Alerts() {
                   <td>
                     <button
                       className="icon-button"
-                      onClick={() => handleArchiveToggle(alert.alert_id, alert.archive)}
+                      onClick={() => handleArchiveToggle(alert.token_id, alert.alert_id, alert.archive)}
                       title={alert.archive ? 'Unarchive' : 'Archive'}
                     >
                       {alert.archive ? (

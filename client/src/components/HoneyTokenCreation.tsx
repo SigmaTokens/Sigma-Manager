@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './popup';
 import '../styles/HoneyTokenCreation.css';
 import { createHoneytokenText, createHoneytokenApi } from '../models/Honeytoken';
@@ -23,6 +23,10 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
   const [apiRows, setApiRows] = useState([{ method: 'GET', route: '', response: '' }]);
 
   const { agents } = useAgents();
+
+  useEffect(() => {
+    setAgentID(agents[0].agent_id || '');
+  }, agents);
 
   const addApiRow = () => {
     setApiRows((rows) => [{ method: 'GET', route: '', response: '' }, ...rows]);

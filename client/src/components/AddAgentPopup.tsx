@@ -38,8 +38,13 @@ export default function AddAgentPopup({ onClose }: AddAgentPopupProps) {
   }
 
   return (
-    <div className="overlay">
-      <div className="popup-card-agent" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="overlay"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className="popup-card-agent">
         <Card>
           <h2 className="popup-title">Add Agent</h2>
           {/* Agent Name */}

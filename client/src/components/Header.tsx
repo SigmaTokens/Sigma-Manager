@@ -12,6 +12,7 @@ export default function Header() {
   const [showCreate, setShowCreate] = useState(false);
   const [showAddAgent, setShowAddAgent] = useState(false);
   const [agents, setAgents] = useState([]);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { currentUser, logout } = useAuth();
 
   useEffect(() => {
@@ -36,12 +37,15 @@ export default function Header() {
           </Link>
         </div>
 
-        <ul className="menu">
+        <button className="hamburger-icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+          ☰
+        </button>
+
+        <ul className="menu desktop-only">
           <li>
             <Link to="/">Home</Link>
           </li>
 
-          {/* ---------- logged in ---------- */}
           {currentUser && (
             <li className="logout">
               <button onClick={handleLogout} className="link-btn">
@@ -50,7 +54,6 @@ export default function Header() {
             </li>
           )}
 
-          {/* ---------- not logged in ---------- */}
           {!currentUser && (
             <>
               <li className="login">
@@ -62,7 +65,6 @@ export default function Header() {
             </>
           )}
 
-          {/* ---------- logged in extras ---------- */}
           {currentUser && (
             <>
               <li>
@@ -83,9 +85,82 @@ export default function Header() {
             </>
           )}
         </ul>
+
+        {mobileMenuOpen && (
+          <ul className="mobile-menu">
+            <li>
+              <Link to="/" onClick={() => setMobileMenuOpen(false)}>
+                Home
+              </Link>
+            </li>
+
+            {!currentUser && (
+              <>
+                <li>
+                  <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+                    Login
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/signup" onClick={() => setMobileMenuOpen(false)}>
+                    Sign Up
+                  </Link>
+                </li>
+              </>
+            )}
+            {currentUser && (
+              <>
+                <li>
+                  <Link to="/honeytokens" onClick={() => setMobileMenuOpen(false)}>
+                    Honeytokens
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/alerts" onClick={() => setMobileMenuOpen(false)}>
+                    Alerts
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/agents" onClick={() => setMobileMenuOpen(false)}>
+                    Agents
+                  </Link>
+                </li>
+                <li>
+                  <button
+                    onClick={() => {
+                      setShowCreate(true);
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    Create
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => {
+                      setShowAddAgent(true);
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    Add Agent
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    Logout
+                  </button>
+                </li>
+              </>
+            )}
+          </ul>
+        )}
       </nav>
 
-      {/* pop-ups only when a user is logged in */}
       {currentUser && showCreate && (
         <CreateHoneytokenForm types={Globals.honeytokenTypes} agents={agents} onClose={() => setShowCreate(false)} />
       )}

@@ -43,6 +43,14 @@ function Alerts() {
     setFilteredAlerts(filtered);
   }, [archiveFilter, alerts]);
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const archiveTypes = [
     { id: 2, name: 'All' },
     { id: 1, name: 'Unarchived' },
@@ -84,6 +92,84 @@ function Alerts() {
   if (isLoading) return <div className="loading">Loading alerts...</div>;
   if (error) return <div className="error">{error}</div>;
 
+  if (isMobile) {
+    return (
+      <div className="alerts-container">
+        <h1 className="alerts-title">Alerts Dashboard</h1>
+        <div className="table-container">
+          <table className="alerts-table">
+            <thead>
+              <tr>
+                <th>Alert ID</th>
+                <th>Accessed By</th>
+
+                <th>
+                  <select
+                    value={archiveFilter}
+                    onChange={(e) => setArchiveFilter(Number(e.target.value))}
+                    className="filter-select"
+                  >
+                    {archiveTypes.map((type) => (
+                      <option key={type.id} value={type.id}>
+                        {type.name}
+                      </option>
+                    ))}
+                  </select>
+                </th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredAlerts.length > 0 ? (
+                filteredAlerts.map((alert) => (
+                  <tr key={alert.alert_id}>
+                    <td>{alert.alert_id}</td>
+                    <td>{alert.accessed_by}</td>
+
+                    <td>
+                      <button
+                        className="icon-button"
+                        onClick={() => handleArchiveToggle(alert.alert_id, alert.archive)}
+                        title={alert.archive ? 'Unarchive' : 'Archive'}
+                      >
+                        {alert.archive ? (
+                          <GiCardboardBox className="unarchive-icon" />
+                        ) : (
+                          <GiCardboardBoxClosed className="archive-icon" />
+                        )}
+                      </button>
+                    </td>
+                    <td className="details-cell">
+                      <div className="details-actions">
+                        <button className="details-button" onClick={() => toggleDetails(alert.alert_id)}>
+                          {expandedDetails === alert.alert_id ? (
+                            <FiChevronDown className="details-icon" />
+                          ) : (
+                            <FiChevronRight className="details-icon" />
+                          )}
+                        </button>
+                        <button className="details-button" onClick={() => handleMoreDetails(alert)}>
+                          <FiInfo className="details-icon" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} className="no-alerts">
+                    No alerts found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+        {selectedAlert && <AlertDetailsPopup alert={selectedAlert} onClose={handleClosePopup} />}
+      </div>
+    );
+  }
+
   return (
     <div className="alerts-container">
       <h1 className="alerts-title">Alerts Dashboard</h1>
@@ -91,28 +177,28 @@ function Alerts() {
         <table className="alerts-table">
           <thead>
             <tr>
-              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+              <th title="Alert ID" onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
                 Alert ID {isReversed ? <FiChevronUp /> : <FiChevronDown />}
               </th>
-
-              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+              <th title="Token ID" onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
                 Token ID {isReversed ? <FiChevronUp /> : <FiChevronDown />}
               </th>
-              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+              <th title="Date" onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
                 Date {isReversed ? <FiChevronUp /> : <FiChevronDown />}
               </th>
-              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+              <th title="Accessed By" onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
                 Accessed By {isReversed ? <FiChevronUp /> : <FiChevronDown />}
               </th>
-              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+              <th title="File" onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
                 File {isReversed ? <FiChevronUp /> : <FiChevronDown />}
               </th>
-              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+              <th title="Agent" onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
                 Agent {isReversed ? <FiChevronUp /> : <FiChevronDown />}
               </th>
-              <th onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
+              <th title="Grade" onClick={handleReverseClick} style={{ cursor: 'pointer' }}>
                 Grade {isReversed ? <FiChevronUp /> : <FiChevronDown />}
               </th>
+
               <th className="filter-header">
                 <select
                   value={archiveFilter}
@@ -133,17 +219,17 @@ function Alerts() {
             {filteredAlerts.length > 0 ? (
               filteredAlerts.map((alert) => (
                 <tr key={alert.alert_id}>
-                  <td className="truncate-cell">
+                  <td className="truncate-cell" title={alert.alert_id}>
                     <span className={expandedDetails === alert.alert_id ? 'expanded' : 'truncated'}>
                       {alert.alert_id}
                     </span>
                   </td>
-                  <td className="truncate-cell">
+                  <td className="truncate-cell" title={alert.token_id}>
                     <span className={expandedDetails === alert.alert_id ? 'expanded' : 'truncated'}>
                       {alert.token_id}
                     </span>
                   </td>
-                  <td className="truncate-cell">
+                  <td className="truncate-cell" title={formatDate(parseInt(alert.alert_epoch))}>
                     <span className={expandedDetails === alert.alert_id ? 'expanded' : 'truncated'}>
                       {formatDate(parseInt(alert.alert_epoch))}
                     </span>
@@ -158,12 +244,12 @@ function Alerts() {
                       {expandedDetails === alert.alert_id ? `${alert.location}\\${alert.file_name}` : alert.file_name}
                     </span>
                   </td>
-                  <td className="truncate-cell">
+                  <td className="truncate-cell" title={`${alert.agent_id} ${alert.agent_name}`}>
                     <span className={expandedDetails === alert.alert_id ? 'expanded' : 'truncated'}>
                       {`${alert.agent_id} ${alert.agent_name}`}
                     </span>
                   </td>
-                  <td className="truncate-cell">
+                  <td className="truncate-cell" title={String(alert.grade)}>
                     <span className={expandedDetails === alert.alert_id ? 'expanded' : 'truncated'}>{alert.grade}</span>
                   </td>
                   <td>

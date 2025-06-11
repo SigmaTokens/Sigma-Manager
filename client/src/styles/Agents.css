@@ -1,6 +1,6 @@
 .agents-container {
   padding: 1.5rem;
-  background-color: #f9fafb;
+  background-color: white;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -20,7 +20,7 @@
   border-radius: 0.5rem;
   overflow: hidden;
   width: 100%;
-  max-width: 72rem;
+  max-width: 90rem;
 }
 
 .agents-table {
@@ -38,10 +38,11 @@
 
 .agents-table th {
   background-color: #f9fafb;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #6b7280;
-  text-transform: uppercase;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #1f2937;
+  text-transform: none;
+  text-align: center;
 }
 
 .agents-table td {
@@ -76,25 +77,6 @@
 .agents-status-unknown {
   color: gray !important;
   font-weight: bold;
-}
-
-.agents-refresh-button-wrapper {
-  margin-bottom: 1rem;
-  text-align: right;
-}
-
-.agents-refresh-statuses-button {
-  background-color: #007bff;
-  color: white;
-  padding: 8px 16px;
-  font-weight: bold;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.agents-refresh-statuses-button:hover {
-  background-color: #0056b3;
 }
 
 /* Action Icons */
@@ -144,4 +126,25 @@
 
 .agents-status-unknown {
   color: #ffc107;
+}
+
+.action-icons button {
+  width: 30px;
+  height: 30px;
+  padding: 4px;
+  border-radius: 0.25rem;
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  transition: background-color 0.2s;
+}
+
+.action-icons button:hover {
+  background-color: #e5e7eb;
+}
+
+.action-icons .action-icon {
+  font-size: 1rem;
 }

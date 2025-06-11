@@ -8,6 +8,7 @@ interface AlertDetailsPopupProps {
   alert: Alert;
   onClose: () => void;
 }
+const isMobile = window.innerWidth <= 768;
 
 const AlertDetailsPopup: React.FC<AlertDetailsPopupProps> = ({ alert, onClose }) => {
   const detailsGroups = [
@@ -72,11 +73,13 @@ const AlertDetailsPopup: React.FC<AlertDetailsPopupProps> = ({ alert, onClose })
           </div>
         </div>
 
-        <div className="popup-footer">
-          <Button className="button-primary" onClick={onClose}>
-            Close
-          </Button>
-        </div>
+        {!isMobile && (
+          <div className="popup-footer">
+            <Button className="button-primary" onClick={onClose}>
+              Close
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

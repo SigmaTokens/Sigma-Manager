@@ -25,35 +25,39 @@ export default function SignUp() {
   };
 
   return (
-    <div className="signup-container">
-      <h1>Sign Up</h1>
+    <div className="signup-page">
+      <div className="signup-wrapper">
+        <div className="signup-container">
+          <h1>Sign Up</h1>
 
-      <form onSubmit={handleSubmit} className="signup-form">
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
+          <form onSubmit={handleSubmit} className="signup-form">
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
 
-        {error && <span className="signup-error">{error}</span>}
+            {error && <span className="signup-error">{error}</span>}
 
-        <button type="submit">Create account</button>
-      </form>
+            <button type="submit">Create account</button>
+          </form>
 
-      <p>
-        Already have an account?&nbsp;
-        <Link to="/login">Log in</Link>
-      </p>
+          <p>
+            Already have an account?&nbsp;
+            <Link to="/login">Log in</Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

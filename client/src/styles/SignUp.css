@@ -44,3 +44,30 @@
   margin-top: 20px;
   font-size: 14px;
 }
+
+.signup-page {
+  height: 100vh;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.signup-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  padding: 0;
+}
+
+@media (max-width: 768px) {
+  .signup-wrapper {
+    align-items: flex-start;
+    padding-top: 40px;
+  }
+
+  .signup-container {
+    margin: 0 auto;
+  }
+}

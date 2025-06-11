@@ -240,13 +240,16 @@ export function serveHoneytokens() {
       let isDeleted = false;
 
       const socket = Globals.agentSockets.get(header.agent_id);
-      if (socket)
+      if (socket) {
         socket.emit('DELETE_HONEYTOKEN_API', group_id, async (response: any) => {
           isDeleted = await delete_honeytokens_by_group_id(group_id);
           if (isDeleted) return void res.status(200).json({ success: true });
           else return void res.status(500).json({ success: false });
         });
-      else return void res.status(500).json({ success: false });
+      } else {
+        isDeleted = await delete_honeytokens_by_group_id(group_id);
+        return void res.status(200).json({ success: true });
+      }
     } catch (error) {
       console.error(
         Constants.TEXT_RED_COLOR,

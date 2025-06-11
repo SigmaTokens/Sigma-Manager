@@ -1,14 +1,21 @@
+import { access_denied } from '../utilities/constants';
+import { useLogout } from '../utilities/helpers';
+
 export async function getAlerts() {
   try {
     const response = await fetch('/api/alerts', {
       headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
     });
+    const payload = await response.json();
+
     if (!response.ok) {
+      if (payload.action === access_denied) useLogout();
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-    return await response.json();
-  } catch (err) {
-    console.error('Error fetching alerts:', err);
+
+    return payload;
+  } catch (error) {
+    throw new Error(`Error fetching alerts: ${error}`);
   }
 }
 
@@ -26,17 +33,18 @@ export async function archiveAlert(tokenId: string, alertId: string, archive: bo
         alert_id: alertId,
       }),
     });
+    const payload = await response.json();
 
     if (!response.ok) {
+      if (payload.action === access_denied) useLogout();
       const errorText = await response.text();
       console.error('Error:', errorText);
       alert('Failed to set alert as archive.');
       return false;
-    } else {
-      return true;
     }
-  } catch (err) {
-    console.error('Request failed:', err);
+    return true;
+  } catch (error) {
+    console.error('Request failed:', error);
     alert('Something went wrong while setting alert as archive.');
     return false;
   }

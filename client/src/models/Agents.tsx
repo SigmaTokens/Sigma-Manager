@@ -1,3 +1,6 @@
+import { access_denied } from '../utilities/constants';
+import { useLogout } from '../utilities/helpers';
+
 export async function startAgent(agent_id: string) {
   try {
     const response = await fetch(`/api/agents/start`, {
@@ -10,11 +13,14 @@ export async function startAgent(agent_id: string) {
         agent_id: agent_id,
       }),
     });
+    const payload = await response.json();
+
     if (!response.ok) {
+      if (payload.action === access_denied) useLogout();
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-  } catch (err) {
-    console.error('Error starting agent:', err);
+  } catch (error) {
+    throw new Error(`Error starting agent: ${error}`);
   }
 }
 
@@ -30,11 +36,14 @@ export async function stopAgent(agent_id: string) {
         agent_id: agent_id,
       }),
     });
+    const payload = await response.json();
+
     if (!response.ok) {
+      if (payload.action === access_denied) useLogout();
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-  } catch (err) {
-    console.error('Error stopping agent:', err);
+  } catch (error) {
+    throw new Error(`Error stopping agent: ${error}`);
   }
 }
 
@@ -44,11 +53,14 @@ export async function deleteAgent(agent_id: string) {
       method: 'DELETE',
       headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
     });
+    const payload = await response.json();
+
     if (!response.ok) {
+      if (payload.action === access_denied) useLogout();
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-  } catch (err) {
-    console.error('Error deleting agent:', err);
+  } catch (error) {
+    throw new Error(`Error deleting agent: ${error}`);
   }
 }
 
@@ -58,7 +70,14 @@ export async function verifyAgent(agent_id: string) {
       method: 'GET',
       headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
     });
-  } catch (err) {
-    console.error('Error verifying agent: ', err);
+
+    const payload = await response.json();
+
+    if (!response.ok) {
+      if (payload.action === access_denied) useLogout();
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+  } catch (error) {
+    throw new Error(`Error verifying agent: ${error}`);
   }
 }

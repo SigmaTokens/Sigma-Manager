@@ -23,8 +23,10 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   font-weight: bold;
   font-size: 1.1rem;
-  min-width: 200px;
+  width: 150px;
+  flex-grow: 0;
   text-align: center;
+  margin: 0 10px;
 }
 
 .section-title {
@@ -46,33 +48,33 @@
 }
 
 .chart-wrapper {
- 
   width: 30%;
   height: 400px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 280px; 
+  min-width: 280px;
 
-.chart-title {
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 1rem;
+  .chart-title {
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
 }
 
 .chart-wrapper canvas {
-  max-height: 300px !important;
+  max-height: 200px !important;
   max-width: 100% !important;
 }
 
 @media (max-width: 768px) {
   .charts-row {
-    flex-wrap: wrap; 
+    flex-wrap: wrap;
     gap: 1rem;
   }
 
   .chart-wrapper {
-    width: 100%; 
+    width: 100%;
     height: auto;
     min-width: auto;
     margin-bottom: 1rem;

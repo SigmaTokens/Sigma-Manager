@@ -9,5 +9,5 @@ export class Constants {
   static VITE_MANAGER_HOST = 'VITE_MANAGER_HOST';
   static VITE_PUBLIC_KEY_BISCUIT = 'VITE_PUBLIC_KEY_BISCUIT';
   static ACCESS_DENIED = 'DENY_ACCESS';
-  static TOKEN_EXP_SECS = 30;
+  static TOKEN_EXP_SECS = 86400;
 }

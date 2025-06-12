@@ -15,17 +15,8 @@ function Alerts() {
   const [expandedDetails, setExpandedDetails] = useState<string | null>(null);
   const [selectedAlert, setSelectedAlert] = useState<IAlert | null>(null);
   const [isReversed, setIsReversed] = useState(false);
-
+  const [isMobile, setIsMobile] = useState(false);
   const { alerts } = useAlerts();
-  setFilteredAlerts(alerts);
-
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   const archiveTypes = [
     { id: 2, name: 'All' },
@@ -33,24 +24,32 @@ function Alerts() {
     { id: 0, name: 'Archive' },
   ];
 
-  const formatDate = (epoch: number) => {
-    return new Date(epoch).toLocaleString();
-  };
+  useEffect(() => {
+    const base = alerts.filter((a) => (archiveFilter === 2 ? true : archiveFilter === 1 ? !a.archive : a.archive));
+    setFilteredAlerts(isReversed ? [...base].reverse() : base);
+    setIsLoading(false);
+  }, [alerts, archiveFilter, isReversed]);
 
-  const handleReverseClick = () => {
-    setFilteredAlerts((prev) => [...prev].reverse());
-    setIsReversed((prev) => !prev);
-  };
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-  const handleArchiveToggle = async (tokenId: string, alertId: string, currentArchiveStatus: boolean) => {
+  const handleReverseClick = () => setIsReversed((prev) => !prev);
+
+  const handleArchiveToggle = async (tokId: string, id: string, curr: boolean) => {
     try {
-      if (await archiveAlert(tokenId, alertId, !currentArchiveStatus)) {
-        setIsLoading(true);
-      }
-    } catch (error) {
-      console.error('Failed to update archive status:', error);
+      await archiveAlert(tokId, id, !curr);
+      setFilteredAlerts((prev) => prev.map((a) => (a.alert_id === id ? { ...a, archive: !curr } : a)));
+    } catch (e) {
+      console.error(e);
     }
   };
+
+  const formatDate = (sec: number) => new Date(sec * 1000).toLocaleString();
 
   const toggleDetails = (alertId: string) => {
     setExpandedDetails(expandedDetails === alertId ? null : alertId);

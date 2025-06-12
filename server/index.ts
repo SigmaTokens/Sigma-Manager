@@ -11,12 +11,11 @@ import { serveAlerts } from './routes/alerts';
 import { startDatabase } from './database/database';
 import { Globals } from './globals';
 import { serveAgents } from './routes/agents';
-import { serveHome } from './routes/home';
 import { Constants } from './constants';
 import { create_honeytoken_alert } from './database/alerts';
 import { get_all_agents, insert_agent } from './database/agents';
 import { get_all_agent_honeytokens } from './database/honeytokens';
-import { serveSSE, sseUpdateAgents } from './routes/sse';
+import { serveSSE, sseUpdateAgents, sseUpdateAlerts } from './routes/sse';
 
 main();
 
@@ -85,6 +84,7 @@ function main(): void {
         const { token_id, alert_epoch, accessed_by, log } = payload;
 
         const result = await create_honeytoken_alert(token_id, alert_epoch, accessed_by, log);
+        sseUpdateAlerts();
 
         if (!result) console.log(Constants.TEXT_RED_COLOR, 'Failed to create alert!', Constants.TEXT_DEFAULT_COLOR);
       } catch (error: any) {
@@ -110,7 +110,6 @@ function main(): void {
 
       serveUsers();
       serveSSE();
-      serveHome();
       serveHoneytokens();
       serveAlerts();
       serveAgents();

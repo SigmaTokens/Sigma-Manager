@@ -5,6 +5,7 @@ import { Constants } from '../constants';
 import { auth } from '../middleware/auth';
 import { get_all_user_agents } from '../database/agents';
 import { is_user_honeytoken_exists } from '../database/honeytokens';
+import { sseUpdateAlerts } from './sse';
 
 export function serveAlerts() {
   const router = Router();
@@ -24,6 +25,7 @@ export function serveAlerts() {
       let result = false;
 
       if (isToken) result = await set_honeytoken_alert_archive_by_alert_id(token_id, alert_id, archive);
+      sseUpdateAlerts();
 
       if (!result) return void res.status(500).json({ success: false });
 

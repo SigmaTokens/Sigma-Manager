@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import '../styles/Agents.css';
 import { deleteAgent, verifyAgent, startAgent, stopAgent } from '../models/Agents';
-import { IAgent } from '../../../server/interfaces/agent';
 import { FaTrash, FaPlay, FaStop, FaCheckSquare } from 'react-icons/fa';
-import AgentDetailsPopup from '../components/AgentDetailsPopup';
+import { IAgent } from '../../../server/interfaces/agent';
 import { FaInfoCircle } from 'react-icons/fa';
 import { useAgents } from '../contexts/AgentsContext';
+import { useHoneytokens } from '../contexts/HoneytokensContext';
+import AgentDetailsPopup from '../components/AgentDetailsPopup';
+import '../styles/Agents.css';
 
 function AgentsPage() {
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);

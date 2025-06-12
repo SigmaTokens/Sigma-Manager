@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { UserContextProvider } from './contexts/UserContext';
 import { AgentsContextProvider } from './contexts/AgentsContext';
 import { HoneytokensContextProvider } from './contexts/HoneytokensContext';
+import { AlertsContextProvider } from './contexts/AlertsContext';
 import { Header } from './components/Header';
 import AppRoutes from './pages/AppRoutes';
 import './styles/Main.css';
@@ -13,10 +14,12 @@ createRoot(document.getElementById('root')!).render(
     <UserContextProvider>
       <AgentsContextProvider>
         <HoneytokensContextProvider>
-          <BrowserRouter>
-            <Header />
-            <AppRoutes />
-          </BrowserRouter>
+          <AlertsContextProvider>
+            <BrowserRouter>
+              <Header />
+              <AppRoutes />
+            </BrowserRouter>
+          </AlertsContextProvider>
         </HoneytokensContextProvider>
       </AgentsContextProvider>
     </UserContextProvider>

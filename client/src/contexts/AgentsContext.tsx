@@ -15,8 +15,12 @@ const AgentsContext = createContext<AgentsContextType>({
 export const AgentsContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [agents, setAgents] = useState<IAgent[]>([]);
   const { currentUser } = useAuth();
+
   useEffect(() => {
-    if (!currentUser) return;
+    if (!currentUser) {
+      setAgents([]);
+      return;
+    }
 
     const biscuit = localStorage.getItem('biscuit');
 

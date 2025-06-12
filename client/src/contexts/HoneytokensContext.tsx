@@ -17,7 +17,10 @@ export const HoneytokensContextProvider: React.FC<{ children: ReactNode }> = ({ 
   const { currentUser } = useAuth();
 
   useEffect(() => {
-    if (!currentUser) return;
+    if (!currentUser) {
+      setHoneytokens([]);
+      return;
+    }
 
     const biscuit = localStorage.getItem('biscuit');
 

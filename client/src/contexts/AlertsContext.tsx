@@ -17,7 +17,10 @@ export const AlertsContextProvider: React.FC<{ children: ReactNode }> = ({ child
   const { currentUser } = useAuth();
 
   useEffect(() => {
-    if (!currentUser) return;
+    if (!currentUser) {
+      setAlerts([]);
+      return;
+    }
 
     const biscuit = localStorage.getItem('biscuit');
 

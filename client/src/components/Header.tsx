@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/UserContext';
 import { Globals } from '../utilities/globals';
 import { useRef } from 'react';
 import logo from '../assets/SigmaTokens.png';
-import CreateHoneytokenForm from './HoneytokenCreation';
+import CreateHoneytokenForm from './HoneyTokenCreation';
 import AddAgentPopup from './AddAgentPopup';
 import '../styles/Header.css';
 import { useAgents } from '../contexts/AgentsContext';

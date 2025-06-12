@@ -1,24 +1,6 @@
 import { access_denied } from '../utilities/constants';
 import { logoutFromSession } from '../utilities/helpers';
 
-export async function getAlerts() {
-  try {
-    const response = await fetch('/api/alerts', {
-      headers: localStorage.getItem('biscuit') ? { Authorization: `Bearer ${localStorage.getItem('biscuit')}` } : {},
-    });
-    const payload = await response.json();
-
-    if (!response.ok) {
-      if (payload.action === access_denied) logoutFromSession();
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    return payload;
-  } catch (error) {
-    throw new Error(`Error fetching alerts: ${error}`);
-  }
-}
-
 export async function archiveAlert(tokenId: string, alertId: string, archive: boolean): Promise<Boolean> {
   try {
     const response = await fetch('/api/alerts/archive', {

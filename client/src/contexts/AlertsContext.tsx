@@ -30,7 +30,7 @@ export const AlertsContextProvider: React.FC<{ children: ReactNode }> = ({ child
       setAlerts([]);
     }
     return () => {
-      if (source && currentUser) {
+      if (source) {
         source.close();
         source = null;
       }

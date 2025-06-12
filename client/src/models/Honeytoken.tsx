@@ -55,20 +55,6 @@ export async function createHoneytokenApi(
   });
 }
 
-export async function getHoneytokens() {
-  try {
-    const response = await fetch('/api/honeytokens', {
-      headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    return await response.json();
-  } catch (err) {
-    console.error('Error fetching honeytokens:', err);
-  }
-}
-
 export async function deleteHoneytoken(token_id: string) {
   try {
     const response = await fetch(`/api/honeytokens/token/${token_id}`, {
@@ -120,68 +106,6 @@ export async function stopMonitorOnHoneytoken(token_id: string) {
     }
   } catch (err) {
     console.error('Error stopping monitor:', err);
-  }
-}
-
-export async function getHoneytokensMonitorStatusesText(agents: IAgent[]): Promise<Record<string, boolean>> {
-  try {
-    const agents_ids: string[] = agents.filter(({ status }) => status === 'online').map(({ agent_id }) => agent_id);
-
-    if (agents_ids.length === 0) {
-      return {}; // Early exit if no online agents
-    }
-
-    const response = await fetch('/api/honeytokens/monitor_status_text', {
-      method: 'POST',
-      headers: {
-        Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ agents_ids }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch monitoring statuses');
-      return {};
-    }
-
-    const data: Record<string, boolean> = await response.json();
-    return data;
-  } catch (err) {
-    console.error('Error fetching monitoring statuses:', err);
-    return {};
-  }
-}
-
-export async function getHoneytokensMonitorStatusesAPI(agents: IAgent[]): Promise<Record<string, boolean>> {
-  try {
-    const agents_ids: string[] = agents
-      .filter((agent: IAgent) => agent.status === 'online')
-      .map(({ agent_id }) => agent_id);
-
-    if (agents_ids.length === 0) {
-      return {}; // Early exit if no online agents
-    }
-
-    const response = await fetch('/api/honeytokens/monitor_status_api', {
-      method: 'POST',
-      headers: {
-        Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ agents_ids }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch monitoring statuses');
-      return {};
-    }
-
-    const data: Record<string, boolean> = await response.json();
-    return data;
-  } catch (err) {
-    console.error('Error fetching monitoring statuses:', err);
-    return {};
   }
 }
 

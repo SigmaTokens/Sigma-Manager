@@ -46,6 +46,7 @@ export function serveSSE() {
     const user_id: string = (req as any).user.id;
 
     const pushUpdate = async () => {
+      console.log('pushing honeytokens !');
       const honeytokens = await getHoneytokens(user_id);
       res.write(`data: ${JSON.stringify(honeytokens)}\n\n`);
     };

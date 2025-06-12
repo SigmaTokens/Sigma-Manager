@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { createServer } from 'http';
-import { Server as IOServer, Socket } from 'socket.io';
+import { Server as IOServer } from 'socket.io';
 import { serveClient } from './routes/client';
 import { serveHoneytokens } from './routes/honeytokens';
 import { serveUsers } from './routes/users';

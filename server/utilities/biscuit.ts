@@ -23,6 +23,7 @@ let KeyPair: typeof KeyPairT;
 let SignatureAlgorithm: typeof SignatureAlgorithmT;
 
 export async function loadBiscuit() {
+  console.log('fuckkkkkkkk');
   if (Biscuit) return;
   const wasm = await import('@biscuit-auth/biscuit-wasm');
   ({
@@ -41,10 +42,8 @@ export async function loadBiscuit() {
 
 await loadBiscuit();
 
-export async function issueBiscuit(id: string, username: string): string {
+export function issueBiscuit(id: string, username: string): string {
   try {
-    await loadBiscuit();
-
     // 1 - Build the authority block
     const bb = new BiscuitBuilder();
     const TOKEN_EXP_SECS = 2 * 600 * 600;
@@ -81,10 +80,8 @@ export async function issueBiscuit(id: string, username: string): string {
   }
 }
 
-export async function verifyBiscuit(raw: string) {
+export function verifyBiscuit(raw: string) {
   try {
-    await loadBiscuit();
-
     // 1 - load the *public* root key (hex in .env)
     const rootBytes = Uint8Array.from(Buffer.from(process.env.PRIVATE_KEY_BISCUIT!, 'hex'));
     const rootKey = PrivateKey.fromBytes(rootBytes, SignatureAlgorithm.Ed25519);

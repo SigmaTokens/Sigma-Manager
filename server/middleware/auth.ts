@@ -1,10 +1,9 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
-import { verifyBiscuit, loadBiscuit } from '../utilities/biscuit';
+import { verifyBiscuit } from '../utilities/biscuit';
 import { Constants } from '../constants';
 
 export function auth(mustBeSelf = false): RequestHandler {
   return async (req: Request, res: Response, next: NextFunction) => {
-    await loadBiscuit();
     try {
       let raw = req.headers.authorization?.startsWith('Bearer ') ? req.headers.authorization.split(' ')[1] : undefined;
 
@@ -12,7 +11,7 @@ export function auth(mustBeSelf = false): RequestHandler {
 
       if (!raw) return void res.status(500).json({ action: Constants.ACCESS_DENIED });
 
-      const tok = await verifyBiscuit(raw);
+      const tok = verifyBiscuit(raw);
       if (tok === '') return void res.status(500).json({ action: Constants.ACCESS_DENIED });
 
       const block0 = tok?.getBlockSource(0);

@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react';
-import React from 'react';
-
 import '../styles/TextHoneytoken.css';
 import '../styles/ApiHoneytoken.css';
 import {
@@ -18,9 +16,10 @@ import { IHoneytoken } from '../../../server/interfaces/honeytoken';
 import { FaTrash, FaPlay, FaStop } from 'react-icons/fa';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import { HoneytokenType } from '../utilities/typing';
-import TextTokenDetailsPopup from '../components/TextTokenDetailsPopup.tsx';
-import ApiTokenDetailsPopup from '../components/ApiTokenDetailsPopup.tsx';
+import TextHoneytokenDetailsPopup from '../components/TextHoneytokenDetailsPopup.tsx';
+import ApiTokenDetailsPopup from '../components/ApiHoneytokenDetailsPopup.tsx';
 import { FiInfo } from 'react-icons/fi';
+import { useAgents } from '../contexts/AgentsContext.tsx';
 
 function Honeytokens() {
   const [honeytokens, setHoneytokens] = useState<IHoneytoken[]>([]);
@@ -32,16 +31,16 @@ function Honeytokens() {
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
   const [selectedToken, setSelectedToken] = useState<IHoneytoken | null>(null);
   const [selectedGroupToken, setSelectedGroupToken] = useState<IHoneytoken | null>(null);
-  // 👇 NEW STATE
   const [loadingTokenId, setLoadingTokenId] = useState<string | null>(null);
+  const { agents } = useAgents();
 
   useEffect(() => {
     const fetchHoneytokens = async () => {
       try {
         const tokenData = await getHoneytokens();
 
-        const monitoringStatuses_text = await getHoneytokensMonitorStatusesText();
-        const monitoringStatuses_api = await getHoneytokensMonitorStatusesAPI();
+        const monitoringStatuses_text = await getHoneytokensMonitorStatusesText(agents);
+        const monitoringStatuses_api = await getHoneytokensMonitorStatusesAPI(agents);
 
         const tokensWithMonitoringStatus = tokenData.map((token: IHoneytoken) => {
           if (token.type_id === HoneytokenType.Text)
@@ -63,7 +62,7 @@ function Honeytokens() {
     };
 
     fetchHoneytokens();
-  }, [refreshCounter]);
+  }, [agents, refreshCounter]);
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -75,19 +74,19 @@ function Honeytokens() {
 
   const handleDeleteHoneytoken = async (tokenId: string) => {
     try {
-      setLoadingTokenId(tokenId); // 👈
+      setLoadingTokenId(tokenId);
       await deleteHoneytoken(tokenId);
       setRefreshCounter((prev) => prev + 1);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
     } finally {
-      setLoadingTokenId(null); // 👈
+      setLoadingTokenId(null);
     }
   };
 
   const handleStartMonitoringText = async (tokenId: string) => {
     try {
-      setLoadingTokenId(tokenId); // 👈
+      setLoadingTokenId(tokenId);
       await startMonitorOnHoneytoken(tokenId);
       setHoneytokens((prevTokens) =>
         prevTokens.map((token) => (token.token_id === tokenId ? { ...token, isMonitored: true } : token)),
@@ -95,13 +94,13 @@ function Honeytokens() {
     } catch (error) {
       console.error('Failed to start monitoring honeytoken:', error);
     } finally {
-      setLoadingTokenId(null); // 👈
+      setLoadingTokenId(null);
     }
   };
 
   const handleStopMonitoring = async (tokenId: string) => {
     try {
-      setLoadingTokenId(tokenId); // 👈
+      setLoadingTokenId(tokenId);
       await stopMonitorOnHoneytoken(tokenId);
       setHoneytokens((prevTokens) =>
         prevTokens.map((token) => (token.token_id === tokenId ? { ...token, isMonitored: false } : token)),
@@ -109,7 +108,7 @@ function Honeytokens() {
     } catch (error) {
       console.error('Failed to stop monitoring honeytoken:', error);
     } finally {
-      setLoadingTokenId(null); // 👈
+      setLoadingTokenId(null);
     }
   };
 
@@ -118,8 +117,8 @@ function Honeytokens() {
       setLoadingGroupId(groupId);
       await deleteHoneytokensByGroupId(groupId);
       setRefreshCounter((prev) => prev + 1);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
     } finally {
       setLoadingGroupId(null);
     }
@@ -130,8 +129,8 @@ function Honeytokens() {
       setLoadingGroupId(groupId);
       await startMonitorByGroupId(groupId);
       setRefreshCounter((prev) => prev + 1);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
     } finally {
       setLoadingGroupId(null);
     }
@@ -142,8 +141,8 @@ function Honeytokens() {
       setLoadingGroupId(groupId);
       await stopMonitorByGroupId(groupId);
       setRefreshCounter((prev) => prev + 1);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
     } finally {
       setLoadingGroupId(null);
     }
@@ -164,7 +163,7 @@ function Honeytokens() {
             <table className="text-honeytokens-table">
               <thead>
                 <tr>
-                  <th>Token ID</th>
+                  <th>Honeytoken ID</th>
                   <th>Status</th>
                   <th>Actions</th>
                   <th>Details</th>
@@ -206,7 +205,9 @@ function Honeytokens() {
             </table>
           </div>
 
-          {selectedToken && <TextTokenDetailsPopup token={selectedToken} onClose={() => setSelectedToken(null)} />}
+          {selectedToken && (
+            <TextHoneytokenDetailsPopup honeytoken={selectedToken} onClose={() => setSelectedToken(null)} />
+          )}
         </div>
       );
     }
@@ -279,7 +280,7 @@ function Honeytokens() {
                             onMouseEnter={() => setHoveredIcon(`stop-${honeytoken.token_id}`)}
                             onMouseLeave={() => setHoveredIcon(null)}
                             title="Stop Monitoring"
-                            disabled={loadingTokenId === honeytoken.token_id} // 👈
+                            disabled={loadingTokenId === honeytoken.token_id}
                             style={{
                               opacity: loadingTokenId === honeytoken.token_id ? 0.5 : 1,
                               pointerEvents: loadingTokenId === honeytoken.token_id ? 'none' : 'auto',
@@ -295,7 +296,7 @@ function Honeytokens() {
                             onMouseEnter={() => setHoveredIcon(`start-${honeytoken.token_id}`)}
                             onMouseLeave={() => setHoveredIcon(null)}
                             title="Start Monitoring"
-                            disabled={loadingTokenId === honeytoken.token_id} // 👈
+                            disabled={loadingTokenId === honeytoken.token_id}
                             style={{
                               opacity: loadingTokenId === honeytoken.token_id ? 0.5 : 1,
                               pointerEvents: loadingTokenId === honeytoken.token_id ? 'none' : 'auto',
@@ -311,7 +312,7 @@ function Honeytokens() {
                           onMouseEnter={() => setHoveredIcon(`delete-${honeytoken.token_id}`)}
                           onMouseLeave={() => setHoveredIcon(null)}
                           title="Delete Honeytoken"
-                          disabled={loadingTokenId === honeytoken.token_id} // 👈
+                          disabled={loadingTokenId === honeytoken.token_id}
                           style={{
                             opacity: loadingTokenId === honeytoken.token_id ? 0.5 : 1,
                             pointerEvents: loadingTokenId === honeytoken.token_id ? 'none' : 'auto',
@@ -495,7 +496,7 @@ function Honeytokens() {
                                 <th>Method</th>
                                 <th>Route</th>
                                 <th>Response</th>
-                                <th>Token ID</th>
+                                <th>Honeytoken ID</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -519,7 +520,7 @@ function Honeytokens() {
           </table>
         </div>
         {selectedGroupToken && (
-          <ApiTokenDetailsPopup token={selectedGroupToken} onClose={() => setSelectedGroupToken(null)} />
+          <ApiTokenDetailsPopup honeytoken={selectedGroupToken} onClose={() => setSelectedGroupToken(null)} />
         )}
       </div>
     );

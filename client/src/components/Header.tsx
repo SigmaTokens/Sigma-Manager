@@ -1,28 +1,20 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { getAgents } from '../models/Agents';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/UserContext';
 import { Globals } from '../utilities/globals';
+import { useRef } from 'react';
 import logo from '../assets/SigmaTokens.png';
-import CreateHoneytokenForm from './HoneyTokenCreation';
+import CreateHoneytokenForm from './HoneytokenCreation';
 import AddAgentPopup from './AddAgentPopup';
 import '../styles/Header.css';
-import { useRef } from 'react';
 
-export default function Header() {
+const Header = () => {
   const [showCreate, setShowCreate] = useState(false);
   const [showAddAgent, setShowAddAgent] = useState(false);
-  const [agents, setAgents] = useState([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { currentUser, logout } = useAuth();
   const menuRef = useRef<HTMLUListElement>(null);
   const hamburgerRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    getAgents().then((agents) => {
-      setAgents(agents);
-    });
-  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -41,13 +33,6 @@ export default function Header() {
       document.removeEventListener('click', handleClickOutside);
     };
   }, []);
-
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    await logout();
-    navigate('/login');
-  };
 
   return (
     <header className="header">
@@ -69,7 +54,7 @@ export default function Header() {
 
           {currentUser && (
             <li className="logout">
-              <button onClick={handleLogout} className="link-btn">
+              <button onClick={logout} className="link-btn">
                 Logout
               </button>
             </li>
@@ -169,7 +154,7 @@ export default function Header() {
                 <li>
                   <button
                     onClick={() => {
-                      handleLogout();
+                      logout();
                       setMobileMenuOpen(false);
                     }}
                   >
@@ -183,10 +168,12 @@ export default function Header() {
       </nav>
 
       {currentUser && showCreate && (
-        <CreateHoneytokenForm types={Globals.honeytokenTypes} agents={agents} onClose={() => setShowCreate(false)} />
+        <CreateHoneytokenForm types={Globals.honeytokenTypes} onClose={() => setShowCreate(false)} />
       )}
 
       {currentUser && showAddAgent && <AddAgentPopup onClose={() => setShowAddAgent(false)} />}
     </header>
   );
-}
+};
+
+export default Header;

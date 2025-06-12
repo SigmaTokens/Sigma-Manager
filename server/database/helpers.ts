@@ -60,9 +60,19 @@ export async function print_table(table_name: string) {
       FROM
         ${table_name}
     `);
-    if (process.env.MODE === 'dev') console.log(`[+] Table '${table_name}' data (${rows.length} rows):`, rows);
+    if (process.env.MODE === 'dev')
+      console.log(
+        Constants.TEXT_GREEN_COLOR,
+        `Table '${table_name}' data (${rows.length} rows): ${rows}`,
+        Constants.TEXT_DEFAULT_COLOR,
+      );
   } catch (error) {
-    if (process.env.MODE === 'dev') console.error(`[-] Failed to fetch data from table '${table_name}':`, error);
+    if (process.env.MODE === 'dev')
+      console.error(
+        Constants.TEXT_RED_COLOR,
+        `Failed to fetch data from table '${table_name}': ${error}`,
+        Constants.TEXT_DEFAULT_COLOR,
+      );
   }
 }
 

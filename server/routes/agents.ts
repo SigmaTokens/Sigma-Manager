@@ -8,23 +8,13 @@ import {
 import { Globals } from '../globals';
 import { Constants } from '../constants';
 import { auth } from '../middleware/auth';
-
-async function checkAgentStatus(id: string): Promise<string> {
-  try {
-    const socket = Globals.agentSockets.get(id);
-    if (socket && socket.connected) return 'online';
-    return 'offline';
-  } catch (error) {
-    return 'offline';
-  }
-}
+import { sseUpdateAgents } from './sse';
 
 export function serveAgents() {
   const router = Router();
 
   router.use(auth());
 
-  //✔️
   router.get('/agents', async (req, res) => {
     try {
       const user_id: string = (req as any).user.id;
@@ -38,7 +28,7 @@ export function serveAgents() {
       return void res.status(500).json([]);
     }
   });
-  //✔️
+
   router.delete('/agents/agent/:agent_id', async (req, res) => {
     try {
       const { agent_id } = req.params;
@@ -52,38 +42,22 @@ export function serveAgents() {
       if (!result) return void res.status(500).json({ success: false });
 
       const socket = Globals.agentSockets.get(agent_id);
-      if (socket)
+      if (socket) {
         socket.emit('CLOSE_AGENT', () => {
           socket.disconnect();
+          sseUpdateAgents();
+          return void res.status(200).json({ success: true });
         });
-      else {
+      } else {
         console.warn(Constants.TEXT_YELLOW_COLOR, 'failed getting socket for closing!');
         return void res.status(500).json({ success: false });
       }
-      return void res.status(200).json({ success: true });
     } catch (error) {
       console.error(Constants.TEXT_RED_COLOR, 'Failed to erase agent:', error, Constants.TEXT_DEFAULT_COLOR);
       return void res.status(500).json({ success: false });
     }
   });
-  //✔️
-  router.get('/agents/active_status', async (req, res) => {
-    try {
-      const user_id: string = (req as any).user.id;
-      const agents = await get_all_user_agents(user_id);
-      const statusUpdates = await Promise.all(
-        agents.map(async (agent: any) => ({
-          agent_id: agent.agent_id,
-          status: await checkAgentStatus(agent.agent_id),
-        })),
-      );
-      return void res.status(200).json(statusUpdates);
-    } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to update agent statuses:', error, Constants.TEXT_DEFAULT_COLOR);
-      return void res.status(500).json({});
-    }
-  });
-  //✔️
+
   router.get('/agents/verify/:agent_id', async (req, res) => {
     try {
       const { agent_id } = req.params;
@@ -93,76 +67,58 @@ export function serveAgents() {
 
       if (!result) return void res.status(500).json({ success: false });
 
+      sseUpdateAgents();
       return void res.status(200).json({ success: true });
     } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to init:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to init:', error, Constants.TEXT_DEFAULT_COLOR);
       return void res.status(500).json({ success: false });
     }
   });
-  //✔️
-  router.put('/agents/monitor_status', async (req, res) => {
-    try {
-      const { agent_id } = req.body;
 
-      let isMonitoring = false;
-
-      const socket = Globals.agentSockets.get(agent_id);
-      if (socket)
-        socket.emit('STATUS_AGENT', (response: any) => {
-          if (response.status === 'monitoring') isMonitoring = true;
-        });
-      else return void res.status(500).json({ success: 'not monitoring' });
-
-      if (isMonitoring) return void res.status(200).json({ success: 'monitoring' });
-      return void res.status(201).json({ success: 'not monitoring' });
-    } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to get agent monitoring status:', error);
-      return void res.status(500).json({ success: 'not monitoring' });
-    }
-  });
-  //✔️
   router.put('/agents/start', async (req, res) => {
     try {
       const { agent_id } = req.body;
 
-      let isRunning = false;
-
       const socket = Globals.agentSockets.get(agent_id);
       if (socket)
         socket.emit('START_AGENT', (response: any) => {
-          if (response.status === 'started') isRunning = true;
+          if (response.status === 'started') {
+            sseUpdateAgents();
+            return void res.status(200).json({ success: true });
+          } else {
+            return void res.status(500).json({ success: false });
+          }
         });
       else {
-        console.error(Constants.TEXT_RED_COLOR, 'Failed fetching socket to start!');
+        console.error(Constants.TEXT_RED_COLOR, 'Failed fetching socket to start!', Constants.TEXT_DEFAULT_COLOR);
         return void res.status(500).json({ success: false });
       }
-      if (isRunning) return void res.status(200).json({ success: true });
-      return void res.status(500).json({ success: false });
     } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to start agent:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to start agent:', error, Constants.TEXT_DEFAULT_COLOR);
       return void res.status(500).json({ success: false });
     }
   });
-  //✔️
+
   router.put('/agents/stop', async (req, res) => {
     try {
       const { agent_id } = req.body;
 
-      let isRunning = true;
-
       const socket = Globals.agentSockets.get(agent_id);
       if (socket)
         socket.emit('STOP_AGENT', (response: any) => {
-          if (response.status === 'stopped') isRunning = false;
+          if (response.status === 'stopped') {
+            sseUpdateAgents();
+            return void res.status(200).json({ success: true });
+          } else {
+            return void res.status(500).json({ success: false });
+          }
         });
       else {
-        console.error(Constants.TEXT_RED_COLOR, 'Failed fetching socket to stop!');
+        console.error(Constants.TEXT_RED_COLOR, 'Failed fetching socket to stop!', Constants.TEXT_DEFAULT_COLOR);
         return void res.status(500).json({ success: false });
       }
-      if (!isRunning) return void res.status(200).json({ success: true });
-      return void res.status(500).json({ success: false });
     } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to stop agent:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to stop agent:', error, Constants.TEXT_DEFAULT_COLOR);
       return void res.status(500).json({ success: false });
     }
   });

@@ -1,21 +1,18 @@
 import { useEffect, useState } from 'react';
 import '../styles/Agents.css';
-import { deleteAgent, verifyAgent, startAgent, stopAgent, fetchAgents } from '../models/Agents';
+import { deleteAgent, verifyAgent, startAgent, stopAgent } from '../models/Agents';
 import { IAgent } from '../../../server/interfaces/agent';
 import { FaTrash, FaPlay, FaStop, FaCheckSquare } from 'react-icons/fa';
-import { FaInfo } from 'react-icons/fa';
 import AgentDetailsPopup from '../components/AgentDetailsPopup';
 import { FaInfoCircle } from 'react-icons/fa';
+import { useAgents } from '../contexts/AgentsContext';
 
 function AgentsPage() {
-  const [agents, setAgents] = useState<IAgent[]>([]);
-  const [refreshCounter, setRefreshCounter] = useState(0);
-  const [statusUpdates, setStatusUpdates] = useState<Record<string, string>>({});
-  const [loadingAgentId, setLoadingAgentId] = useState<string | null>(null);
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
+  const [loadingAgentId, setLoadingAgentId] = useState<string | null>(null); // disable the agent from being updated again until response
   const [selectedAgent, setSelectedAgent] = useState<IAgent | null>(null);
-
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const { agents } = useAgents();
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -27,7 +24,6 @@ function AgentsPage() {
     try {
       setLoadingAgentId(agentId);
       await deleteAgent(agentId);
-      setRefreshCounter((prev) => prev + 1);
     } catch (error) {
       console.error('Failed to delete agent:', error);
     } finally {
@@ -39,9 +35,6 @@ function AgentsPage() {
     try {
       setLoadingAgentId(agentId);
       await startAgent(agentId);
-      setAgents((prevAgents) =>
-        prevAgents.map((agent) => (agent.agent_id === agentId ? { ...agent, isMonitoring: true } : agent)),
-      );
     } catch (error) {
       console.error('Failed to start agent:', error);
     } finally {
@@ -53,19 +46,12 @@ function AgentsPage() {
     try {
       setLoadingAgentId(agentId);
       await stopAgent(agentId);
-      setAgents((prevAgents) =>
-        prevAgents.map((agent) => (agent.agent_id === agentId ? { ...agent, isMonitoring: false } : agent)),
-      );
     } catch (error) {
       console.error('Failed to stop agent:', error);
     } finally {
       setLoadingAgentId(null);
     }
   };
-
-  useEffect(() => {
-    fetchAgents(setAgents, setStatusUpdates);
-  }, [refreshCounter]);
 
   if (isMobile) {
     return (
@@ -86,9 +72,7 @@ function AgentsPage() {
               {agents.map((agent) => (
                 <tr key={agent.agent_id}>
                   <td>{agent.agent_name}</td>
-                  <td className={`agents-status-${statusUpdates[agent.agent_id] || 'unknown'}`}>
-                    {statusUpdates[agent.agent_id] || 'unknown'}
-                  </td>
+                  <td className={`agents-status-${agent.status}`}>{agent.status}</td>
                   <td>
                     <div className="action-icons">
                       <button
@@ -100,7 +84,7 @@ function AgentsPage() {
                       </button>
                       {agent.validated === 0 && (
                         <button
-                          onClick={() => verifyAgent(agent.agent_id, setAgents, setStatusUpdates)}
+                          onClick={() => verifyAgent(agent.agent_id)}
                           disabled={loadingAgentId === agent.agent_id}
                           title="Verify Agent"
                         >
@@ -108,8 +92,8 @@ function AgentsPage() {
                         </button>
                       )}
                       {agent.validated === 1 &&
-                        statusUpdates[agent.agent_id] !== 'unknown' &&
-                        statusUpdates[agent.agent_id] !== 'offline' &&
+                        agent.status !== 'unknown' &&
+                        agent.status !== 'offline' &&
                         (agent.isMonitoring ? (
                           <button
                             onClick={() => handleStop(agent.agent_id)}
@@ -143,7 +127,7 @@ function AgentsPage() {
         {selectedAgent && (
           <AgentDetailsPopup
             agent={selectedAgent}
-            status={statusUpdates[selectedAgent.agent_id] || 'unknown'}
+            status={selectedAgent.status}
             onClose={() => setSelectedAgent(null)}
           />
         )}
@@ -162,7 +146,8 @@ function AgentsPage() {
               <th title="Agent Name">Name</th>
               <th title="Agent ID">ID</th>
               <th title="Validation Status">Validated</th>
-              <th title="Agent Status">Status</th>
+              <th title="Agent Status">Is Alive?</th>
+              <th title="Agent Monitor">Is Monitoring?</th>
               <th title="Actions">Actions</th>
             </tr>
           </thead>
@@ -176,18 +161,19 @@ function AgentsPage() {
 
                 <td title={agent.validated == 0 ? 'no' : 'yes'}>{agent.validated == 0 ? 'no' : 'yes'}</td>
 
-                <td
-                  className={`agents-status-${statusUpdates[agent.agent_id] || 'unknown'}`}
-                  title={statusUpdates[agent.agent_id] || 'unknown'}
-                >
-                  {statusUpdates[agent.agent_id] || 'unknown'}
+                <td className={`agents-status-${agent.status}`} title={agent.status}>
+                  {agent.status}
+                </td>
+
+                <td className={`agents-status-${agent.isMonitoring ? 'online' : 'offline'}`}>
+                  {agent.isMonitoring ? 'yes' : 'no'}
                 </td>
 
                 <td>
                   <div className="action-icons">
                     {agent.validated == 1 &&
-                      statusUpdates[agent.agent_id] !== 'unknown' &&
-                      statusUpdates[agent.agent_id] !== 'offline' &&
+                      agent.status !== 'unknown' &&
+                      agent.status !== 'offline' &&
                       (agent.isMonitoring ? (
                         <button
                           onClick={() => handleStop(agent.agent_id)}
@@ -240,7 +226,7 @@ function AgentsPage() {
 
                     {agent.validated == 0 && (
                       <button
-                        onClick={() => verifyAgent(agent.agent_id, setAgents, setStatusUpdates)}
+                        onClick={() => verifyAgent(agent.agent_id)}
                         disabled={loadingAgentId === agent.agent_id}
                         style={{
                           opacity: loadingAgentId === agent.agent_id ? 0.5 : 1,

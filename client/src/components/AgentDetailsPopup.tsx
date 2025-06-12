@@ -1,14 +1,8 @@
 import React from 'react';
-import { IAgent } from '../../../server/interfaces/agent';
 import '../styles/AgentDetailsPopup.css';
+import { AgentDetailsPopupProps } from '../utilities/props';
 
-interface Props {
-  agent: IAgent;
-  status: string;
-  onClose: () => void;
-}
-
-const AgentDetailsPopup: React.FC<Props> = ({ agent, status, onClose }) => {
+const AgentDetailsPopup: React.FC<AgentDetailsPopupProps> = ({ agent, status, onClose }) => {
   return (
     <div className="agent-popup-overlay" onClick={onClose}>
       <div className="agent-popup-box" onClick={(e) => e.stopPropagation()}>

@@ -173,7 +173,7 @@ export async function delete_honeytoken_by_token_id(token_id: string) {
 
     await commit();
     return true;
-  } catch (err) {
+  } catch {
     await rollback();
     return false;
   }
@@ -204,7 +204,7 @@ export async function delete_honeytokens_by_group_id(group_id: string) {
 
     await commit();
     return true;
-  } catch (err) {
+  } catch {
     await rollback();
     return false;
   }

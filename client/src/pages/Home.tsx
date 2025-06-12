@@ -5,6 +5,7 @@ import '../styles/Home.css';
 import { IDashboardSummary } from '../../../server/interfaces/summary';
 import { Bar } from 'react-chartjs-2';
 import { CategoryScale, LinearScale, BarElement } from 'chart.js';
+import { getHome } from '../models/Home';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement);
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -14,20 +15,7 @@ function Home() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetch('/api/home', {
-      headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error('Failed to fetch dashboard data');
-        return res.json();
-      })
-      .then((data) => {
-        setSummary(data);
-      })
-      .catch((err) => {
-        console.error(err);
-        setError('Failed to load dashboard data.');
-      });
+    getHome(setSummary, setError);
   }, []);
 
   if (error) return <div>{error}</div>;
@@ -51,7 +39,7 @@ function Home() {
     labels: ['Active', 'Expiring Soon (within 7 days)', 'Expired'],
     datasets: [
       {
-        label: 'Token Count',
+        label: 'Honeytoken Count',
         data: [totalActive, summary.token_status.expiring_soon, summary.token_status.expired],
         backgroundColor: ['#4caf50', '#ff9800', '#f44336'],
       },
@@ -119,7 +107,7 @@ function Home() {
       {/*shak6- All charts in the same row */}
       <div className="charts-row">
         <div className="chart-wrapper large">
-          <h3 className="chart-title">Token Status</h3>
+          <h3 className="chart-title">Honeytoken Status</h3>
           <Bar
             data={statusChartData}
             options={{

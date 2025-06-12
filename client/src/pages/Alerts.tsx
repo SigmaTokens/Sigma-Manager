@@ -21,12 +21,11 @@ function Alerts() {
     const fetchAlerts = async () => {
       try {
         const data = await getAlerts();
-        console.log(data);
         setAlerts(data);
         setFilteredAlerts(data);
-      } catch (err) {
+      } catch (error) {
         setError('Failed to load alerts');
-        console.error(err);
+        console.error(error);
       } finally {
         setIsLoading(false);
       }
@@ -72,8 +71,8 @@ function Alerts() {
       if (await archiveAlert(tokenId, alertId, !currentArchiveStatus)) {
         setIsLoading(true);
       }
-    } catch (err) {
-      console.error('Failed to update archive status:', err);
+    } catch (error) {
+      console.error('Failed to update archive status:', error);
     }
   };
 
@@ -82,7 +81,6 @@ function Alerts() {
   };
 
   const handleMoreDetails = (alert: Alert) => {
-    console.log(alert);
     setSelectedAlert(alert);
   };
 

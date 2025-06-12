@@ -1,41 +1,26 @@
-import { IAgent, IAgentStatus } from '../../../server/interfaces/agent';
-
-export async function getAgents() {
-  try {
-    const response = await fetch('/api/agents', {
-      method: 'GET',
-      headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Error:', errorText);
-    } else {
-      const data = await response.json();
-      return data;
-    }
-  } catch (err) {
-    console.error('Request failed:', err);
-  }
-}
+import { access_denied } from '../utilities/constants';
+import { logoutFromSession } from '../utilities/helpers';
 
 export async function startAgent(agent_id: string) {
   try {
     const response = await fetch(`/api/agents/start`, {
       method: 'PUT',
       headers: {
-        Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
+        Authorization: localStorage.getItem('biscuit') ? `Bearer ${localStorage.getItem('biscuit')}` : '',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         agent_id: agent_id,
       }),
     });
+    const payload = await response.json();
+
     if (!response.ok) {
+      if (payload.action === access_denied) logoutFromSession();
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-  } catch (err) {
-    console.error('Error starting agent:', err);
+  } catch (error) {
+    throw new Error(`Error starting agent: ${error}`);
   }
 }
 
@@ -44,47 +29,21 @@ export async function stopAgent(agent_id: string) {
     const response = await fetch(`/api/agents/stop`, {
       method: 'PUT',
       headers: {
-        Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
+        Authorization: localStorage.getItem('biscuit') ? `Bearer ${localStorage.getItem('biscuit')}` : '',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         agent_id: agent_id,
       }),
     });
+    const payload = await response.json();
+
     if (!response.ok) {
+      if (payload.action === access_denied) logoutFromSession();
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-  } catch (err) {
-    console.error('Error stopping agent:', err);
-  }
-}
-
-export async function areAgentsConnected() {
-  const response = await fetch('/api/agents/active_status', {
-    headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
-  });
-  return await response.json();
-}
-
-export async function isAgentMonitoring(agent_id: string): Promise<boolean> {
-  try {
-    const response = await fetch(`/api/agents/monitor_status`, {
-      method: 'PUT',
-      headers: {
-        Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        agent_id: agent_id,
-      }),
-    });
-    if (response.ok && response.status === 200) {
-      return true;
-    }
-    return false;
-  } catch (err) {
-    console.error('Error stopping agent:', err);
-    return false;
+  } catch (error) {
+    throw new Error(`Error stopping agent: ${error}`);
   }
 }
 
@@ -92,62 +51,33 @@ export async function deleteAgent(agent_id: string) {
   try {
     const response = await fetch(`/api/agents/agent/${agent_id}`, {
       method: 'DELETE',
-      headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
+      headers: localStorage.getItem('biscuit') ? { Authorization: `Bearer ${localStorage.getItem('biscuit')}` } : {},
     });
+    const payload = await response.json();
+
     if (!response.ok) {
+      if (payload.action === access_denied) logoutFromSession();
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-  } catch (err) {
-    console.error('Error deleting agent:', err);
+  } catch (error) {
+    throw new Error(`Error deleting agent: ${error}`);
   }
 }
 
-export async function verifyAgent(agent_id: string, setAgents: any, setStatusUpdates: any) {
+export async function verifyAgent(agent_id: string) {
   try {
     const response = await fetch(`/api/agents/verify/${agent_id}`, {
       method: 'GET',
-      headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
-    });
-    fetchAgents(setAgents, setStatusUpdates);
-  } catch (err) {
-    console.error('Error verifying agent: ', err);
-  }
-}
-
-export async function refreshStatuses(setStatusUpdates: any) {
-  try {
-    const data: IAgentStatus[] = await areAgentsConnected();
-    const newStatuses: Record<string, string> = {};
-    data.forEach(({ agent_id, status }) => {
-      newStatuses[agent_id] = status;
+      headers: localStorage.getItem('biscuit') ? { Authorization: `Bearer ${localStorage.getItem('biscuit')}` } : {},
     });
 
-    setStatusUpdates(newStatuses);
+    const payload = await response.json();
+
+    if (!response.ok) {
+      if (payload.action === access_denied) logoutFromSession();
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
   } catch (error) {
-    console.error('Failed to refresh statuses:', error);
-  }
-}
-
-export async function fetchAgents(setAgents: any, setStatusUpdates: any) {
-  try {
-    const agentData = await getAgents();
-
-    const agentDataWithRunningStatus = await Promise.all(
-      agentData.map(async (agent: IAgent) => {
-        try {
-          const isMonitoring = await isAgentMonitoring(agent.agent_id);
-
-          return { ...agent, isMonitoring: isMonitoring };
-        } catch (err) {
-          console.error(`Failed to check monitoring for agent ${agent.agent_id}:`, err);
-          return { ...agent, isMonitoring: false };
-        }
-      }),
-    );
-
-    setAgents(agentDataWithRunningStatus);
-    await refreshStatuses(setStatusUpdates);
-  } catch (error) {
-    console.error('Failed to fetch agents:', error);
+    throw new Error(`Error verifying agent: ${error}`);
   }
 }

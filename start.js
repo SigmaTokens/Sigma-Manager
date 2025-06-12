@@ -195,7 +195,7 @@ function run_sigmatokens(mode) {
     console.log(Constants.TEXT_MAGENTA_COLOR, `Starting in ${mode} mode`, Constants.TEXT_DEFAULT_COLOR);
     execSync(`npm run ${mode}`, { stdio: 'inherit' });
   } catch (error) {
-    console.error(Constants.TEXT_RED_COLOR, 'Failed to start:', error.message);
+    console.error(Constants.TEXT_RED_COLOR, 'Failed to start:', error.message, Constants.TEXT_DEFAULT_COLOR);
     process.exit(-1);
   }
 }

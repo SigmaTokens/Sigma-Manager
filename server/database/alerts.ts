@@ -118,9 +118,9 @@ export async function delete_honeytoken_alert_by_alert_id(token_id: string, aler
       `,
       [token_id, alert_id],
     );
-  } catch (err) {
-    console.error(Constants.TEXT_RED_COLOR, `Failed to delete alert ${alert_id}:`, err, Constants.TEXT_DEFAULT_COLOR);
-    throw err;
+  } catch (error) {
+    console.error(Constants.TEXT_RED_COLOR, `Failed to delete alert ${alert_id}:`, error, Constants.TEXT_DEFAULT_COLOR);
+    throw error;
   }
 }
 
@@ -138,11 +138,11 @@ export async function set_honeytoken_alert_archive_by_alert_id(token_id: string,
       [archive, token_id, alert_id],
     );
     return true;
-  } catch (err) {
+  } catch (error) {
     console.error(
       Constants.TEXT_RED_COLOR,
       `Failed to set archive flag on alert ${alert_id}:`,
-      err,
+      error,
       Constants.TEXT_DEFAULT_COLOR,
     );
     return false;

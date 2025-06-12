@@ -70,7 +70,7 @@ export function serveAgents() {
       sseUpdateAgents();
       return void res.status(200).json({ success: true });
     } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to init:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to init:', error, Constants.TEXT_DEFAULT_COLOR);
       return void res.status(500).json({ success: false });
     }
   });
@@ -90,11 +90,11 @@ export function serveAgents() {
           }
         });
       else {
-        console.error(Constants.TEXT_RED_COLOR, 'Failed fetching socket to start!');
+        console.error(Constants.TEXT_RED_COLOR, 'Failed fetching socket to start!', Constants.TEXT_DEFAULT_COLOR);
         return void res.status(500).json({ success: false });
       }
     } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to start agent:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to start agent:', error, Constants.TEXT_DEFAULT_COLOR);
       return void res.status(500).json({ success: false });
     }
   });
@@ -114,11 +114,11 @@ export function serveAgents() {
           }
         });
       else {
-        console.error(Constants.TEXT_RED_COLOR, 'Failed fetching socket to stop!');
+        console.error(Constants.TEXT_RED_COLOR, 'Failed fetching socket to stop!', Constants.TEXT_DEFAULT_COLOR);
         return void res.status(500).json({ success: false });
       }
     } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to stop agent:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to stop agent:', error, Constants.TEXT_DEFAULT_COLOR);
       return void res.status(500).json({ success: false });
     }
   });

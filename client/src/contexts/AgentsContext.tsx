@@ -1,5 +1,6 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { IAgent } from '../../../server/interfaces/agent';
+import { useAuth } from './UserContext';
 
 export type AgentsContextType = {
   agents: IAgent[];
@@ -13,27 +14,22 @@ const AgentsContext = createContext<AgentsContextType>({
 
 export const AgentsContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [agents, setAgents] = useState<IAgent[]>([]);
-
+  const { currentUser } = useAuth();
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    if (!currentUser) return;
 
-    if (token) {
-      document.cookie = `token=${token}`;
-    }
+    const biscuit = localStorage.getItem('biscuit');
+
+    if (biscuit) document.cookie = `biscuit=${biscuit}`;
 
     const es = new EventSource('/api/agents_sse', { withCredentials: true });
 
-    es.onmessage = (event) => {
-      setAgents(JSON.parse(event.data));
-    };
+    es.onmessage = (event) => setAgents(JSON.parse(event.data));
 
-    es.onerror = (error) => {
-      console.error('SSE error: ', error);
-    };
-    return () => {
-      es.close();
-    };
-  }, []);
+    es.onerror = (error) => console.error('SSE error: ', error);
+
+    return () => es.close();
+  }, [currentUser]);
 
   return <AgentsContext.Provider value={{ agents, setAgents }}>{children}</AgentsContext.Provider>;
 };

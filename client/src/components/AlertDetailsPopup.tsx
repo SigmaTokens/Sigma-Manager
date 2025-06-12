@@ -1,43 +1,10 @@
 import React from 'react';
-import { Button } from './popup';
-import { Alert } from '../../../server/interfaces/alert';
-
+import { Button } from './Popup';
+import { AlertDetailsPopupProps } from '../utilities/props';
+import { isMobile, detailsGroups } from '../utilities/data';
 import '../styles/AlertDetailsPopup.css';
 
-interface AlertDetailsPopupProps {
-  alert: Alert;
-  onClose: () => void;
-}
-const isMobile = window.innerWidth <= 768;
-
 const AlertDetailsPopup: React.FC<AlertDetailsPopupProps> = ({ alert, onClose }) => {
-  const detailsGroups = [
-    {
-      title: 'Basic Information',
-      items: [
-        { label: 'Alert ID', value: alert.alert_id },
-        { label: 'Token ID', value: alert.token_id },
-        { label: 'Grade', value: alert.grade },
-        {
-          label: 'Alert Date',
-          value: new Date(parseInt(alert.alert_epoch)).toLocaleString(),
-        },
-      ],
-    },
-    {
-      title: 'Access Details',
-      items: [
-        { label: 'Accessed By', value: alert.accessed_by },
-        { label: 'Location', value: alert.location },
-        { label: 'File Name', value: alert.file_name },
-      ],
-    },
-    {
-      title: 'Agent Information',
-      items: [{ label: 'Agent', value: `${alert.agent_id} | ${alert.agent_name}` }],
-    },
-  ];
-
   return (
     <div className="popup-overlay" onClick={onClose}>
       <div className="popup-card" onClick={(e) => e.stopPropagation()}>
@@ -49,7 +16,7 @@ const AlertDetailsPopup: React.FC<AlertDetailsPopupProps> = ({ alert, onClose })
         </div>
 
         <div className="popup-content">
-          {detailsGroups.map((group, index) => (
+          {detailsGroups({ alert }).map((group, index) => (
             <div key={index} className="details-group">
               <h3 className="group-title">{group.title}</h3>
               <div className="details-grid">
@@ -63,7 +30,8 @@ const AlertDetailsPopup: React.FC<AlertDetailsPopupProps> = ({ alert, onClose })
             </div>
           ))}
 
-          <br></br>
+          <br />
+
           {/* Full-width log section */}
           <div className="full-width-group">
             <h3 className="group-title">Log Details</h3>

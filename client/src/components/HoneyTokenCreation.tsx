@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './popup';
-import '../styles/HoneyTokenCreation.css';
 import { createHoneytokenText, createHoneytokenApi } from '../models/Honeytoken';
-
 import { IHoneytokenType, CreateHoneytokenFormProps } from '../../../server/interfaces/agent';
 import { FiPlus, FiMinus } from 'react-icons/fi';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { HoneytokenType } from '../utilities/typing';
 import { useAgents } from '../contexts/AgentsContext';
+import '../styles/HoneyTokenCreation.css';
 
-function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
+const CreateHoneytokenForm = ({ types, onClose }: CreateHoneytokenFormProps) => {
   const [selectedType, setSelectedType] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
   const [componentAddresses, setComponentAddresses] = useState<string>('');
@@ -75,7 +74,6 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
   const handleSubmitApi = async () => {
     try {
       const response = await createHoneytokenApi(grade, expirationDate, notes, agentID, port, apiRows);
-      console.log(response);
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Error creating honeytoken: ', errorText);
@@ -83,8 +81,8 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
       }
       onClose();
       window.location.href = '/honeytokens';
-    } catch (err) {
-      console.error('error: ', err);
+    } catch (error) {
+      console.error('error: ', error);
     }
   };
 
@@ -108,8 +106,8 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
       }
       onClose();
       window.location.href = '/honeytokens';
-    } catch (err) {
-      console.error('Request failed:', err);
+    } catch (error) {
+      console.error('Request failed:', error);
       alert('Something went wrong while creating the honeytoken.');
     }
   };
@@ -349,6 +347,6 @@ function CreateHoneytokenForm({ types, onClose }: CreateHoneytokenFormProps) {
       </div>
     </div>
   );
-}
+};
 
 export default CreateHoneytokenForm;

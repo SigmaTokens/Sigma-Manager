@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/UserContext';
 import { Globals } from '../utilities/globals';
 import { useRef } from 'react';
 import logo from '../assets/SigmaTokens.png';
-import CreateHoneytokenForm from './HoneyTokenCreation';
+import CreateHoneytokenForm from './HoneytokenCreation';
 import AddAgentPopup from './AddAgentPopup';
 import '../styles/Header.css';
 
-export function Header() {
+const Header = () => {
   const [showCreate, setShowCreate] = useState(false);
   const [showAddAgent, setShowAddAgent] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -34,13 +34,6 @@ export function Header() {
     };
   }, []);
 
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    await logout();
-    navigate('/login');
-  };
-
   return (
     <header className="header">
       <nav className="nav">
@@ -61,7 +54,7 @@ export function Header() {
 
           {currentUser && (
             <li className="logout">
-              <button onClick={handleLogout} className="link-btn">
+              <button onClick={logout} className="link-btn">
                 Logout
               </button>
             </li>
@@ -161,7 +154,7 @@ export function Header() {
                 <li>
                   <button
                     onClick={() => {
-                      handleLogout();
+                      logout();
                       setMobileMenuOpen(false);
                     }}
                   >
@@ -181,4 +174,6 @@ export function Header() {
       {currentUser && showAddAgent && <AddAgentPopup onClose={() => setShowAddAgent(false)} />}
     </header>
   );
-}
+};
+
+export default Header;

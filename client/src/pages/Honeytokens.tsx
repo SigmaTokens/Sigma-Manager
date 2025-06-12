@@ -10,10 +10,8 @@ import {
 import { IHoneytoken } from '../../../server/interfaces/honeytoken';
 import { FaTrash, FaPlay, FaStop } from 'react-icons/fa';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
-import TextTokenDetailsPopup from '../components/TextTokenDetailsPopup.tsx';
-import ApiTokenDetailsPopup from '../components/ApiTokenDetailsPopup.tsx';
+import ApiTokenDetailsPopup from '../components/ApiHoneytokenDetailsPopup.tsx';
 import { FiInfo } from 'react-icons/fi';
-import { useAgents } from '../contexts/AgentsContext.tsx';
 import { useHoneytokens } from '../contexts/HoneytokensContext.tsx';
 import '../styles/TextHoneytoken.css';
 import '../styles/ApiHoneytoken.css';
@@ -118,7 +116,7 @@ function Honeytokens() {
             <table className="text-honeytokens-table">
               <thead>
                 <tr>
-                  <th>Token ID</th>
+                  <th>Honeytoken ID</th>
                   <th>Status</th>
                   <th>Actions</th>
                   <th>Details</th>
@@ -160,7 +158,9 @@ function Honeytokens() {
             </table>
           </div>
 
-          {selectedToken && <TextTokenDetailsPopup token={selectedToken} onClose={() => setSelectedToken(null)} />}
+          {selectedToken && (
+            <TextHoneytokenDetailsPopup honeytoken={selectedToken} onClose={() => setSelectedToken(null)} />
+          )}
         </div>
       );
     }
@@ -233,7 +233,7 @@ function Honeytokens() {
                             onMouseEnter={() => setHoveredIcon(`stop-${honeytoken.token_id}`)}
                             onMouseLeave={() => setHoveredIcon(null)}
                             title="Stop Monitoring"
-                            disabled={loadingTokenId === honeytoken.token_id} // 👈
+                            disabled={loadingTokenId === honeytoken.token_id}
                             style={{
                               opacity: loadingTokenId === honeytoken.token_id ? 0.5 : 1,
                               pointerEvents: loadingTokenId === honeytoken.token_id ? 'none' : 'auto',
@@ -249,7 +249,7 @@ function Honeytokens() {
                             onMouseEnter={() => setHoveredIcon(`start-${honeytoken.token_id}`)}
                             onMouseLeave={() => setHoveredIcon(null)}
                             title="Start Monitoring"
-                            disabled={loadingTokenId === honeytoken.token_id} // 👈
+                            disabled={loadingTokenId === honeytoken.token_id}
                             style={{
                               opacity: loadingTokenId === honeytoken.token_id ? 0.5 : 1,
                               pointerEvents: loadingTokenId === honeytoken.token_id ? 'none' : 'auto',
@@ -265,7 +265,7 @@ function Honeytokens() {
                           onMouseEnter={() => setHoveredIcon(`delete-${honeytoken.token_id}`)}
                           onMouseLeave={() => setHoveredIcon(null)}
                           title="Delete Honeytoken"
-                          disabled={loadingTokenId === honeytoken.token_id} // 👈
+                          disabled={loadingTokenId === honeytoken.token_id}
                           style={{
                             opacity: loadingTokenId === honeytoken.token_id ? 0.5 : 1,
                             pointerEvents: loadingTokenId === honeytoken.token_id ? 'none' : 'auto',
@@ -449,7 +449,7 @@ function Honeytokens() {
                                 <th>Method</th>
                                 <th>Route</th>
                                 <th>Response</th>
-                                <th>Token ID</th>
+                                <th>Honeytoken ID</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -473,7 +473,7 @@ function Honeytokens() {
           </table>
         </div>
         {selectedGroupToken && (
-          <ApiTokenDetailsPopup token={selectedGroupToken} onClose={() => setSelectedGroupToken(null)} />
+          <ApiTokenDetailsPopup honeytoken={selectedGroupToken} onClose={() => setSelectedGroupToken(null)} />
         )}
       </div>
     );

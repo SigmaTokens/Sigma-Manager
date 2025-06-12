@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { IHoneytoken } from '../../../server/interfaces/honeytoken';
 import { useAuth } from './UserContext';
 
@@ -17,23 +17,25 @@ export const HoneytokensContextProvider: React.FC<{ children: ReactNode }> = ({ 
   const { currentUser } = useAuth();
 
   useEffect(() => {
-    if (!currentUser) {
+    let source: EventSource | null = null;
+
+    if (currentUser) {
+      const biscuit = localStorage.getItem('biscuit');
+      if (biscuit) document.cookie = `biscuit=${biscuit}`;
+
+      source = new EventSource('/api/honeytokens_sse', { withCredentials: true });
+      source.onmessage = (event) => setHoneytokens(JSON.parse(event.data));
+      source.onerror = (error) => console.error('SSE error: ', error);
+    } else {
       setHoneytokens([]);
-      return;
     }
-
-    const biscuit = localStorage.getItem('biscuit');
-
-    if (biscuit) document.cookie = `biscuit=${biscuit}`;
-
-    const es = new EventSource('/api/honeytokens_sse', { withCredentials: true });
-
-    es.onmessage = (event) => setHoneytokens(JSON.parse(event.data));
-
-    es.onerror = (error) => console.error('SSE error: ', error);
-
-    return () => es.close();
-  }, [currentUser]);
+    return () => {
+      if (source && currentUser) {
+        source.close();
+        source = null;
+      }
+    };
+  }, [currentUser?.id]);
 
   return <HoneytokensContext.Provider value={{ honeytokens, setHoneytokens }}>{children}</HoneytokensContext.Provider>;
 };

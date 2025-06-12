@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { IAgent } from '../../../server/interfaces/agent';
 import { useAuth } from './UserContext';
 
@@ -17,23 +17,26 @@ export const AgentsContextProvider: React.FC<{ children: ReactNode }> = ({ child
   const { currentUser } = useAuth();
 
   useEffect(() => {
-    if (!currentUser) {
+    let source: EventSource | null = null;
+
+    if (currentUser) {
+      const biscuit = localStorage.getItem('biscuit');
+      if (biscuit) document.cookie = `biscuit=${biscuit}`;
+
+      source = new EventSource('/api/agents_sse', { withCredentials: true });
+      source.onmessage = (event) => setAgents(JSON.parse(event.data));
+      source.onerror = (error) => console.error('SSE error: ', error);
+    } else {
       setAgents([]);
-      return;
     }
 
-    const biscuit = localStorage.getItem('biscuit');
-
-    if (biscuit) document.cookie = `biscuit=${biscuit}`;
-
-    const es = new EventSource('/api/agents_sse', { withCredentials: true });
-
-    es.onmessage = (event) => setAgents(JSON.parse(event.data));
-
-    es.onerror = (error) => console.error('SSE error: ', error);
-
-    return () => es.close();
-  }, [currentUser]);
+    return () => {
+      if (source && currentUser) {
+        source.close();
+        source = null;
+      }
+    };
+  }, [currentUser?.id]);
 
   return <AgentsContext.Provider value={{ agents, setAgents }}>{children}</AgentsContext.Provider>;
 };

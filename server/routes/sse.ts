@@ -70,6 +70,7 @@ export function serveSSE() {
     res.flushHeaders();
 
     const user_id: string = (req as any).user.id;
+    console.log('help me please', user_id);
 
     const pushUpdate = async () => {
       const alerts = await get_all_user_alerts(user_id);

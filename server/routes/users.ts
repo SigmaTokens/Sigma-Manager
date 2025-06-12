@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { add_user, check_user_credentials } from '../database/users';
 import { Globals } from '../globals';
 import { issueBiscuit } from '../utilities/biscuit';
+import { sseUpdateAgents, sseUpdateAlerts, sseUpdateHoneytokens } from './sse';
 
 export const asyncHandler = (fn: (...a: any[]) => Promise<any>) => (req: any, res: any, next: any) =>
   Promise.resolve(fn(req, res, next)).catch(next);
@@ -27,6 +28,8 @@ export function serveUsers() {
     '/login',
     asyncHandler(async (req, res) => {
       const { username, password } = req.body;
+
+      console.log(username, password);
 
       const user = await check_user_credentials(username, password);
       if (!user) return void res.status(500).json({ message: 'Invalid credentials' });

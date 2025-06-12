@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { IAlert } from '../../../server/interfaces/alert';
 import { useAuth } from './UserContext';
 
@@ -17,20 +17,25 @@ export const AlertsContextProvider: React.FC<{ children: ReactNode }> = ({ child
   const { currentUser } = useAuth();
 
   useEffect(() => {
-    if (!currentUser) return;
+    let source: EventSource | null = null;
 
-    const biscuit = localStorage.getItem('biscuit');
+    if (currentUser) {
+      const biscuit = localStorage.getItem('biscuit');
+      if (biscuit) document.cookie = `biscuit=${biscuit}`;
 
-    if (biscuit) document.cookie = `biscuit=${biscuit}`;
-
-    const es = new EventSource('/api/alerts_sse', { withCredentials: true });
-
-    es.onmessage = (event) => setAlerts(JSON.parse(event.data));
-
-    es.onerror = (error) => console.error('SSE error: ', error);
-
-    return () => es.close();
-  }, [currentUser]);
+      source = new EventSource('/api/alerts_sse', { withCredentials: true });
+      source.onmessage = (event) => setAlerts(JSON.parse(event.data));
+      source.onerror = (error) => console.error('SSE error: ', error);
+    } else {
+      setAlerts([]);
+    }
+    return () => {
+      if (source && currentUser) {
+        source.close();
+        source = null;
+      }
+    };
+  }, [currentUser?.id]);
 
   return <AlertsContext.Provider value={{ alerts, setAlerts }}>{children}</AlertsContext.Provider>;
 };

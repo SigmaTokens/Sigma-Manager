@@ -27,8 +27,6 @@ function main(): void {
   dotenv.config({ path: '../.env' });
   app.use(cookieParser());
 
-  console.log(Constants.TEXT_MAGENTA_COLOR, 'SERVER_TEST=' + process.env.SERVER_TEST, Constants.TEXT_DEFAULT_COLOR);
-
   const port = process.env.PORT || 3000;
 
   const httpServer = createServer(app);

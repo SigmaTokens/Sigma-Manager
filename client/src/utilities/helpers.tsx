@@ -17,16 +17,7 @@ export function eraseSession() {
   if (typeof window === 'undefined') return;
 
   localStorage.removeItem('biscuit');
-
-  const expire = 'expires=Thu, 01 Jan 1970 00:00:00 GMT';
-  const parts = window.location.hostname.split('.');
-
-  for (let i = 0; i < parts.length; i++) {
-    const domain = '.' + parts.slice(i).join('.');
-    document.cookie = `biscuit=; ${expire}; path=/; domain=${domain};`;
-  }
-
-  document.cookie = `biscuit=; ${expire}; path=/;`;
+  document.cookie = '';
 }
 
 export function logoutFromSession() {

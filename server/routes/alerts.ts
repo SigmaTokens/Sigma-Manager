@@ -10,21 +10,7 @@ export function serveAlerts() {
   const router = Router();
 
   router.use(auth());
-  //✔️
-  router.get('/alerts', async (req, res) => {
-    try {
-      const user_id: string = (req as any).user.id;
 
-      const alerts = await get_all_user_alerts(user_id);
-
-      if (!alerts) return void res.status(200).json([]);
-      return void res.status(200).json(alerts);
-    } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to fetch alerts:', error, Constants.TEXT_DEFAULT_COLOR);
-      return void res.status(500).json([]);
-    }
-  });
-  //✔️
   router.post('/alerts/archive', async (req, res) => {
     try {
       const user_id: string = (req as any).user.id;

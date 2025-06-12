@@ -10,10 +10,11 @@ import '../styles/Agents.css';
 
 function AgentsPage() {
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
-  const [loadingAgentId, setLoadingAgentId] = useState<string | null>(null); // disable the agent from being updated again until response
+  const [loadingAgentId, setLoadingAgentId] = useState<string | null>(null);
   const [selectedAgent, setSelectedAgent] = useState<IAgent | null>(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const { agents } = useAgents();
+  const { honeytokens } = useHoneytokens();
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -92,7 +93,8 @@ function AgentsPage() {
                           <FaCheckSquare className="action-icon verify" />
                         </button>
                       )}
-                      {agent.validated === 1 &&
+                      {honeytokens.length > 0 &&
+                        agent.validated === 1 &&
                         agent.status !== 'unknown' &&
                         agent.status !== 'offline' &&
                         (agent.isMonitoring ? (
@@ -172,7 +174,8 @@ function AgentsPage() {
 
                 <td>
                   <div className="action-icons">
-                    {agent.validated == 1 &&
+                    {honeytokens.length > 0 &&
+                      agent.validated == 1 &&
                       agent.status !== 'unknown' &&
                       agent.status !== 'offline' &&
                       (agent.isMonitoring ? (

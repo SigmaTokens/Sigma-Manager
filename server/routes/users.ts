@@ -37,7 +37,7 @@ export function serveUsers() {
 
       if (biscuit === '') return void res.status(500).json({ message: 'Broken token!' });
 
-      res.status(200).json({ biscuit });
+      return void res.status(200).json({ biscuit });
     }),
   );
 

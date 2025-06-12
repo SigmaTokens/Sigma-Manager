@@ -1,9 +1,22 @@
 import React from 'react';
-import { VolumeBarProps } from '../utilities/props';
-import { bars, getColor } from '../utilities/helpers';
 import '../styles/VolumeBar.css';
 
-const VolumeBar: React.FC<VolumeBarProps> = ({ grade }) => {
+interface Props {
+  grade: number;
+}
+
+const VolumeBar: React.FC<Props> = ({ grade }) => {
+  const bars = Array.from({ length: 5 }, (_, i) => i + 1);
+
+  const getColor = (index: number): string => {
+    if (grade >= index) {
+      if (grade === 5) return '#f44336'; // red
+      if (grade >= 3 && grade <= 4) return '#ff9800'; // yellow
+      return '#4caf50'; // green
+    }
+    return '#e0e0e0'; // gray
+  };
+
   return (
     <div className="volume-bar">
       {bars.map((index) => (
@@ -11,13 +24,8 @@ const VolumeBar: React.FC<VolumeBarProps> = ({ grade }) => {
           key={index}
           className="bar"
           style={{
-<<<<<<< HEAD
-            height: `${(index / 10) * 100}%`,
-            backgroundColor: getColor(grade, index),
-=======
-            height: `${(index / 12) * 100}%`,
+            height: `${(index / 5) * 100}%`,
             backgroundColor: getColor(index),
->>>>>>> 140ff99 (changes001)
           }}
         />
       ))}

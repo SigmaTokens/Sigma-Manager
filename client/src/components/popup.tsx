@@ -1,4 +1,5 @@
 import React from 'react';
+import '../styles/Popup.css';
 
 export function Button({
   children,
@@ -14,13 +15,7 @@ export function Button({
   );
 }
 
-export function Card({
-  className,
-  children,
-}: {
-  className?: string;
-  children: React.ReactNode;
-}) {
+export function Card({ className, children }: { className?: string; children: React.ReactNode }) {
   return <div className={`card`}>{children}</div>;
 }
 
@@ -28,38 +23,19 @@ export function CardContent({ children }: { children: React.ReactNode }) {
   return <div className="card-content">{children}</div>;
 }
 
-export function Checkbox({
-  className,
-  ...props
-}: React.InputHTMLAttributes<HTMLInputElement>) {
-  return (
-    <input
-      type="checkbox"
-      className={`checkbox ${className || ''}`}
-      {...props}
-    />
-  );
+export function Checkbox({ className, ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
+  return <input type="checkbox" className={`checkbox ${className || ''}`} {...props} />;
 }
 
-export function Input({
-  className,
-  ...props
-}: React.InputHTMLAttributes<HTMLInputElement>) {
+export function Input({ className, ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
   return <input className={`input ${className || ''}`} {...props} />;
 }
 
-export function Textarea({
-  className,
-  ...props
-}: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
+export function Textarea({ className, ...props }: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return <textarea className={`textarea ${className || ''}`} {...props} />;
 }
 
-export function Select({
-  className,
-  children,
-  ...props
-}: React.SelectHTMLAttributes<HTMLSelectElement>) {
+export function Select({ className, children, ...props }: React.SelectHTMLAttributes<HTMLSelectElement>) {
   return (
     <select className={`select ${className || ''}`} {...props}>
       {children}
@@ -83,14 +59,16 @@ export function SelectContent({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-export function SelectItem({
-  value,
-  children,
-}: {
-  value: string;
-  children: React.ReactNode;
-}) {
+export function SelectItem({ value, children }: { value: string; children: React.ReactNode }) {
   return <option value={value}>{children}</option>;
+}
+
+export function WarningPopup(message: string, ms = 3000) {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = message;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), ms);
 }
 
 export default {

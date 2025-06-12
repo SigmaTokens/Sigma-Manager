@@ -32,9 +32,7 @@ export function serveUsers() {
       if (!user) return void res.status(500).json({ message: 'Invalid credentials' });
       const biscuit = issueBiscuit(user.id, user.username);
 
-      console.log('user:', username);
       if (biscuit === '') return void res.status(500).json({ message: 'Broken token!' });
-      console.log('pass:', password);
 
       return void res.status(200).json({ biscuit });
     }),

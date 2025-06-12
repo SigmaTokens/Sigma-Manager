@@ -1,5 +1,6 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { IHoneytoken } from '../../../server/interfaces/honeytoken';
+import { useAuth } from './UserContext';
 
 export type HoneytokensContextType = {
   honeytokens: IHoneytoken[];
@@ -13,28 +14,23 @@ const HoneytokensContext = createContext<HoneytokensContextType>({
 
 export const HoneytokensContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [honeytokens, setHoneytokens] = useState<IHoneytoken[]>([]);
+  const { currentUser } = useAuth();
 
   useEffect(() => {
+    if (!currentUser) return;
+
     const token = localStorage.getItem('token');
 
-    if (token) {
-      document.cookie = `token=${token}`;
-    }
+    if (token) document.cookie = `token=${token}`;
 
     const es = new EventSource('/api/honeytokens_sse', { withCredentials: true });
 
-    es.onmessage = (event) => {
-      console.log('honeytokens: ', JSON.parse(event.data));
-      setHoneytokens(JSON.parse(event.data));
-    };
+    es.onmessage = (event) => setHoneytokens(JSON.parse(event.data));
 
-    es.onerror = (error) => {
-      console.error('SSE error: ', error);
-    };
-    return () => {
-      es.close();
-    };
-  }, []);
+    es.onerror = (error) => console.error('SSE error: ', error);
+
+    return () => es.close();
+  }, [currentUser]);
 
   return <HoneytokensContext.Provider value={{ honeytokens, setHoneytokens }}>{children}</HoneytokensContext.Provider>;
 };

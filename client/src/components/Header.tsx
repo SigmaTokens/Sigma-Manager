@@ -7,6 +7,7 @@ import logo from '../assets/SigmaTokens.png';
 import CreateHoneytokenForm from './HoneytokenCreation';
 import AddAgentPopup from './AddAgentPopup';
 import '../styles/Header.css';
+import { useAgents } from '../contexts/AgentsContext';
 
 export const Header = () => {
   const [showCreate, setShowCreate] = useState(false);
@@ -15,6 +16,7 @@ export const Header = () => {
   const { currentUser, logout } = useAuth();
   const menuRef = useRef<HTMLUListElement>(null);
   const hamburgerRef = useRef<HTMLButtonElement>(null);
+  const { agents } = useAgents();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -73,18 +75,22 @@ export const Header = () => {
 
           {currentUser && (
             <>
-              <li>
-                <Link to="/honeytokens">Honeytokens</Link>
-              </li>
-              <li>
-                <Link to="/alerts">Alerts</Link>
-              </li>
-              <li>
-                <Link to="/agents">Agents</Link>
-              </li>
-              <li>
-                <button onClick={() => setShowCreate(true)}>Create</button>
-              </li>
+              {agents.length > 0 && (
+                <>
+                  <li>
+                    <Link to="/honeytokens">Honeytokens</Link>
+                  </li>
+                  <li>
+                    <Link to="/alerts">Alerts</Link>
+                  </li>
+                  <li>
+                    <Link to="/agents">Agents</Link>
+                  </li>
+                  <li>
+                    <button onClick={() => setShowCreate(true)}>Create</button>
+                  </li>
+                </>
+              )}
               <li>
                 <button onClick={() => setShowAddAgent(true)}>Add Agent</button>
               </li>
@@ -116,31 +122,35 @@ export const Header = () => {
             )}
             {currentUser && (
               <>
-                <li>
-                  <Link to="/honeytokens" onClick={() => setMobileMenuOpen(false)}>
-                    Honeytokens
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/alerts" onClick={() => setMobileMenuOpen(false)}>
-                    Alerts
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/agents" onClick={() => setMobileMenuOpen(false)}>
-                    Agents
-                  </Link>
-                </li>
-                <li>
-                  <button
-                    onClick={() => {
-                      setShowCreate(true);
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    Create
-                  </button>
-                </li>
+                {agents.length > 0 && (
+                  <>
+                    <li>
+                      <Link to="/honeytokens" onClick={() => setMobileMenuOpen(false)}>
+                        Honeytokens
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/alerts" onClick={() => setMobileMenuOpen(false)}>
+                        Alerts
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/agents" onClick={() => setMobileMenuOpen(false)}>
+                        Agents
+                      </Link>
+                    </li>
+                    <li>
+                      <button
+                        onClick={() => {
+                          setShowCreate(true);
+                          setMobileMenuOpen(false);
+                        }}
+                      >
+                        Create
+                      </button>
+                    </li>
+                  </>
+                )}
                 <li>
                   <button
                     onClick={() => {

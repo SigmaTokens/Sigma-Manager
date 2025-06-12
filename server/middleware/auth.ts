@@ -12,6 +12,7 @@ export function auth(mustBeSelf = false): RequestHandler {
       if (!raw) return void res.status(500).json({ action: Constants.ACCESS_DENIED });
 
       const tok = verifyBiscuit(raw);
+
       if (tok === '') return void res.status(500).json({ action: Constants.ACCESS_DENIED });
 
       const block0 = tok?.getBlockSource(0);

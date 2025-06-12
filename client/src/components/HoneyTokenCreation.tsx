@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './popup';
+import { Card, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './Popup';
 import { createHoneytokenText, createHoneytokenApi } from '../models/Honeytoken';
 import { IHoneytokenType, CreateHoneytokenFormProps } from '../../../server/interfaces/agent';
 import { FiPlus, FiMinus } from 'react-icons/fi';
@@ -20,7 +20,6 @@ const CreateHoneytokenForm = ({ types, onClose }: CreateHoneytokenFormProps) => 
   const [errors, setErrors] = useState<any>({});
   const [port, setPort] = useState<number>(9999);
   const [apiRows, setApiRows] = useState([{ method: 'GET', route: '', response: '' }]);
-
   const { agents } = useAgents();
 
   useEffect(() => {

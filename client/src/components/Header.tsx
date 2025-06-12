@@ -8,7 +8,7 @@ import CreateHoneytokenForm from './HoneytokenCreation';
 import AddAgentPopup from './AddAgentPopup';
 import '../styles/Header.css';
 
-const Header = () => {
+export const Header = () => {
   const [showCreate, setShowCreate] = useState(false);
   const [showAddAgent, setShowAddAgent] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -175,5 +175,3 @@ const Header = () => {
     </header>
   );
 };
-
-export default Header;

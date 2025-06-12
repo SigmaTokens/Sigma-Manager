@@ -2,8 +2,6 @@ import { createContext, useContext, useState, ReactNode } from 'react';
 import { Biscuit, PublicKey, SignatureAlgorithm } from '@biscuit-auth/biscuit-wasm';
 import { User, UserContextValue } from '../utilities/props';
 import { logoutFromSession } from '../utilities/helpers';
-import { useAgents } from './AgentsContext';
-import { useAlerts } from './AlertsContext';
 
 async function apiFetch<T>(url: string, options: RequestInit = {}): Promise<T> {
   const res = await fetch(url, {

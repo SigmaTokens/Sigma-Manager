@@ -1,3 +1,4 @@
+import { logoutFromSession } from '../utilities/helpers';
 export async function getHome(setSummary: any, setError: any) {
   try {
     const response = await fetch('/api/home', {
@@ -8,6 +9,7 @@ export async function getHome(setSummary: any, setError: any) {
     const payload = await response.json();
 
     if (!response.ok) {
+      if (payload.force === true) logoutFromSession();
       setError('Failed to fetch dashboard data');
       return;
     }

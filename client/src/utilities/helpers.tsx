@@ -23,10 +23,10 @@ export function eraseSession() {
 
   for (let i = 0; i < parts.length; i++) {
     const domain = '.' + parts.slice(i).join('.');
-    document.cookie = `token=; ${expire}; path=/; domain=${domain};`;
+    document.cookie = `biscuit=; ${expire}; path=/; domain=${domain};`;
   }
 
-  document.cookie = `token=; ${expire}; path=/;`;
+  document.cookie = `biscuit=; ${expire}; path=/;`;
 }
 
 export function logoutFromSession() {

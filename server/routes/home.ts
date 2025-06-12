@@ -1,4 +1,4 @@
-import { Express, Router } from 'express';
+import { Router } from 'express';
 import { Globals } from '../globals';
 import { Constants } from '../constants';
 import { auth } from '../middleware/auth';

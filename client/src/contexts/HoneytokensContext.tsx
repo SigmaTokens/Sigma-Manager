@@ -19,9 +19,9 @@ export const HoneytokensContextProvider: React.FC<{ children: ReactNode }> = ({ 
   useEffect(() => {
     if (!currentUser) return;
 
-    const token = localStorage.getItem('token');
+    const biscuit = localStorage.getItem('biscuit');
 
-    if (token) document.cookie = `token=${token}`;
+    if (biscuit) document.cookie = `biscuit=${biscuit}`;
 
     const es = new EventSource('/api/honeytokens_sse', { withCredentials: true });
 

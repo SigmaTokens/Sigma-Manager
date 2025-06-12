@@ -1,5 +1,5 @@
 import { access_denied } from '../utilities/constants';
-import { useLogout } from '../utilities/helpers';
+import { logoutFromSession } from '../utilities/helpers';
 import { IAgent } from '../../../server/interfaces/agent';
 import { HoneytokenType } from '../utilities/typing';
 
@@ -16,7 +16,7 @@ export async function createHoneytokenText(
     const response = await fetch('/api/honeytokens/text', {
       method: 'POST',
       headers: {
-        Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
+        Authorization: localStorage.getItem('biscuit') ? `Bearer ${localStorage.getItem('biscuit')}` : '',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -34,7 +34,7 @@ export async function createHoneytokenText(
     const payload = await response.json();
 
     if (!response.ok) {
-      if (payload.action === access_denied) useLogout();
+      if (payload.action === access_denied) logoutFromSession();
       throw new Error(`Error creating honeytoken text: ${response.status}`);
     }
 
@@ -56,7 +56,7 @@ export async function createHoneytokenApi(
     const response = await fetch('/api/honeytokens/api', {
       method: 'POST',
       headers: {
-        Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
+        Authorization: localStorage.getItem('biscuit') ? `Bearer ${localStorage.getItem('biscuit')}` : '',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -72,7 +72,7 @@ export async function createHoneytokenApi(
     const payload = await response.json();
 
     if (!response.ok) {
-      if (payload.action === access_denied) useLogout();
+      if (payload.action === access_denied) logoutFromSession();
       throw new Error(`Error creating honeytoken api: ${response.status}`);
     }
 
@@ -85,7 +85,7 @@ export async function createHoneytokenApi(
 export async function getHoneytokens() {
   try {
     const response = await fetch('/api/honeytokens', {
-      headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
+      headers: localStorage.getItem('biscuit') ? { Authorization: `Bearer ${localStorage.getItem('biscuit')}` } : {},
     });
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -94,7 +94,7 @@ export async function getHoneytokens() {
     const payload = await response.json();
 
     if (!response.ok) {
-      if (payload.action === access_denied) useLogout();
+      if (payload.action === access_denied) logoutFromSession();
       throw new Error(`Error fetching honeytoken: ${response.status}`);
     }
 
@@ -108,12 +108,12 @@ export async function deleteHoneytoken(token_id: string) {
   try {
     const response = await fetch(`/api/honeytokens/token/${token_id}`, {
       method: 'DELETE',
-      headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
+      headers: localStorage.getItem('biscuit') ? { Authorization: `Bearer ${localStorage.getItem('biscuit')}` } : {},
     });
     const payload = await response.json();
 
     if (!response.ok) {
-      if (payload.action === access_denied) useLogout();
+      if (payload.action === access_denied) logoutFromSession();
       console.error(`Error deleting honeytoken: ${response.status}`);
       return false;
     }
@@ -130,7 +130,7 @@ export async function startMonitorOnHoneytoken(token_id: string) {
     const response = await fetch(`/api/honeytokens/start`, {
       method: 'PUT',
       headers: {
-        Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
+        Authorization: localStorage.getItem('biscuit') ? `Bearer ${localStorage.getItem('biscuit')}` : '',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -140,7 +140,7 @@ export async function startMonitorOnHoneytoken(token_id: string) {
     const payload = await response.json();
 
     if (!response.ok) {
-      if (payload.action === access_denied) useLogout();
+      if (payload.action === access_denied) logoutFromSession();
       console.error(`Error monitoring honeytoken: ${response.status}`);
       return false;
     }
@@ -157,7 +157,7 @@ export async function stopMonitorOnHoneytoken(token_id: string) {
     const response = await fetch(`/api/honeytokens/stop`, {
       method: 'PUT',
       headers: {
-        Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
+        Authorization: localStorage.getItem('biscuit') ? `Bearer ${localStorage.getItem('biscuit')}` : '',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -167,7 +167,7 @@ export async function stopMonitorOnHoneytoken(token_id: string) {
     const payload = await response.json();
 
     if (!response.ok) {
-      if (payload.action === access_denied) useLogout();
+      if (payload.action === access_denied) logoutFromSession();
       console.error(`Error disabling honeytoken: ${response.status}`);
       return false;
     }
@@ -188,7 +188,7 @@ export async function getHoneytokensMonitorStatusesText(agents: IAgent[]): Promi
     const response = await fetch('/api/honeytokens/monitor_status_text', {
       method: 'POST',
       headers: {
-        Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
+        Authorization: localStorage.getItem('biscuit') ? `Bearer ${localStorage.getItem('biscuit')}` : '',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ agents_ids }),
@@ -197,7 +197,7 @@ export async function getHoneytokensMonitorStatusesText(agents: IAgent[]): Promi
     const payload = await response.json();
 
     if (!response.ok) {
-      if (payload.action === access_denied) useLogout();
+      if (payload.action === access_denied) logoutFromSession();
       console.error(`Error fetching monitoring statuses: ${response.status}`);
       return {};
     }
@@ -221,7 +221,7 @@ export async function getHoneytokensMonitorStatusesAPI(agents: IAgent[]): Promis
     const response = await fetch('/api/honeytokens/monitor_status_api', {
       method: 'POST',
       headers: {
-        Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
+        Authorization: localStorage.getItem('biscuit') ? `Bearer ${localStorage.getItem('biscuit')}` : '',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ agents_ids }),
@@ -230,7 +230,7 @@ export async function getHoneytokensMonitorStatusesAPI(agents: IAgent[]): Promis
     const payload = await response.json();
 
     if (!response.ok) {
-      if (payload.action === access_denied) useLogout();
+      if (payload.action === access_denied) logoutFromSession();
       console.error(`Error fetching monitoring statuses: ${response.status}`);
       return {};
     }
@@ -247,12 +247,12 @@ export async function deleteHoneytokensByGroupId(group_id: string) {
   try {
     const response = await fetch(`/api/honeytokens/group/${group_id}`, {
       method: 'DELETE',
-      headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
+      headers: localStorage.getItem('biscuit') ? { Authorization: `Bearer ${localStorage.getItem('biscuit')}` } : {},
     });
     const payload = await response.json();
 
     if (!response.ok) {
-      if (payload.action === access_denied) useLogout();
+      if (payload.action === access_denied) logoutFromSession();
       console.error(`Error deleting honeytokens group: ${response.status}`);
       return false;
     }
@@ -268,7 +268,7 @@ export async function startMonitorByGroupId(group_id: string) {
     const response = await fetch(`/api/honeytokens/api/start`, {
       method: 'PUT',
       headers: {
-        Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
+        Authorization: localStorage.getItem('biscuit') ? `Bearer ${localStorage.getItem('biscuit')}` : '',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ group_id }),
@@ -276,7 +276,7 @@ export async function startMonitorByGroupId(group_id: string) {
     const payload = await response.json();
 
     if (!response.ok) {
-      if (payload.action === access_denied) useLogout();
+      if (payload.action === access_denied) logoutFromSession();
       console.error(`Error starting monitor on group: ${response.status}`);
       return false;
     }
@@ -292,7 +292,7 @@ export async function stopMonitorByGroupId(group_id: string) {
     const response = await fetch(`/api/honeytokens/stop/group`, {
       method: 'PUT',
       headers: {
-        Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
+        Authorization: localStorage.getItem('biscuit') ? `Bearer ${localStorage.getItem('biscuit')}` : '',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ group_id }),
@@ -300,7 +300,7 @@ export async function stopMonitorByGroupId(group_id: string) {
     const payload = await response.json();
 
     if (!response.ok) {
-      if (payload.action === access_denied) useLogout();
+      if (payload.action === access_denied) logoutFromSession();
       console.error(`Error stopping monitor on group: ${response.status}`);
       return false;
     }

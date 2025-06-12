@@ -17,13 +17,13 @@ export interface AlertDetailsPopupProps {
   onClose: () => void;
 }
 
-export interface ApiTokenDetailsPopupProps {
-  token: IHoneytoken;
+export interface ApiHoneytokenDetailsPopupProps {
+  honeytoken: IHoneytoken;
   onClose: () => void;
 }
 
-export interface TextTokenDetailsPopupProps {
-  token: IHoneytoken;
+export interface TextHoneytokenDetailsPopupProps {
+  honeytoken: IHoneytoken;
   onClose: () => void;
 }
 

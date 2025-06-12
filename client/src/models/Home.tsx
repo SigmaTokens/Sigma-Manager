@@ -1,17 +1,17 @@
 import { access_denied } from '../utilities/constants';
-import { useLogout } from '../utilities/helpers';
+import { logoutFromSession } from '../utilities/helpers';
 
 export async function getHome(setSummary: any, setError: any) {
   try {
     const response = await fetch('/api/home', {
       method: 'GET',
-      headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
+      headers: localStorage.getItem('biscuit') ? { Authorization: `Bearer ${localStorage.getItem('biscuit')}` } : {},
     });
 
     const payload = await response.json();
 
     if (!response.ok) {
-      if (payload.action === access_denied) useLogout();
+      if (payload.action === access_denied) logoutFromSession();
       setError('Failed to fetch dashboard data');
     }
 

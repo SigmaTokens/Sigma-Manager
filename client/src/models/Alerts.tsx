@@ -1,15 +1,15 @@
 import { access_denied } from '../utilities/constants';
-import { useLogout } from '../utilities/helpers';
+import { logoutFromSession } from '../utilities/helpers';
 
 export async function getAlerts() {
   try {
     const response = await fetch('/api/alerts', {
-      headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {},
+      headers: localStorage.getItem('biscuit') ? { Authorization: `Bearer ${localStorage.getItem('biscuit')}` } : {},
     });
     const payload = await response.json();
 
     if (!response.ok) {
-      if (payload.action === access_denied) useLogout();
+      if (payload.action === access_denied) logoutFromSession();
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
@@ -24,7 +24,7 @@ export async function archiveAlert(tokenId: string, alertId: string, archive: bo
     const response = await fetch('/api/alerts/archive', {
       method: 'POST',
       headers: {
-        Authorization: localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : '',
+        Authorization: localStorage.getItem('biscuit') ? `Bearer ${localStorage.getItem('biscuit')}` : '',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -36,7 +36,7 @@ export async function archiveAlert(tokenId: string, alertId: string, archive: bo
     const payload = await response.json();
 
     if (!response.ok) {
-      if (payload.action === access_denied) useLogout();
+      if (payload.action === access_denied) logoutFromSession();
       const errorText = await response.text();
       console.error('Error:', errorText);
       alert('Failed to set alert as archive.');

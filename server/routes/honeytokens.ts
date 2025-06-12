@@ -49,10 +49,7 @@ export function serveHoneytokens() {
       };
 
       for (const [field, value] of Object.entries(required)) {
-        if (value === undefined || value === null || value === '') {
-          console.log(`Missing required field: ${field}`);
-          return void res.status(500).json({ success: false });
-        }
+        if (value === undefined || value === null || value === '') return void res.status(500).json({ success: false });
       }
 
       const isOwner = await is_user_agent(user_id, agent_id);
@@ -102,13 +99,17 @@ export function serveHoneytokens() {
           if (response.status === 'created') isCreated = true;
         });
       else {
-        console.error(Constants.TEXT_RED_COLOR, 'Failed fetching socket to create honeytoken!');
+        console.error(
+          Constants.TEXT_RED_COLOR,
+          'Failed fetching socket to create honeytoken!',
+          Constants.TEXT_DEFAULT_COLOR,
+        );
         return void res.status(500).json({ success: false });
       }
       if (!isCreated) return void res.status(500).json({ success: false });
       return void res.status(200).json({ success: true });
     } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to create honeytoken text:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to create honeytoken text:', error, Constants.TEXT_DEFAULT_COLOR);
       return void res.status(500).json({ success: false });
     }
   });
@@ -130,10 +131,7 @@ export function serveHoneytokens() {
       const apis_test: any[] = apis;
 
       for (const [field, value] of Object.entries(required)) {
-        if (value === undefined || value === null || value === '') {
-          console.log(`Missing required field: ${field}`);
-          return void res.status(500).json({ success: false });
-        }
+        if (value === undefined || value === null || value === '') return void res.status(500).json({ success: false });
       }
 
       const isOwner = await is_user_agent(user_id, agent_id);
@@ -169,10 +167,7 @@ export function serveHoneytokens() {
           api_port,
         );
 
-        if (!result) {
-          console.log('here1');
-          return void res.status(500).json({ success: false });
-        }
+        if (!result) return void res.status(500).json({ success: false });
       });
 
       const token_data = {
@@ -187,18 +182,21 @@ export function serveHoneytokens() {
       const socket = Globals.agentSockets.get(agent_id);
       if (socket)
         socket.emit('CREATE_HONEYTOKEN_API', token_data, async (response: any) => {
-          console.log(response.status);
           if (response.status === 'created') {
             return void res.status(200).json({ success: true });
           }
           return void res.status(500).json({ success: false });
         });
       else {
-        console.error(Constants.TEXT_RED_COLOR, 'Failed fetching socket to create honeytoken!');
+        console.error(
+          Constants.TEXT_RED_COLOR,
+          'Failed fetching socket to create honeytoken!',
+          Constants.TEXT_DEFAULT_COLOR,
+        );
         return void res.status(500).json({ success: false });
       }
     } catch (error) {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to create honeytoken api:', error);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to create honeytoken api:', error, Constants.TEXT_DEFAULT_COLOR);
       return void res.status(500).json({ success: false });
     }
   });
@@ -350,7 +348,11 @@ export function serveHoneytokens() {
           if (response.status === 'monitoring') isMonitoring = true;
         });
       else {
-        console.error(Constants.TEXT_RED_COLOR, 'failed getting socket for honeytoken text start!');
+        console.error(
+          Constants.TEXT_RED_COLOR,
+          'failed getting socket for honeytoken text start!',
+          Constants.TEXT_DEFAULT_COLOR,
+        );
         return void res.status(500).json({ success: false });
       }
 
@@ -389,7 +391,11 @@ export function serveHoneytokens() {
           isMonitoring = true;
         });
       else {
-        console.error(Constants.TEXT_RED_COLOR, 'failed getting socket for honeytoken text start!');
+        console.error(
+          Constants.TEXT_RED_COLOR,
+          'failed getting socket for honeytoken text start!',
+          Constants.TEXT_DEFAULT_COLOR,
+        );
         return void res.status(500).json({ success: false });
       }
       if (!isMonitoring) return void res.status(500).json({ success: false });
@@ -421,7 +427,11 @@ export function serveHoneytokens() {
           if (response.status === 'not monitoring') isMonitoring = false;
         });
       else {
-        console.error(Constants.TEXT_RED_COLOR, 'failed getting socket for honeytoken text stop!');
+        console.error(
+          Constants.TEXT_RED_COLOR,
+          'failed getting socket for honeytoken text stop!',
+          Constants.TEXT_DEFAULT_COLOR,
+        );
         return void res.status(500).json({ success: false });
       }
       if (isMonitoring) return void res.status(500).json({ success: false });
@@ -458,7 +468,11 @@ export function serveHoneytokens() {
           return void res.status(200).json({ success: true });
         });
       else {
-        console.error(Constants.TEXT_RED_COLOR, 'failed getting socket for honeytoken text stop!');
+        console.error(
+          Constants.TEXT_RED_COLOR,
+          'failed getting socket for honeytoken text stop!',
+          Constants.TEXT_DEFAULT_COLOR,
+        );
         return void res.status(500).json({ success: false });
       }
     } catch (error) {

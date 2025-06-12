@@ -4,16 +4,15 @@ import { useAuth } from '../contexts/UserContext';
 import { Globals } from '../utilities/globals';
 import { useRef } from 'react';
 import logo from '../assets/SigmaTokens.png';
-import CreateHoneytokenForm from './HoneyTokenCreation';
+import CreateHoneytokenForm from './HoneytokenCreation';
 import AddAgentPopup from './AddAgentPopup';
 import '../styles/Header.css';
-import { useLogout } from '../utilities/helpers';
 
 const Header = () => {
   const [showCreate, setShowCreate] = useState(false);
   const [showAddAgent, setShowAddAgent] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { currentUser } = useAuth();
+  const { currentUser, logout } = useAuth();
   const menuRef = useRef<HTMLUListElement>(null);
   const hamburgerRef = useRef<HTMLButtonElement>(null);
 
@@ -55,7 +54,7 @@ const Header = () => {
 
           {currentUser && (
             <li className="logout">
-              <button onClick={useLogout} className="link-btn">
+              <button onClick={logout} className="link-btn">
                 Logout
               </button>
             </li>
@@ -155,7 +154,7 @@ const Header = () => {
                 <li>
                   <button
                     onClick={() => {
-                      useLogout();
+                      logout();
                       setMobileMenuOpen(false);
                     }}
                   >

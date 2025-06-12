@@ -1,7 +1,3 @@
-import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/UserContext';
-
 export function copyToClipboard(text: string, setToast: React.Dispatch<React.SetStateAction<boolean>>) {
   navigator.clipboard.writeText(text).then(() => {
     setToast(true);
@@ -17,15 +13,13 @@ export const getColor = (grade: number, index: number): string => {
   return index <= grade ? '#4caf50' : '#e0e0e0';
 };
 
-export const eraseSession = (): void => {
+export function eraseSession() {
   if (typeof window === 'undefined') return;
 
-  localStorage.removeItem('token');
+  localStorage.removeItem('biscuit');
 
   const expire = 'expires=Thu, 01 Jan 1970 00:00:00 GMT';
-  const { hostname } = window.location;
-
-  const parts = hostname.split('.');
+  const parts = window.location.hostname.split('.');
 
   for (let i = 0; i < parts.length; i++) {
     const domain = '.' + parts.slice(i).join('.');
@@ -33,15 +27,9 @@ export const eraseSession = (): void => {
   }
 
   document.cookie = `token=; ${expire}; path=/;`;
-};
+}
 
-export const useLogout = () => {
-  const navigate = useNavigate();
-  const { logout } = useAuth();
-
-  return useCallback(async () => {
-    logout();
-    eraseSession();
-    navigate('/login');
-  }, [navigate]);
-};
+export function logoutFromSession() {
+  eraseSession();
+  window.location.href = '/login';
+}

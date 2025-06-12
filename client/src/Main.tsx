@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { UserContextProvider } from './contexts/UserContext';
 import { AgentsContextProvider } from './contexts/AgentsContext';
-import { Header } from './components/Header';
+import Header from './components/Header';
 import AppRoutes from './pages/AppRoutes';
 import './styles/Main.css';
 

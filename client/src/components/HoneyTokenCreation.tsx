@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './popup';
 import { createHoneytokenText, createHoneytokenApi } from '../models/Honeytoken';
 import { IHoneytokenType, CreateHoneytokenFormProps } from '../../../server/interfaces/agent';
@@ -70,7 +70,6 @@ const CreateHoneytokenForm = ({ types, onClose }: CreateHoneytokenFormProps) => 
   const handleSubmitApi = async () => {
     try {
       const response = await createHoneytokenApi(grade, expirationDate, notes, agentID, port, apiRows);
-      console.log(response);
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Error creating honeytoken: ', errorText);
@@ -78,8 +77,8 @@ const CreateHoneytokenForm = ({ types, onClose }: CreateHoneytokenFormProps) => 
       }
       onClose();
       window.location.href = '/honeytokens';
-    } catch (err) {
-      console.error('error: ', err);
+    } catch (error) {
+      console.error('error: ', error);
     }
   };
 
@@ -103,8 +102,8 @@ const CreateHoneytokenForm = ({ types, onClose }: CreateHoneytokenFormProps) => 
       }
       onClose();
       window.location.href = '/honeytokens';
-    } catch (err) {
-      console.error('Request failed:', err);
+    } catch (error) {
+      console.error('Request failed:', error);
       alert('Something went wrong while creating the honeytoken.');
     }
   };

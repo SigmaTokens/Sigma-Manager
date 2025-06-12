@@ -40,7 +40,7 @@ function Home() {
     labels: ['Active', 'Expiring Soon (within 7 days)', 'Expired'],
     datasets: [
       {
-        label: 'Token Count',
+        label: 'Honeytoken Count',
         data: [totalActive, summary.token_status.expiring_soon, summary.token_status.expired],
         backgroundColor: ['#4caf50', '#ff9800', '#f44336'],
       },
@@ -107,7 +107,7 @@ function Home() {
 
       <div className="charts-row">
         <div className="chart-wrapper large">
-          <h3 className="chart-title">Token Status</h3>
+          <h3 className="chart-title">Honeytoken Status</h3>
           <Bar
             data={statusChartData}
             options={{

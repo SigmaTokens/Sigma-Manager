@@ -1,24 +1,3 @@
-process.on('uncaughtException', (err) => {
-  console.error('UNCAUGHT', err);
-  console.error('Type:', err.constructor?.name);
-  console.error('Stack:', err.stack);
-  process.exit(1);
-});
-process.on('unhandledRejection', (reason, p) => {
-  console.error('UNHANDLED PROMISE', p, 'reason:', reason);
-});
-
-process.on('unhandledRejection', (reason) => {
-  if (reason instanceof Error) {
-    console.error('UNHANDLED REJECTION →', reason.stack); // full stack
-  } else {
-    console.error(
-      'UNHANDLED REJECTION →',
-      util.inspect(reason, { depth: null, colors: true }), // pretty-print
-    );
-  }
-});
-
 import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
@@ -34,7 +13,6 @@ import { Globals } from './globals';
 import { serveAgents } from './routes/agents';
 import { serveHome } from './routes/home';
 import { Constants } from './constants';
-import util from 'node:util';
 import { create_honeytoken_alert } from './database/alerts';
 import { get_all_agents, insert_agent } from './database/agents';
 import { get_all_agent_honeytokens } from './database/honeytokens';
@@ -74,11 +52,10 @@ function main(): void {
 
     socket.on('GET_HONEYTOKENS', async (payload, callback) => {
       const agent_id = payload;
-      console.log('agent id:', agent_id);
       try {
         const honeytokens = await get_all_agent_honeytokens(agent_id);
         callback({ tokens: honeytokens });
-      } catch (err) {
+      } catch {
         callback({ tokens: [] });
       }
     });
@@ -92,7 +69,12 @@ function main(): void {
 
       if (!agent_id_exists) {
         const result = await insert_agent(agent_id, agent_name, user_id);
-        if (result) console.log(`created agent ${agent_name} successfully`);
+        if (result)
+          console.log(
+            Constants.TEXT_GREEN_COLOR,
+            `created agent ${agent_name} successfully`,
+            Constants.TEXT_DEFAULT_COLOR,
+          );
       }
 
       sseUpdateAgents();
@@ -104,7 +86,7 @@ function main(): void {
 
         const result = await create_honeytoken_alert(token_id, alert_epoch, accessed_by, log);
 
-        if (!result) console.log('Failed to create alert!');
+        if (!result) console.log(Constants.TEXT_RED_COLOR, 'Failed to create alert!', Constants.TEXT_DEFAULT_COLOR);
       } catch (error: any) {
         console.error(Constants.TEXT_RED_COLOR, 'Failed to create alert:', error.message, Constants.TEXT_DEFAULT_COLOR);
       }
@@ -126,8 +108,8 @@ function main(): void {
         app.locals.db,
       );
 
-      serveSSE();
       serveUsers();
+      serveSSE();
       serveHome();
       serveHoneytokens();
       serveAlerts();
@@ -143,7 +125,7 @@ function main(): void {
       });
     })
     .catch((error) => {
-      console.error(Constants.TEXT_RED_COLOR, 'Failed to initialize server:', error, Constants.TEXT_DEFAULT_COLOR);
+      console.error(Constants.TEXT_RED_COLOR, 'Failed to initialize sigmatokens:', error, Constants.TEXT_DEFAULT_COLOR);
       process.exit(1);
     });
 }

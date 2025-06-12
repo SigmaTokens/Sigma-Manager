@@ -7,7 +7,7 @@ export const detailsGroups = ({ alert }: Pick<AlertDetailsPopupProps, 'alert'>) 
     title: 'Basic Information',
     items: [
       { label: 'Alert ID', value: alert.alert_id },
-      { label: 'Token ID', value: alert.token_id },
+      { label: 'biscuit ID', value: alert.token_id },
       { label: 'Grade', value: alert.grade },
       {
         label: 'Alert Date',

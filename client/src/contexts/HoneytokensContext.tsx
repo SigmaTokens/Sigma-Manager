@@ -30,7 +30,7 @@ export const HoneytokensContextProvider: React.FC<{ children: ReactNode }> = ({ 
       setHoneytokens([]);
     }
     return () => {
-      if (source && currentUser) {
+      if (source) {
         source.close();
         source = null;
       }

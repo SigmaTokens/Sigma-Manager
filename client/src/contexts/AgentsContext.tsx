@@ -31,7 +31,7 @@ export const AgentsContextProvider: React.FC<{ children: ReactNode }> = ({ child
     }
 
     return () => {
-      if (source && currentUser) {
+      if (source) {
         source.close();
         source = null;
       }

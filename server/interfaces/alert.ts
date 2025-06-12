@@ -1,4 +1,4 @@
-export interface Alert {
+export interface IAlert {
   alert_id: string;
   token_id: string;
   alert_epoch: string;

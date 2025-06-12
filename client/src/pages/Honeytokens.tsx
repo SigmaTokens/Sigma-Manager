@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import {
   deleteHoneytoken,
   startMonitorOnHoneytoken,
@@ -7,12 +6,14 @@ import {
   startMonitorByGroupId,
   stopMonitorByGroupId,
 } from '../models/Honeytoken';
+import { useEffect, useState } from 'react';
 import { IHoneytoken } from '../../../server/interfaces/honeytoken';
 import { FaTrash, FaPlay, FaStop } from 'react-icons/fa';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
-import ApiTokenDetailsPopup from '../components/ApiHoneytokenDetailsPopup.tsx';
 import { FiInfo } from 'react-icons/fi';
 import { useHoneytokens } from '../contexts/HoneytokensContext.tsx';
+import ApiHoneytokenDetailsPopup from '../components/ApiHoneytokenDetailsPopup.tsx';
+import TextHoneytokenDetailsPopup from '../components/TextHoneytokenDetailsPopup.tsx';
 import '../styles/TextHoneytoken.css';
 import '../styles/ApiHoneytoken.css';
 
@@ -473,7 +474,7 @@ function Honeytokens() {
           </table>
         </div>
         {selectedGroupToken && (
-          <ApiTokenDetailsPopup honeytoken={selectedGroupToken} onClose={() => setSelectedGroupToken(null)} />
+          <ApiHoneytokenDetailsPopup honeytoken={selectedGroupToken} onClose={() => setSelectedGroupToken(null)} />
         )}
       </div>
     );

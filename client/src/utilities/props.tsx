@@ -1,5 +1,5 @@
 import { IAgent } from '../../../server/interfaces/agent';
-import { Alert } from '../../../server/interfaces/alert';
+import { IAlert } from '../../../server/interfaces/alert';
 import { IHoneytoken } from '../../../server/interfaces/honeytoken';
 
 export interface AddAgentPopupProps {
@@ -13,7 +13,7 @@ export interface AgentDetailsPopupProps {
 }
 
 export interface AlertDetailsPopupProps {
-  alert: Alert;
+  alert: IAlert;
   onClose: () => void;
 }
 

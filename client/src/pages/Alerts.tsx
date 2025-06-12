@@ -1,47 +1,23 @@
 import { GiCardboardBoxClosed, GiCardboardBox } from 'react-icons/gi';
 import { FiChevronDown, FiChevronUp, FiChevronRight, FiInfo } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
-import '../styles/Alerts.css';
-import { getAlerts, archiveAlert } from '../models/Alerts';
-import { Alert } from '../../../server/interfaces/alert';
+import { useAlerts } from '../contexts/AlertsContext.tsx';
+import { archiveAlert } from '../models/Alerts';
+import { IAlert } from '../../../server/interfaces/alert';
 import AlertDetailsPopup from '../components/AlertDetailsPopup';
 import VolumeBar from '../components/VolumeBar';
+import '../styles/Alerts.css';
 
 function Alerts() {
-  const [alerts, setAlerts] = useState<Alert[]>([]);
-  const [filteredAlerts, setFilteredAlerts] = useState<Alert[]>([]);
+  const [filteredAlerts, setFilteredAlerts] = useState<IAlert[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
   const [archiveFilter, setArchiveFilter] = useState<number>(2);
   const [expandedDetails, setExpandedDetails] = useState<string | null>(null);
-  const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
+  const [selectedAlert, setSelectedAlert] = useState<IAlert | null>(null);
   const [isReversed, setIsReversed] = useState(false);
 
-  useEffect(() => {
-    const fetchAlerts = async () => {
-      try {
-        const data = await getAlerts();
-        setAlerts(data);
-        setFilteredAlerts(data);
-      } catch (error) {
-        setError('Failed to load alerts');
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchAlerts();
-  }, [isLoading]);
-
-  useEffect(() => {
-    const filtered = alerts.filter((alert) => {
-      if (archiveFilter === 2) return true;
-      if (archiveFilter === 1) return !alert.archive;
-      return alert.archive;
-    });
-    setFilteredAlerts(filtered);
-  }, [archiveFilter, alerts]);
+  const { alerts } = useAlerts();
+  setFilteredAlerts(alerts);
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -80,7 +56,7 @@ function Alerts() {
     setExpandedDetails(expandedDetails === alertId ? null : alertId);
   };
 
-  const handleMoreDetails = (alert: Alert) => {
+  const handleMoreDetails = (alert: IAlert) => {
     setSelectedAlert(alert);
   };
 
@@ -89,7 +65,6 @@ function Alerts() {
   };
 
   if (isLoading) return <div className="loading">Loading alerts...</div>;
-  if (error) return <div className="error">{error}</div>;
 
   if (isMobile) {
     return (

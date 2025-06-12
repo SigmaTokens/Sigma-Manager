@@ -2,14 +2,12 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  gap: 2px;
-  height: 60px;
-  width: 50px;
-  margin: auto;
+  height: 75px;
+  gap: 4px;
 }
 
 .bar {
-  width: 4px;
-  border-radius: 1px;
-  transition: background-color 0.3s ease;
+  width: 6px;
+  border-radius: 2px;
+  transition: background-color 0.3s;
 }

@@ -7,7 +7,6 @@ import { Bar } from 'react-chartjs-2';
 import { CategoryScale, LinearScale, BarElement } from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement);
-
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 function Home() {
@@ -117,6 +116,7 @@ function Home() {
 
       <h2 className="section-title">Visual Overview</h2>
 
+      {/*shak6- All charts in the same row */}
       <div className="charts-row">
         <div className="chart-wrapper large">
           <h3 className="chart-title">Token Status</h3>
@@ -136,9 +136,7 @@ function Home() {
           <h3 className="chart-title">Alerts by Severity</h3>
           <Bar data={severityChartData} options={severityChartOptions} />
         </div>
-      </div>
 
-      <div className="charts-row">
         <div className="chart-wrapper large">
           <h3 className="chart-title">Honeytoken Type</h3>
           <Pie data={pieChartData} />

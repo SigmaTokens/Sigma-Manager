@@ -21,7 +21,7 @@ const VolumeBar: React.FC<Props> = ({ grade }) => {
           key={index}
           className="bar"
           style={{
-            height: `${index * 6}px`,
+            height: `${(index / 10) * 100}%`,
             backgroundColor: getColor(index),
           }}
         />

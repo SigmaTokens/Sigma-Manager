@@ -1,29 +1,22 @@
 import { useEffect, useState } from 'react';
-import '../styles/TextHoneytoken.css';
-import '../styles/ApiHoneytoken.css';
 import {
-  getHoneytokens,
   deleteHoneytoken,
   startMonitorOnHoneytoken,
   stopMonitorOnHoneytoken,
-  getHoneytokensMonitorStatusesText,
   deleteHoneytokensByGroupId,
   startMonitorByGroupId,
   stopMonitorByGroupId,
-  getHoneytokensMonitorStatusesAPI,
 } from '../models/Honeytoken';
 import { IHoneytoken } from '../../../server/interfaces/honeytoken';
 import { FaTrash, FaPlay, FaStop } from 'react-icons/fa';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
-import { HoneytokenType } from '../utilities/typing';
-import TextHoneytokenDetailsPopup from '../components/TextHoneytokenDetailsPopup.tsx';
 import ApiTokenDetailsPopup from '../components/ApiHoneytokenDetailsPopup.tsx';
 import { FiInfo } from 'react-icons/fi';
-import { useAgents } from '../contexts/AgentsContext.tsx';
+import { useHoneytokens } from '../contexts/HoneytokensContext.tsx';
+import '../styles/TextHoneytoken.css';
+import '../styles/ApiHoneytoken.css';
 
 function Honeytokens() {
-  const [honeytokens, setHoneytokens] = useState<IHoneytoken[]>([]);
-  const [refreshCounter, setRefreshCounter] = useState(0);
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
   const [isReversed, setIsReversed] = useState(false);
   const [activeTab, setActiveTab] = useState<'text' | 'api'>('text');
@@ -32,39 +25,9 @@ function Honeytokens() {
   const [selectedToken, setSelectedToken] = useState<IHoneytoken | null>(null);
   const [selectedGroupToken, setSelectedGroupToken] = useState<IHoneytoken | null>(null);
   const [loadingTokenId, setLoadingTokenId] = useState<string | null>(null);
-  const { agents } = useAgents();
-
-  useEffect(() => {
-    const fetchHoneytokens = async () => {
-      try {
-        const tokenData = await getHoneytokens();
-
-        const monitoringStatuses_text = await getHoneytokensMonitorStatusesText(agents);
-        const monitoringStatuses_api = await getHoneytokensMonitorStatusesAPI(agents);
-
-        const tokensWithMonitoringStatus = tokenData.map((token: IHoneytoken) => {
-          if (token.type_id === HoneytokenType.Text)
-            return {
-              ...token,
-              isMonitored: monitoringStatuses_text[token.token_id] ?? false,
-            };
-          if (token.type_id === HoneytokenType.API)
-            return {
-              ...token,
-              isMonitored: monitoringStatuses_api[token.group_id] ?? false,
-            };
-        });
-
-        setHoneytokens(tokensWithMonitoringStatus);
-      } catch (error) {
-        console.error('Failed to fetch honeytokens:', error);
-      }
-    };
-
-    fetchHoneytokens();
-  }, [agents, refreshCounter]);
-
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  const { honeytokens } = useHoneytokens();
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -76,9 +39,8 @@ function Honeytokens() {
     try {
       setLoadingTokenId(tokenId);
       await deleteHoneytoken(tokenId);
-      setRefreshCounter((prev) => prev + 1);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
     } finally {
       setLoadingTokenId(null);
     }
@@ -88,9 +50,6 @@ function Honeytokens() {
     try {
       setLoadingTokenId(tokenId);
       await startMonitorOnHoneytoken(tokenId);
-      setHoneytokens((prevTokens) =>
-        prevTokens.map((token) => (token.token_id === tokenId ? { ...token, isMonitored: true } : token)),
-      );
     } catch (error) {
       console.error('Failed to start monitoring honeytoken:', error);
     } finally {
@@ -102,9 +61,6 @@ function Honeytokens() {
     try {
       setLoadingTokenId(tokenId);
       await stopMonitorOnHoneytoken(tokenId);
-      setHoneytokens((prevTokens) =>
-        prevTokens.map((token) => (token.token_id === tokenId ? { ...token, isMonitored: false } : token)),
-      );
     } catch (error) {
       console.error('Failed to stop monitoring honeytoken:', error);
     } finally {
@@ -116,9 +72,8 @@ function Honeytokens() {
     try {
       setLoadingGroupId(groupId);
       await deleteHoneytokensByGroupId(groupId);
-      setRefreshCounter((prev) => prev + 1);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
     } finally {
       setLoadingGroupId(null);
     }
@@ -128,9 +83,8 @@ function Honeytokens() {
     try {
       setLoadingGroupId(groupId);
       await startMonitorByGroupId(groupId);
-      setRefreshCounter((prev) => prev + 1);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
     } finally {
       setLoadingGroupId(null);
     }
@@ -140,16 +94,15 @@ function Honeytokens() {
     try {
       setLoadingGroupId(groupId);
       await stopMonitorByGroupId(groupId);
-      setRefreshCounter((prev) => prev + 1);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
     } finally {
       setLoadingGroupId(null);
     }
   };
 
   const handleReverseClick = () => {
-    setHoneytokens((prev) => [...prev].reverse());
+    // setHoneytokens((prev) => [...prev].reverse());
     setIsReversed((prev) => !prev);
   };
 

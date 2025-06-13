@@ -23,8 +23,8 @@ const CreateHoneytokenForm = ({ types, onClose }: CreateHoneytokenFormProps) => 
   const { agents } = useAgents();
 
   useEffect(() => {
-    setAgentID(agents[0].agent_id || '');
-  }, agents);
+    setAgentID(agents[0]?.agent_id || '');
+  }, [agents]);
 
   const addApiRow = () => {
     setApiRows((rows) => [{ method: 'GET', route: '', response: '' }, ...rows]);
@@ -193,7 +193,10 @@ const CreateHoneytokenForm = ({ types, onClose }: CreateHoneytokenFormProps) => 
                 max={5}
                 value={grade}
                 onChange={(e) => setGrade(Number(e.target.value))}
-                className="custom-slider"
+                className={`custom-slider ${
+                  grade <= 2 ? 'slider-green' : grade === 3 ? 'slider-yellow' : 'slider-red'
+                }`}
+                style={{ '--value': `${grade - 1}` } as React.CSSProperties}
               />
               <div className="selected-grade">Selected Grade: {grade}</div>
             </div>

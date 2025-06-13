@@ -162,8 +162,6 @@ function Home() {
         <div className="kpi-card">✅ Resolved Alerts: {summary.alerts.resolved}</div>
       </div>
 
-      {/* <h2 className="section-title">Visual Overview</h2> */}
-
       <div className="charts-row">
         <div className="chart-wrapper large">
           <h3 className="chart-title">Honeytoken Status</h3>

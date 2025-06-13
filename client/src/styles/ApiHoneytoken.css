@@ -102,11 +102,11 @@
   box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.4);
 }
 
-.slider-green {
+.slider-yellow1 {
   background: linear-gradient(
     to right,
-    #4caf50 0%,
-    #4caf50 calc((100% / 4) * var(--value)),
+    #d3ff32 0%,
+    #d3ff32 calc((100% / 4) * var(--value)),
     #ccc calc((100% / 4) * var(--value))
   );
 }

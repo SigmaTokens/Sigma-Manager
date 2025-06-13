@@ -194,7 +194,7 @@ const CreateHoneytokenForm = ({ types, onClose }: CreateHoneytokenFormProps) => 
                 value={grade}
                 onChange={(e) => setGrade(Number(e.target.value))}
                 className={`custom-slider ${
-                  grade <= 2 ? 'slider-green' : grade === 3 ? 'slider-yellow' : 'slider-red'
+                  grade <= 2 ? 'slider-yellow1' : grade === 3 ? 'slider-yellow' : 'slider-red'
                 }`}
                 style={{ '--value': `${grade - 1}` } as React.CSSProperties}
               />

@@ -104,11 +104,11 @@
   box-shadow: 0 0 0 3px rgba(21, 156, 228, 0.4);
 }
 
-.slider-green {
+.slider-yellow1 {
   background: linear-gradient(
     to right,
-    #4caf50 0%,
-    #4caf50 calc((100% / 4) * var(--value)),
+    hsl(59, 98%, 43%) 0%,
+    #ffeb3b calc((100% / 4) * var(--value)),
     #ccc calc((100% / 4) * var(--value))
   );
 }
@@ -116,8 +116,8 @@
 .slider-yellow {
   background: linear-gradient(
     to right,
-    #ffeb3b 0%,
-    #ffeb3b calc((100% / 4) * var(--value)),
+    #fabc03 0%,
+    #fabc03 calc((100% / 4) * var(--value)),
     #ccc calc((100% / 4) * var(--value))
   );
 }
@@ -165,7 +165,7 @@ textarea {
 .button-container {
   margin-top: 1.5rem;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 0.5rem;
 }
 
@@ -178,19 +178,19 @@ textarea {
 }
 
 .button-primary {
-  background-color: #4caf50;
+  background-color: #0726b0;
   color: white;
 }
 
 .button-primary:disabled {
-  background-color: #a5d6a7;
+  background-color: #0726b0;
   cursor: not-allowed;
 }
 
 .button-outline {
   background-color: transparent;
-  border: 2px solid #4caf50;
-  color: #4caf50;
+  border: 2px solid #0726b0;
+  color: #0726b0;
 }
 
 .global-error {

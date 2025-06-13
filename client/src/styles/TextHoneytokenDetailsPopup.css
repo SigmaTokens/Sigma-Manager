@@ -21,8 +21,7 @@
   padding: 1.5rem;
   width: 90%;
   max-width: 400px;
-  /* max-height: 90vh;  <-- REMOVED to eliminate scrollbar */
-  /* overflow-y: auto;  <-- REMOVED to eliminate scrollbar */
+
   position: relative;
 }
 
@@ -63,13 +62,11 @@
 .custom-slider::-webkit-slider-runnable-track {
   height: 8px;
   border-radius: 4px;
-  /* background: #ccc; <-- REMOVED to allow parent gradient to show through */
 }
 
 .custom-slider::-moz-range-track {
   height: 8px;
   border-radius: 4px;
-  /* background: #ccc; <-- REMOVED to allow parent gradient to show through */
 }
 
 .custom-slider::-webkit-slider-thumb {

@@ -42,7 +42,6 @@
   padding: 0.75rem;
   text-align: center;
   border: 1px solid #e5e7eb;
-
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -81,9 +80,8 @@
   font-size: 0.95rem;
   color: #1f2937;
   font-weight: 500;
-  min-height: unset;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
+  min-height: 3rem;
+  line-height: 1.5;
 }
 
 .group-header-row .api-status {
@@ -114,6 +112,8 @@
   text-align: center;
   border-right: 1px solid #d1d5db;
   flex: 1;
+  line-height: 1.5;
+  min-height: 2.25rem;
 }
 
 .group-header-row span:first-of-type {

@@ -182,12 +182,12 @@ const CreateHoneytokenForm = ({ types, onClose }: CreateHoneytokenFormProps) => 
             <div id="this is alert" className="alert-section">
               <label>Alert Severity </label>
               <small className="grade-subtitle">
-                Set the alert severity for this honeytoken (1 = lowest, 10 = highest)
+                Set the alert severity for this honeytoken (1 = lowest, 5 = highest)
               </small>
               <input
                 type="range"
                 min={1}
-                max={10}
+                max={5}
                 value={grade}
                 onChange={(e) => setGrade(Number(e.target.value))}
                 className="custom-slider"

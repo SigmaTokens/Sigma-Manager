@@ -183,9 +183,7 @@ function Home() {
           <h3 className="chart-title">Alerts by Severity</h3>
           <Bar data={severityChartData} options={severityChartOptions} />
         </div>
-      </div>
 
-      <div className="charts-row">
         <div className="chart-wrapper large">
           <h3 className="chart-title">Honeytoken Type</h3>
           <Pie data={pieChartData} />

@@ -19,14 +19,20 @@ const AddAgentPopup = ({ onClose }: AddAgentPopupProps) => {
   const { currentUser } = useAuth();
 
   useEffect(() => {
-    let newInstallScript = '';
     const manager_host = import.meta.env.VITE_MANAGER_HOST;
     setManagerHost(manager_host);
-    newInstallScript = generateInstallScript(os, managerHost, currentUser!.id, agentName);
-
-    setInstallScript(newInstallScript);
+    setInstallScript(generateInstallScript(os, manager_host, currentUser!.id, agentName));
     setUpdateScript(generateUpdateScript(os));
+    // eslint-disable-next-line
   }, [os, agentName, managerHost]);
+
+  // Optionally: Click textarea to copy
+  const handleCopyInstall = () => {
+    copyToClipboard(installScript, setInstallToast);
+  };
+  const handleCopyUpdate = () => {
+    copyToClipboard(updateScript, setUpdateToast);
+  };
 
   return (
     <div
@@ -38,7 +44,7 @@ const AddAgentPopup = ({ onClose }: AddAgentPopupProps) => {
       <div className="popup-card-agent">
         <Card>
           <h2 className="popup-title">Add Agent</h2>
-          {/* Agent Name */}
+
           <div className="instruction2">
             Name the new agent:
             <input
@@ -50,16 +56,20 @@ const AddAgentPopup = ({ onClose }: AddAgentPopupProps) => {
             />
           </div>
 
-          {/* Node/Git Instructions */}
           <div className="instruction3">
-            Ensure you have the latest <a href="https://nodejs.org/en/download">node.js</a> and{' '}
-            <a href="https://git-scm.com/downloads">git</a> installed.
+            Ensure you have the latest{' '}
+            <a href="https://nodejs.org/en/download" target="_blank" rel="noopener noreferrer">
+              node.js
+            </a>{' '}
+            and{' '}
+            <a href="https://git-scm.com/downloads" target="_blank" rel="noopener noreferrer">
+              git
+            </a>{' '}
+            installed.
           </div>
 
-          {/* OS Instructions */}
           <div className="instruction4">{getOsInstructions(os)}</div>
 
-          {/* OS Tabs */}
           <div className="tabs">
             {(Object.values(OS) as OS[]).map((tab) => (
               <span key={tab} className={`tab ${os === tab ? 'active' : ''}`} onClick={() => setOs(tab as typeof os)}>
@@ -68,26 +78,51 @@ const AddAgentPopup = ({ onClose }: AddAgentPopupProps) => {
             ))}
           </div>
 
-          {/* Script Section */}
           <div className="script-section">
-            <p>Run this script:</p>
-            <div className="script-with-button">
-              <textarea className="install-script-box" readOnly value={installScript} />
-              {installToast && <div className="toast">Copied!</div>}
-              <FaClipboard className="copy-icon" onClick={() => copyToClipboard(installScript, setInstallToast)} />
+            <p className="script-label">Run this script:</p>
+            <div className="script-box-wrapper">
+              <textarea
+                className="install-script-box"
+                readOnly
+                value={installScript}
+                onClick={handleCopyInstall}
+                title="Click to copy"
+              />
+              <button
+                type="button"
+                className="copy-btn"
+                onClick={handleCopyInstall}
+                aria-label="Copy script"
+                tabIndex={0}
+              >
+                <FaClipboard />
+              </button>
+              {installToast && <div className="toast-local">Copied!</div>}
             </div>
-            <p>To update an existing agent, run:</p>
-            <div className="script-with-button">
-              <textarea className="update-script-box" readOnly value={updateScript} />
-              <FaClipboard onClick={() => copyToClipboard(updateScript, setUpdateToast)} className="copy-icon" />
-              {updateToast && <div className="toast">Copied!</div>}
+
+            <p className="script-label">To update an existing agent, run:</p>
+            <div className="script-box-wrapper">
+              <textarea
+                className="update-script-box"
+                readOnly
+                value={updateScript}
+                onClick={handleCopyUpdate}
+                title="Click to copy"
+              />
+              <button
+                type="button"
+                className="copy-btn"
+                onClick={handleCopyUpdate}
+                aria-label="Copy update command"
+                tabIndex={0}
+              >
+                <FaClipboard />
+              </button>
+              {updateToast && <div className="toast-local">Copied!</div>}
             </div>
           </div>
 
-          {/* Confirmation */}
           <div className="instruction6">Confirm the new agent on the Agents page.</div>
-
-          {/* Close Button */}
           <div className="button-container">
             <button className="button button-outline" onClick={onClose}>
               Close

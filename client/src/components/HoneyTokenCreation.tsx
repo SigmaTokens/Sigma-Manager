@@ -7,6 +7,7 @@ import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea
 import { HoneytokenType } from '../utilities/typing';
 import { useAgents } from '../contexts/AgentsContext';
 import '../styles/HoneyTokenCreation.css';
+import VolumeBar from './VolumeBar';
 
 const CreateHoneytokenForm = ({ types, onClose }: CreateHoneytokenFormProps) => {
   const [selectedType, setSelectedType] = useState<string>('');
@@ -183,7 +184,7 @@ const CreateHoneytokenForm = ({ types, onClose }: CreateHoneytokenFormProps) => 
               </Select>
             </div>
             <div id="this is alert" className="alert-section">
-              <label>Alert Severity </label>
+              <label>Alert Severity</label>
               <small className="grade-subtitle">
                 Set the alert severity for this honeytoken (1 = lowest, 5 = highest)
               </small>
@@ -193,11 +194,9 @@ const CreateHoneytokenForm = ({ types, onClose }: CreateHoneytokenFormProps) => 
                 max={5}
                 value={grade}
                 onChange={(e) => setGrade(Number(e.target.value))}
-                className={`custom-slider ${
-                  grade <= 2 ? 'slider-yellow1' : grade === 3 ? 'slider-yellow' : 'slider-red'
-                }`}
-                style={{ '--value': `${grade - 1}` } as React.CSSProperties}
+                className="custom-slider"
               />
+              <VolumeBar grade={grade} />
               <div className="selected-grade">Selected Grade: {grade}</div>
             </div>
 

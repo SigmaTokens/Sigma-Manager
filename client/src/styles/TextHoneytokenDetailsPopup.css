@@ -103,32 +103,52 @@
 .custom-slider:focus::-moz-range-thumb {
   box-shadow: 0 0 0 3px rgba(21, 156, 228, 0.4);
 }
-
-.slider-yellow1 {
+.custom-slider {
+  height: 8px;
+  border-radius: 4px;
   background: linear-gradient(
     to right,
-    hsl(59, 98%, 43%) 0%,
-    #ffeb3b calc((100% / 4) * var(--value)),
-    #ccc calc((100% / 4) * var(--value))
+    #fffde7 0%,
+    /* 1: light yellow */ #ffeb3b 25%,
+    /* 2: yellow */ #ffc107 50%,
+    /* 3: orange */ #ff9800 75%,
+    /* 4: dark orange */ #f44336 100% /* 5: red */
   );
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  outline: none;
 }
 
-.slider-yellow {
-  background: linear-gradient(
-    to right,
-    #fabc03 0%,
-    #fabc03 calc((100% / 4) * var(--value)),
-    #ccc calc((100% / 4) * var(--value))
-  );
+/* Thumb styling */
+.custom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 20px;
+  width: 20px;
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: -7px;
+  position: relative;
+  transition: background 0.3s ease;
+  box-sizing: border-box;
+  z-index: 1;
 }
-
-.slider-red {
-  background: linear-gradient(
-    to right,
-    #f44336 0%,
-    #f44336 calc((100% / 4) * var(--value)),
-    #ccc calc((100% / 4) * var(--value))
-  );
+.custom-slider::-moz-range-thumb {
+  height: 20px;
+  width: 20px;
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 50%;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: background 0.3s ease;
+}
+.custom-slider:focus::-webkit-slider-thumb,
+.custom-slider:focus::-moz-range-thumb {
+  box-shadow: 0 0 0 3px rgba(21, 156, 228, 0.4);
 }
 
 .select-type {

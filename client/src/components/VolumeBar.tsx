@@ -1,36 +1,27 @@
 import React from 'react';
-import '../styles/VolumeBar.css';
 
-interface Props {
-  grade: number;
-}
+const gradeColors = [
+  '#fffde7', // 1: light yellow
+  '#ffeb3b', // 2: yellow
+  '#ffc107', // 3: orange
+  '#ff9800', // 4: dark orange
+  '#f44336', // 5: red
+];
 
-const VolumeBar: React.FC<Props> = ({ grade }) => {
-  const bars = Array.from({ length: 5 }, (_, i) => i + 1);
-
-  const getColor = (index: number): string => {
-    if (grade >= index) {
-      if (grade === 5) return '#f44336'; // red
-      if (grade >= 3 && grade <= 4) return '#ff9800'; // yellow
-      return '#4caf50'; // green
-    }
-    return '#e0e0e0'; // gray
-  };
-
-  return (
-    <div className="volume-bar">
-      {bars.map((index) => (
-        <div
-          key={index}
-          className="bar"
-          style={{
-            height: `${(index / 5) * 100}%`,
-            backgroundColor: getColor(index),
-          }}
-        />
-      ))}
-    </div>
-  );
-};
+const VolumeBar: React.FC<{ grade: number }> = ({ grade }) => (
+  <div style={{ display: 'flex', gap: 4, height: 12, marginTop: 8, marginBottom: 2 }}>
+    {gradeColors.map((color, idx) => (
+      <div
+        key={idx}
+        style={{
+          flex: 1,
+          background: idx < grade ? color : '#e0e0e0',
+          borderRadius: 2,
+          border: '1px solid #e0e0e0',
+        }}
+      />
+    ))}
+  </div>
+);
 
 export default VolumeBar;

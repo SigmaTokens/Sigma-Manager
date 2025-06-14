@@ -32,7 +32,7 @@
 .instruction0 {
   display: flex;
   align-items: center;
-  gap: 1rem; /* space between the labels */
+  gap: 1rem;
   margin-bottom: 1rem;
 }
 .instruction0 label {
@@ -42,20 +42,19 @@
 }
 
 .agent-input {
-  flex: 1; /* take up remaining space */
+  flex: 1;
   padding: 0.5rem;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
 
 .instruction1 .agent-input {
-  flex: none; /* don’t stretch */
-  max-width: 140px; /* adjust to taste */
+  flex: none;
+  max-width: 140px;
 }
-
 .instruction2 .agent-input {
-  flex: none; /* don’t stretch */
-  max-width: 130px; /* adjust to taste */
+  flex: none;
+  max-width: 130px;
 }
 
 .tabs {
@@ -64,13 +63,11 @@
   gap: 70px;
   margin: 20px 0 40px;
 }
-
 .tab {
   cursor: pointer;
   font-weight: bold;
   padding-bottom: 2px;
 }
-
 .tab.active {
   border-bottom: 2px solid black;
 }
@@ -80,112 +77,60 @@
   padding-right: 25px;
 }
 
-.install-script-box {
-  width: 100%;
-  height: auto; /* let JS size it */
-  min-height: 100px; /* floor size */
-  max-height: 400px; /* ceiling with scrollbar */
-  overflow: auto;
-  resize: vertical; /* user can still drag */
-  border: solid;
-}
-
-.update-script-box {
-  width: 100%;
-  height: auto; /* let JS size it */
-  min-height: 40px; /* floor size */
-  max-height: 400px; /* ceiling with scrollbar */
-  overflow: auto;
-  resize: vertical; /* user can still drag */
-  border: solid;
-}
-
+/* ---- MAKE THE POPUP LARGER ---- */
 .popup-card-agent {
   background-color: #fff;
-  border-radius: 12px;
-  padding: 24px;
-  width: 30%;
-  max-width: 90vw;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+  padding: 36px;
+  width: 55vw; /* much wider */
+  min-width: 500px; /* optional, tweak as you like */
+  max-width: 900px;
+  box-shadow: 0 4px 28px rgba(0, 0, 0, 0.22);
   position: relative;
 }
 
-.popup-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 24px;
-  text-align: center;
+/* ---- MAKE THE SCRIPT BOXES LARGER ---- */
+.install-script-box,
+.update-script-box {
+  font-size: 1rem;
+  width: 100%;
+  min-height: 160px;
+  max-height: 500px;
+  padding: 12px;
+  border: solid 1px #222;
+  border-radius: 6px;
+  background: #f6f8fa;
+  margin-bottom: 12px;
+  resize: vertical;
+  box-sizing: border-box;
+  font-family: 'Fira Mono', 'Consolas', monospace;
 }
 
-.popup-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  column-gap: 20px;
-  row-gap: 16px;
-  margin-bottom: 24px;
+/* The update-script-box can be a little shorter if you want */
+.update-script-box {
+  min-height: 70px;
 }
 
-.popup-content p {
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-}
-
-.popup-content p:nth-child(3) {
-  grid-column: 1 / 3;
-  justify-self: center;
-  width: 50%;
-}
-
-.button-container {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-}
-
-.button {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.button-outline {
-  background-color: transparent;
-  border: 2px solid #ccc;
-  color: #333;
-}
-
-.button-primary {
-  background-color: #007bff;
-  color: white;
-}
-
-input[type='number']::-webkit-inner-spin-button,
-input[type='number']::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-input[type='number'] {
-  -moz-appearance: textfield;
-  appearance: textfield;
-}
-
+/* ---- USE FLEXBOX FOR SCRIPT + ICON ---- */
 .script-with-button {
-  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
+/* NO absolute positioning for the icon now */
 .copy-icon {
   color: gray;
-  position: absolute;
-  bottom: 0.5rem;
-  right: 1px;
   cursor: pointer;
   font-size: 1.2rem;
+  align-self: flex-end;
+  margin-left: 6px;
+  margin-bottom: 6px;
+  transition:
+    color 0.15s,
+    font-size 0.15s;
 }
-
 .copy-icon:hover {
   color: black;
   font-size: 1.3rem;
@@ -222,27 +167,92 @@ input[type='number'] {
   }
 }
 
+/* ---- POPUP TITLE ---- */
+.popup-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+/* ---- POPUP CONTENT GRID (if you use it) ---- */
+.popup-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 20px;
+  row-gap: 16px;
+  margin-bottom: 24px;
+}
+.popup-content p {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+.popup-content p:nth-child(3) {
+  grid-column: 1 / 3;
+  justify-self: center;
+  width: 50%;
+}
+
+/* ---- BUTTONS ---- */
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.button-outline {
+  background-color: transparent;
+  border: 2px solid #ccc;
+  color: #333;
+}
+.button-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+/* ---- HIDE NUMBER SPINNERS ---- */
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* ---- MOBILE RESPONSIVE ---- */
 @media (max-width: 768px) {
   .popup-card-agent {
-    width: 100vw;
+    width: 98vw;
     max-height: 80vh;
     min-width: unset;
-    padding: 16px;
+    padding: 12px;
     box-sizing: border-box;
     border-radius: 10px;
     overflow-y: auto;
   }
-
   .agent-input {
     width: 100%;
     max-width: 100%;
   }
-
-  .script-with-button textarea {
-    font-size: 0.75rem;
-    min-height: 80px;
+  .install-script-box,
+  .update-script-box {
+    font-size: 0.9rem;
+    min-height: 100px;
   }
-
+  .script-with-button {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+  }
   .instruction0,
   .instruction1,
   .instruction2,
@@ -252,12 +262,10 @@ input[type='number'] {
     flex-direction: column;
     align-items: flex-start;
   }
-
   .tabs {
     gap: 1rem;
     font-size: 0.9rem;
   }
-
   .popup-title {
     font-size: 1.2rem;
   }

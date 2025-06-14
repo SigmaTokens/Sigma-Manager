@@ -29,8 +29,6 @@ export function serveUsers() {
     asyncHandler(async (req, res) => {
       const { username, password } = req.body;
 
-      console.log(username, password);
-
       const user = await check_user_credentials(username, password);
       if (!user) return void res.status(500).json({ message: 'Invalid credentials' });
       const biscuit = issueBiscuit(user.id, user.username);

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { deleteAgent, verifyAgent, startAgent, stopAgent } from '../models/Agents';
 import { FaTrash, FaPlay, FaStop, FaCheckSquare } from 'react-icons/fa';
 import { IAgent } from '../../../server/interfaces/agent';
+import { IHoneytoken } from '../../../server/interfaces/honeytoken';
 import { FaInfoCircle } from 'react-icons/fa';
 import { useAgents } from '../contexts/AgentsContext';
 import { useHoneytokens } from '../contexts/HoneytokensContext';
@@ -15,6 +16,20 @@ function AgentsPage() {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const { agents } = useAgents();
   const { honeytokens } = useHoneytokens();
+
+  const agentsTokensMap = new Map<string, IHoneytoken[]>();
+
+  for (const token of honeytokens) {
+    const list = agentsTokensMap.get(token.agent_id);
+
+    if (list) list.push(token);
+    else agentsTokensMap.set(token.agent_id, [token]);
+  }
+  for (const token of honeytokens) {
+    const list = agentsTokensMap.get(token.agent_id) ?? [];
+    list.push(token);
+    agentsTokensMap.set(token.agent_id, list);
+  }
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -93,7 +108,7 @@ function AgentsPage() {
                           <FaCheckSquare className="action-icon verify" />
                         </button>
                       )}
-                      {honeytokens.length > 0 &&
+                      {(agentsTokensMap.get(agent.agent_id)?.length ?? 0) > 0 &&
                         agent.validated === 1 &&
                         agent.status !== 'unknown' &&
                         agent.status !== 'offline' &&
@@ -174,7 +189,7 @@ function AgentsPage() {
 
                 <td>
                   <div className="action-icons">
-                    {honeytokens.length > 0 &&
+                    {(agentsTokensMap.get(agent.agent_id)?.length ?? 0) > 0 &&
                       agent.validated == 1 &&
                       agent.status !== 'unknown' &&
                       agent.status !== 'offline' &&

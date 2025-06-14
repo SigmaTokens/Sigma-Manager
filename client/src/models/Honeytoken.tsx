@@ -1,6 +1,5 @@
 import { access_denied } from '../utilities/constants';
 import { logoutFromSession } from '../utilities/helpers';
-import { IAgent } from '../../../server/interfaces/agent';
 import { HoneytokenType } from '../utilities/typing';
 
 export async function createHoneytokenText(
@@ -83,12 +82,16 @@ export async function createHoneytokenApi(
 }
 
 export async function deleteHoneytoken(token_id: string) {
+  console.log('trying to delete honeytoken!');
   try {
     const response = await fetch(`/api/honeytokens/token/${token_id}`, {
       method: 'DELETE',
       headers: localStorage.getItem('biscuit') ? { Authorization: `Bearer ${localStorage.getItem('biscuit')}` } : {},
     });
     const payload = await response.json();
+
+    console.log('the returned payload:', payload);
+    console.log('the returned status:', response.status);
 
     if (!response.ok) {
       if (payload.action === access_denied) logoutFromSession();

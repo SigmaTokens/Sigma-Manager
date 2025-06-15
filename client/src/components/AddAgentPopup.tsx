@@ -85,8 +85,7 @@ const AddAgentPopup = ({ onClose }: AddAgentPopupProps) => {
                 className="install-script-box"
                 readOnly
                 value={installScript}
-                onClick={handleCopyInstall}
-                title="Click to copy"
+                title="Click the clipboard icon to copy"
               />
               <button
                 type="button"
@@ -106,8 +105,7 @@ const AddAgentPopup = ({ onClose }: AddAgentPopupProps) => {
                 className="update-script-box"
                 readOnly
                 value={updateScript}
-                onClick={handleCopyUpdate}
-                title="Click to copy"
+                title="Click the clipboard icon to copy"
               />
               <button
                 type="button"

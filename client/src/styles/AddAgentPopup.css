@@ -22,7 +22,7 @@
 .instruction3,
 .instruction4,
 .instruction6 {
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem; /* היה 1rem */
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -75,45 +75,42 @@
   border-bottom: 2px solid black;
 }
 
-.script-section {
-  margin-top: 20px;
-  padding-right: 25px;
+.script-section p {
+  margin: 0.5rem 0 0.25rem;
 }
 
-.install-script-box {
-  width: 100%;
-  height: auto; /* let JS size it */
-  min-height: 100px; /* floor size */
-  max-height: 400px; /* ceiling with scrollbar */
-  overflow: auto;
-  resize: vertical; /* user can still drag */
-  border: solid;
-}
-
+.install-script-box,
 .update-script-box {
   width: 100%;
-  height: auto; /* let JS size it */
-  min-height: 40px; /* floor size */
-  max-height: 400px; /* ceiling with scrollbar */
-  overflow: auto;
-  resize: vertical; /* user can still drag */
-  border: solid;
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  font-family: monospace;
+  font-size: 0.85rem;
+  line-height: 1.2;
+  resize: none;
+  overflow: hidden;
+  height: auto;
+  box-sizing: border-box;
 }
 
 .popup-card-agent {
   background-color: #fff;
   border-radius: 12px;
   padding: 24px;
-  width: 30%;
-  max-width: 90vw;
+  width: 600px;
+  max-width: 95vw;
+  font-size: 0.9rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   position: relative;
+  max-height: unset;
+  overflow-y: visible;
 }
 
 .popup-title {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: bold;
-  margin-bottom: 24px;
+  margin-bottom: 16px; /* היה 24px */
+  margin-top: 0;
   text-align: center;
 }
 
@@ -180,8 +177,8 @@ input[type='number'] {
 .copy-icon {
   color: gray;
   position: absolute;
-  bottom: 0.5rem;
-  right: 1px;
+  bottom: 0.9rem;
+  right: 8px;
   cursor: pointer;
   font-size: 1.2rem;
 }

@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Card } from './Popup';
+import { useEffect, useState, useRef } from 'react';
+import { Card } from './popup';
 import { FaClipboard } from 'react-icons/fa';
 import { generateInstallScript, generateUpdateScript, getOsInstructions } from '../utilities/agent_install_scripts';
 import { OS } from '../utilities/typing';
@@ -17,6 +17,8 @@ const AddAgentPopup = ({ onClose }: AddAgentPopupProps) => {
   const [installScript, setInstallScript] = useState('');
   const [updateScript, setUpdateScript] = useState('');
   const { currentUser } = useAuth();
+  const installRef = useRef<HTMLTextAreaElement>(null);
+  const updateRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     let newInstallScript = '';
@@ -27,6 +29,20 @@ const AddAgentPopup = ({ onClose }: AddAgentPopupProps) => {
     setInstallScript(newInstallScript);
     setUpdateScript(generateUpdateScript(os));
   }, [os, agentName, managerHost]);
+
+  useEffect(() => {
+    if (installRef.current) {
+      installRef.current.style.height = 'auto';
+      installRef.current.style.height = `${installRef.current.scrollHeight}px`;
+    }
+  }, [installScript]);
+
+  useEffect(() => {
+    if (updateRef.current) {
+      updateRef.current.style.height = 'auto';
+      updateRef.current.style.height = `${updateRef.current.scrollHeight}px`;
+    }
+  }, [updateScript]);
 
   return (
     <div
@@ -72,13 +88,13 @@ const AddAgentPopup = ({ onClose }: AddAgentPopupProps) => {
           <div className="script-section">
             <p>Run this script:</p>
             <div className="script-with-button">
-              <textarea className="install-script-box" readOnly value={installScript} />
+              <textarea ref={installRef} className="install-script-box" readOnly value={installScript} />
               {installToast && <div className="toast">Copied!</div>}
               <FaClipboard className="copy-icon" onClick={() => copyToClipboard(installScript, setInstallToast)} />
             </div>
             <p>To update an existing agent, run:</p>
             <div className="script-with-button">
-              <textarea className="update-script-box" readOnly value={updateScript} />
+              <textarea ref={updateRef} className="update-script-box" readOnly value={updateScript} />
               <FaClipboard onClick={() => copyToClipboard(updateScript, setUpdateToast)} className="copy-icon" />
               {updateToast && <div className="toast">Copied!</div>}
             </div>

@@ -78,6 +78,14 @@ function Home() {
     setSummary(newSummary);
   }, [alerts, honeytokens, agents]);
 
+  const severityColors = [
+    '#fff176', // grade 1
+    '#fdd835', // grade 2
+    '#ff9800', // grade 3
+    '#f57c00', // grade 4
+    '#e53935', // grade 5
+  ];
+
   const totalActive = summary.token_status.active + summary.token_status.expiring_soon;
   const statusChartData = {
     labels: ['Active', 'Expiring Soon (within 7 days)', 'Expired'],
@@ -90,7 +98,7 @@ function Home() {
     ],
   };
 
-  const maxSeverity = 10;
+  const maxSeverity = 5;
   const severityLabels = Array.from({ length: maxSeverity }, (_, i) => `${i + 1}`);
   const severityValues = Array(maxSeverity).fill(0);
 
@@ -112,12 +120,17 @@ function Home() {
       {
         label: 'Alerts per Grade',
         data: severityValues,
-        backgroundColor: '#2196f3',
+        backgroundColor: severityColors,
       },
     ],
   };
 
   const severityChartOptions = {
+    plugins: {
+      legend: {
+        display: false,
+      },
+    },
     scales: {
       y: {
         beginAtZero: true,
@@ -161,12 +174,16 @@ function Home() {
         <div className="kpi-card">🚨 Total Alerts: {summary.alerts.total}</div>
         <div className="kpi-card">✅ Resolved Alerts: {summary.alerts.resolved}</div>
       </div>
-
-      <h2 className="section-title">Visual Overview</h2>
-
       <div className="charts-row">
-        <div className="chart-wrapper large">
-          <h3 className="chart-title">Honeytoken Status</h3>
+        <div className="chart-wrapper large chart-left">
+          <div className="chart-title-with-legend">
+            <h3 className="chart-title">Honeytoken Status</h3>
+            <div className="custom-legend">
+              <span className="legend-item green">Active</span>
+              <span className="legend-item orange">Expiring Soon</span>
+              <span className="legend-item red">Expired</span>
+            </div>
+          </div>
           <Bar
             data={statusChartData}
             options={{
@@ -175,20 +192,58 @@ function Home() {
                   display: false,
                 },
               },
+              scales: {
+                x: {
+                  ticks: {
+                    display: false,
+                  },
+                  grid: {
+                    drawTicks: false,
+                  },
+                },
+                y: {
+                  beginAtZero: true,
+                  max: Math.max(...statusChartData.datasets[0].data) + 5,
+                  ticks: {
+                    stepSize: 1,
+                  },
+                },
+              },
             }}
           />
         </div>
 
         <div className="chart-wrapper large">
-          <h3 className="chart-title">Alerts by Severity</h3>
+          <div className="chart-title-with-legend">
+            <h3 className="chart-title">Alerts by Severity</h3>
+            <div className="custom-legend">
+              <span className="legend-item no-dot">Alerts per Grade</span>
+            </div>
+          </div>
           <Bar data={severityChartData} options={severityChartOptions} />
         </div>
-      </div>
 
-      <div className="charts-row">
-        <div className="chart-wrapper large">
-          <h3 className="chart-title">Honeytoken Type</h3>
-          <Pie data={pieChartData} />
+        <div className="chart-wrapper large pie-chart-wrapper">
+          <div className="chart-title-with-legend">
+            <h3 className="chart-title">Honeytoken Type</h3>
+            <div className="custom-legend">
+              <span className="legend-item purple">Type api</span>
+              <span className="legend-item green">Type text</span>
+            </div>
+          </div>
+
+          <div className="pie-chart-container">
+            <Pie
+              data={pieChartData}
+              options={{
+                plugins: {
+                  legend: {
+                    display: false,
+                  },
+                },
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>

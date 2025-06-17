@@ -278,6 +278,91 @@ select:invalid {
   font-family: inherit;
 }
 
+.custom-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 4px;
+  background: linear-gradient(to right, #ccc 0%, #ccc 100%);
+  outline: none;
+  margin-top: 8px;
+  position: relative;
+}
+
+.grade-1 {
+  background: linear-gradient(to right, #fff176 3%, #ccc 3%);
+}
+.grade-2 {
+  background: linear-gradient(to right, #fdd835 26%, #ccc 26%);
+}
+.grade-3 {
+  background: linear-gradient(to right, #ff9800 50%, #ccc 50%);
+}
+.grade-4 {
+  background: linear-gradient(to right, #f57c00 74%, #ccc 74%);
+}
+.grade-5 {
+  background: linear-gradient(to right, #e53935 97%, #ccc 97%);
+}
+
+/* הכדור עצמו
+.custom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  border: 2px solid #000;
+  margin-top: -3px;
+  transition:
+    background-color 0.3s,
+    border-color 0.3s;
+} */
+
+.grade-1::-webkit-slider-thumb,
+.grade-2::-webkit-slider-thumb,
+.grade-3::-webkit-slider-thumb,
+.grade-4::-webkit-slider-thumb,
+.grade-5::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: -2px;
+  transition:
+    background-color 0.3s,
+    border-color 0.3s;
+}
+
+.grade-1::-webkit-slider-thumb {
+  background-color: #fff176;
+  border: 3px solid white;
+}
+
+.grade-2::-webkit-slider-thumb {
+  background-color: #fdd835;
+  border: 3px solid white;
+}
+
+.grade-3::-webkit-slider-thumb {
+  background-color: #ff9800;
+  border: 3px solid white;
+}
+
+.grade-4::-webkit-slider-thumb {
+  background-color: #f57c00;
+  border: 3px solid white;
+}
+
+.grade-5::-webkit-slider-thumb {
+  background-color: #e53935;
+  border: 3px solid white;
+}
+
 @media (max-width: 768px) {
   .popup-card-token {
     width: 95vw;

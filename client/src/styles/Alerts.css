@@ -44,13 +44,14 @@
 
 .alerts-table th,
 .alerts-table td {
-  padding: 0.75rem;
+  padding: 2px 4px;
   text-align: center;
   border: 1px solid #e5e7eb;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 0.875rem;
+  font-size: 0.8rem;
+  height: 42px;
 }
 
 .alerts-table th {
@@ -65,7 +66,8 @@
 .alerts-table td {
   font-size: 0.875rem;
   color: #1f2937;
-  vertical-align: top;
+  vertical-align: middle;
+  text-align: center;
 }
 
 .alerts-table tbody tr {
@@ -88,14 +90,13 @@
   position: relative;
   word-wrap: break-word;
 }
-
 .truncated {
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
+  display: inline-block;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
   max-width: 100%;
+  direction: ltr;
 }
 
 .expanded {
@@ -210,6 +211,25 @@
   text-align: center;
   font-size: 0.875rem;
   color: #6b7280;
+}
+
+.volume-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.volume-wrapper > * {
+  margin: auto;
+}
+
+.details-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
 /* Responsive Adjustments */

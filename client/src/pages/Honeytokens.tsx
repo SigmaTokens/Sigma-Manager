@@ -392,9 +392,10 @@ function Honeytokens() {
                             </div>
                           ) : (
                             <>
-                              <span>
+                              <span className="group-col">
                                 <strong>Group:</strong> {groupId}
                               </span>
+
                               <span>
                                 <strong>Creation:</strong> {new Date(first.creation_date).toLocaleString()}
                               </span>
@@ -430,11 +431,14 @@ function Honeytokens() {
                                   <FaTrash className="action-icon delete" />
                                 </button>
                               </div>
-                              <button
-                                onClick={() => setExpandedGroups((prev) => ({ ...prev, [groupId]: !prev[groupId] }))}
-                              >
-                                {expanded ? '▲' : '▼'}
-                              </button>
+                              <div className="expand-button-wrapper">
+                                <button
+                                  className="expand-button"
+                                  onClick={() => setExpandedGroups((prev) => ({ ...prev, [groupId]: !prev[groupId] }))}
+                                >
+                                  {expanded ? '▲' : '▼'}
+                                </button>
+                              </div>
                             </>
                           )}
                         </div>

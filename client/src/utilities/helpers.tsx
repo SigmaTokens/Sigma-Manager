@@ -5,12 +5,18 @@ export function copyToClipboard(text: string, setToast: React.Dispatch<React.Set
   });
 }
 
-export const bars = Array.from({ length: 10 }, (_, i) => i + 1);
+export const bars = [1, 2, 3, 4, 5];
 
 export const getColor = (grade: number, index: number): string => {
-  if (grade >= 8) return index <= grade ? '#f44336' : '#e0e0e0';
-  if (grade >= 5) return index <= grade ? '#ff9800' : '#e0e0e0';
-  return index <= grade ? '#4caf50' : '#e0e0e0';
+  const colors = {
+    1: '#ffeb3b',
+    2: '#fbc02d',
+    3: '#ff9800',
+    4: '#ef6c00',
+    5: '#f44336',
+  };
+
+  return index <= grade ? colors[grade as keyof typeof colors] || '#e0e0e0' : '#e0e0e0';
 };
 
 export function eraseSession() {

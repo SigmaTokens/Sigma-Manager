@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './Popup';
+import { Card, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './popup';
 import { createHoneytokenText, createHoneytokenApi } from '../models/Honeytoken';
 import { IHoneytokenType, CreateHoneytokenFormProps } from '../../../server/interfaces/agent';
 import { FiPlus, FiMinus } from 'react-icons/fi';
@@ -185,15 +185,15 @@ const CreateHoneytokenForm = ({ types, onClose }: CreateHoneytokenFormProps) => 
             <div id="this is alert" className="alert-section">
               <label>Alert Severity </label>
               <small className="grade-subtitle">
-                Set the alert severity for this honeytoken (1 = lowest, 10 = highest)
+                Set the alert severity for this honeytoken (1 = lowest, 5 = highest)
               </small>
               <input
                 type="range"
                 min={1}
-                max={10}
+                max={5}
                 value={grade}
                 onChange={(e) => setGrade(Number(e.target.value))}
-                className="custom-slider"
+                className={`custom-slider grade-${grade}`}
               />
               <div className="selected-grade">Selected Grade: {grade}</div>
             </div>

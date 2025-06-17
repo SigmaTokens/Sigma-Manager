@@ -2,14 +2,14 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  gap: 2px;
-  height: 60px;
+  gap: 3px;
+  height: 40px;
   width: 50px;
   margin: auto;
 }
 
 .bar {
   width: 4px;
-  border-radius: 1px;
+  border-radius: 3px;
   transition: background-color 0.3s ease;
 }

@@ -223,9 +223,11 @@ function Alerts() {
                     </span>
                   </td>
                   <td className="truncate-cell" title={`Grade: ${alert.grade}`}>
-                    <span className={expandedDetails === alert.alert_id ? 'expanded' : 'truncated'}>
-                      <VolumeBar grade={alert.grade} />
-                    </span>
+                    <div className="volume-wrapper">
+                      <span className={expandedDetails === alert.alert_id ? 'expanded' : 'truncated'}>
+                        <VolumeBar grade={alert.grade} />
+                      </span>
+                    </div>
                   </td>
 
                   <td>

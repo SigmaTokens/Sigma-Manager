@@ -80,12 +80,12 @@ export function serveHoneytokens() {
         data: data,
       };
 
-      let isCreated = false;
-
       const socket = Globals.agentSockets.get(agent_id);
       if (socket)
         socket.emit('CREATE_HONEYTOKEN_TEXT', token_data, async (response: any) => {
-          if (response.status === 'created') isCreated = true;
+          if (response.status === 'created') {
+          } else {
+          }
         });
       else {
         console.error(
@@ -93,9 +93,7 @@ export function serveHoneytokens() {
           'Failed fetching socket to create honeytoken!',
           Constants.TEXT_DEFAULT_COLOR,
         );
-        return void res.status(500).json({ success: false });
       }
-      if (!isCreated) return void res.status(500).json({ success: false });
       return void res.status(200).json({ success: true });
     } catch (error) {
       console.error(Constants.TEXT_RED_COLOR, 'Failed to create honeytoken text:', error, Constants.TEXT_DEFAULT_COLOR);

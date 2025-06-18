@@ -79,7 +79,7 @@ const CreateHoneytokenForm = ({ types, onClose }: CreateHoneytokenFormProps) => 
         return;
       }
       onClose();
-      window.location.href = '/honeytokens';
+      if (window.location.pathname !== '/honeytokens') window.location.href = '/honeytokens';
     } catch (error) {
       console.error('error: ', error);
     }
@@ -88,7 +88,7 @@ const CreateHoneytokenForm = ({ types, onClose }: CreateHoneytokenFormProps) => 
   const handleSubmitText = async () => {
     if (!validate()) return;
     try {
-      const response = await createHoneytokenText(
+      const payload = await createHoneytokenText(
         fileName,
         componentAddresses,
         grade,
@@ -97,14 +97,14 @@ const CreateHoneytokenForm = ({ types, onClose }: CreateHoneytokenFormProps) => 
         fileContent,
         agentID,
       );
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error creating honeytoken:', errorText);
+
+      if (payload.success === false) {
         alert('Failed to create honeytoken.');
         return;
       }
+
       onClose();
-      window.location.href = '/honeytokens';
+      if (window.location.pathname !== '/honeytokens') window.location.href = '/honeytokens';
     } catch (error) {
       console.error('Request failed:', error);
       alert('Something went wrong while creating the honeytoken.');

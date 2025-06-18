@@ -87,6 +87,11 @@
   background: #fef2f2;
 }
 
+.text-status.not-connected {
+  color: #d97706;
+  background: #fffbeb;
+}
+
 /* — Action buttons & info icon — */
 .action-icons-text {
   display: flex;

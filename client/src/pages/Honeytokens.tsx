@@ -12,6 +12,7 @@ import { FaTrash, FaPlay, FaStop } from 'react-icons/fa';
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import { FiInfo } from 'react-icons/fi';
 import { useHoneytokens } from '../contexts/HoneytokensContext.tsx';
+import { useAgents } from '../contexts/AgentsContext.tsx';
 import ApiHoneytokenDetailsPopup from '../components/ApiHoneytokenDetailsPopup.tsx';
 import TextHoneytokenDetailsPopup from '../components/TextHoneytokenDetailsPopup.tsx';
 import '../styles/TextHoneytoken.css';
@@ -28,7 +29,24 @@ function Honeytokens() {
   const [loadingTokenId, setLoadingTokenId] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
+  const { agents } = useAgents();
   const { honeytokens } = useHoneytokens();
+
+  const agentsTokensMap = new Map<string, IHoneytoken[]>();
+
+  for (const token of honeytokens) {
+    let list = agentsTokensMap.get(token.agent_id);
+    if (!list) {
+      list = [];
+      agentsTokensMap.set(token.agent_id, list);
+    }
+    list.push(token);
+  }
+
+  const onlineAgents = new Set(agents.filter((a) => a.status === 'online').map((a) => a.agent_id));
+
+  const statusOf = (t: IHoneytoken) =>
+    !onlineAgents.has(t.agent_id) ? 'not-connected' : t.isMonitored ? 'monitored' : 'not-monitored';
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -145,17 +163,26 @@ function Honeytokens() {
                   <tr key={token.token_id}>
                     <td>{token.token_id}</td>
                     <td>
-                      <span className={`text-status ${token.isMonitored ? 'monitored' : 'not-monitored'}`}>
-                        {token.isMonitored ? 'Monitored' : 'Not Monitored'}
-                      </span>
+                      {(() => {
+                        const s = statusOf(token);
+                        return (
+                          <span className={`text-status ${s}`}>
+                            {s === 'monitored'
+                              ? 'Monitored'
+                              : s === 'not-connected'
+                                ? 'Not Connected'
+                                : 'Not Monitored'}
+                          </span>
+                        );
+                      })()}
                     </td>
                     <td>
                       <div className="action-icons-text">
-                        {token.isMonitored ? (
+                        {statusOf(token) === 'monitored' ? (
                           <button onClick={() => handleStopMonitoring(token.token_id)}>
                             <FaStop className="action-icon stop" />
                           </button>
-                        ) : (
+                        ) : statusOf(token) === 'not-connected' ? null : (
                           <button onClick={() => handleStartMonitoringText(token.token_id)}>
                             <FaPlay className="action-icon start" />
                           </button>
@@ -238,13 +265,18 @@ function Honeytokens() {
                   <td title={honeytoken.data}>{honeytoken.data}</td>
                   <td title={honeytoken.notes}>{honeytoken.notes}</td>
                   <td>
-                    <span className={`text-status ${honeytoken.isMonitored ? 'monitored' : 'not-monitored'}`}>
-                      {honeytoken.isMonitored ? 'Monitored' : 'Not Monitored'}
-                    </span>
+                    {(() => {
+                      const s = statusOf(honeytoken);
+                      return (
+                        <span className={`text-status ${s}`}>
+                          {s === 'monitored' ? 'Monitored' : s === 'not-connected' ? 'Not Connected' : 'Not Monitored'}
+                        </span>
+                      );
+                    })()}
                   </td>
                   <td>
                     <div className="action-icons-text">
-                      {honeytoken.isMonitored ? (
+                      {statusOf(honeytoken) === 'monitored' ? (
                         <button
                           onClick={() => handleStopMonitoring(honeytoken.token_id)}
                           onMouseEnter={() => setHoveredIcon(`stop-${honeytoken.token_id}`)}
@@ -260,7 +292,7 @@ function Honeytokens() {
                             className={`action-icon stop ${hoveredIcon === `stop-${honeytoken.token_id}` ? 'hovered' : ''}`}
                           />
                         </button>
-                      ) : (
+                      ) : statusOf(honeytoken) === 'not-connected' ? null : (
                         <button
                           onClick={() => handleStartMonitoringText(honeytoken.token_id)}
                           onMouseEnter={() => setHoveredIcon(`start-${honeytoken.token_id}`)}
@@ -342,6 +374,12 @@ function Honeytokens() {
                 const first = tokens[0];
                 const expanded = expandedGroups[groupId];
 
+                const s = statusOf(first);
+
+                <span className={`text-status ${s}`}>
+                  {s === 'monitored' ? 'Monitored' : s === 'not-connected' ? 'Not Connected' : 'Not Monitored'}
+                </span>;
+
                 return (
                   <>
                     <tr key={groupId} className="group-row">
@@ -355,20 +393,24 @@ function Honeytokens() {
 
                               <div className="mobile-api-actions-row">
                                 <span
-                                  className={`api-status ${first.isMonitored ? 'monitored' : 'not-monitored'}`}
+                                  className={`api-status ${s === 'monitored' ? 'monitored' : s === 'not-connected' ? 'not-connected' : 'not-monitored'}`}
                                   style={{ marginRight: '0.5rem' }}
                                 >
-                                  {first.isMonitored ? 'Monitored' : 'Not Monitored'}
+                                  {s === 'monitored'
+                                    ? 'Monitored'
+                                    : s === 'not-connected'
+                                      ? 'Not Connected'
+                                      : 'Not Monitored'}
                                 </span>
 
-                                {first.isMonitored ? (
+                                {s === 'monitored' ? (
                                   <button
                                     onClick={() => handleStopGroup(groupId)}
                                     disabled={loadingGroupId === groupId}
                                   >
                                     <FaStop className="action-icon stop" />
                                   </button>
-                                ) : (
+                                ) : s === 'not-connected' ? null : (
                                   <button
                                     onClick={() => handleStartGroup(groupId)}
                                     disabled={loadingGroupId === groupId}
@@ -414,18 +456,24 @@ function Honeytokens() {
                               <span>
                                 <strong>Port:</strong> {first.api_port}
                               </span>
-                              <span className={`api-status ${first.isMonitored ? 'monitored' : 'not-monitored'}`}>
-                                {first.isMonitored ? 'Monitored' : 'Not Monitored'}
+                              <span
+                                className={`api-status ${s === 'monitored' ? 'monitored' : s === 'not-connected' ? 'not-connected' : 'not-monitored'}`}
+                              >
+                                {s === 'monitored'
+                                  ? 'Monitored'
+                                  : s === 'not-connected'
+                                    ? 'Not Connected'
+                                    : 'Not Monitored'}
                               </span>
                               <div className="action-icons-api">
-                                {first.isMonitored ? (
+                                {s === 'monitored' ? (
                                   <button
                                     onClick={() => handleStopGroup(groupId)}
                                     disabled={loadingGroupId === groupId}
                                   >
                                     <FaStop className="action-icon stop" />
                                   </button>
-                                ) : (
+                                ) : s === 'not-connected' ? null : (
                                   <button
                                     onClick={() => handleStartGroup(groupId)}
                                     disabled={loadingGroupId === groupId}

@@ -69,6 +69,11 @@
   background: #fef2f2;
 }
 
+.api-status.not-connected {
+  color: #d97706;
+  background: #fffbeb;
+}
+
 /* group header */
 .group-row td {
   padding: 0.2rem 0.5rem !important;

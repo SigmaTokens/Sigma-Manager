@@ -72,12 +72,13 @@ const CreateHoneytokenForm = ({ types, onClose }: CreateHoneytokenFormProps) => 
 
   const handleSubmitApi = async () => {
     try {
-      const response = await createHoneytokenApi(grade, expirationDate, notes, agentID, port, apiRows);
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error creating honeytoken: ', errorText);
+      const payload = await createHoneytokenApi(grade, expirationDate, notes, agentID, port, apiRows);
+
+      if (payload.success === false) {
+        alert('Failed to create honeytoken.');
         return;
       }
+
       onClose();
       if (window.location.pathname !== '/honeytokens#api') window.location.href = '/honeytokens#api';
     } catch (error) {

@@ -87,13 +87,13 @@ export function serveHoneytokens() {
           } else {
           }
         });
-      else {
+      else
         console.error(
           Constants.TEXT_RED_COLOR,
           'Failed fetching socket to create honeytoken!',
           Constants.TEXT_DEFAULT_COLOR,
         );
-      }
+
       return void res.status(200).json({ success: true });
     } catch (error) {
       console.error(Constants.TEXT_RED_COLOR, 'Failed to create honeytoken text:', error, Constants.TEXT_DEFAULT_COLOR);
@@ -154,9 +154,7 @@ export function serveHoneytokens() {
           api_port,
         );
 
-        if (!result) {
-          return void res.status(500).json({ success: false });
-        }
+        if (!result) return void res.status(500).json({ success: false });
       });
 
       sseUpdateHoneytokens();
@@ -174,18 +172,17 @@ export function serveHoneytokens() {
       if (socket)
         socket.emit('CREATE_HONEYTOKEN_API', token_data, async (response: any) => {
           if (response.status === 'created') {
-            return void res.status(200).json({ success: true });
+          } else {
           }
-          return void res.status(500).json({ success: false });
         });
-      else {
+      else
         console.error(
           Constants.TEXT_RED_COLOR,
           'Failed fetching socket to create honeytoken!',
           Constants.TEXT_DEFAULT_COLOR,
         );
-        return void res.status(500).json({ success: false });
-      }
+
+      return void res.status(200).json({ success: true });
     } catch (error) {
       console.error(Constants.TEXT_RED_COLOR, 'Failed to create honeytoken api:', error, Constants.TEXT_DEFAULT_COLOR);
       return void res.status(500).json({ success: false });

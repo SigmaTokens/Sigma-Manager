@@ -19,8 +19,6 @@ export async function archiveAlert(tokenId: string, alertId: string, archive: bo
 
     if (!response.ok) {
       if (payload.action === access_denied) logoutFromSession();
-      const errorText = await response.text();
-      console.error('Error:', errorText);
       alert('Failed to set alert as archive.');
       return false;
     }

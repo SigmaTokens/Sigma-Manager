@@ -28,5 +28,5 @@ export function eraseSession() {
 
 export function logoutFromSession() {
   eraseSession();
-  window.location.href = '/login';
+  if (window.location.pathname !== '/login') window.location.href = '/login';
 }

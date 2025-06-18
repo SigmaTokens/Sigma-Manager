@@ -209,12 +209,14 @@ export function serveHoneytokens() {
       if (socket)
         socket.emit('DELETE_HONEYTOKEN_TEXT', token_id, async (response: any) => {
           if (response.status === 'deleted') {
-            if (await delete_honeytoken_by_token_id(token_id)) {
-              sseUpdateHoneytokens();
-              return void res.status(200).json({ success: true });
-            } else return void res.status(500).json({ success: false });
+          } else {
           }
         });
+      const isDeleted = await delete_honeytoken_by_token_id(token_id);
+      if (isDeleted) {
+        sseUpdateHoneytokens();
+        return void res.status(200).json({ success: true });
+      } else return void res.status(500).json({ success: false });
     } catch (error) {
       console.error(Constants.TEXT_RED_COLOR, 'Failed to delete honeytoken text:', error, Constants.TEXT_DEFAULT_COLOR);
       return void res.status(500).json({ success: false });

@@ -1,5 +1,6 @@
 const sql = (strings: TemplateStringsArray, ...values: any[]) => String.raw(strings, ...values);
 import { begin_transaction, commit, rollback } from './helpers';
+import { Constants } from '../constants';
 import { Globals } from '../globals';
 
 //INIT
@@ -149,9 +150,8 @@ export async function delete_all_agent_honeytokens(agent_id: string) {
 
 //TEXT
 export async function delete_honeytoken_by_token_id(token_id: string) {
+  await begin_transaction();
   try {
-    await begin_transaction();
-
     await Globals.app.locals.db.run(
       sql`
         DELETE FROM alerts
@@ -165,16 +165,16 @@ export async function delete_honeytoken_by_token_id(token_id: string) {
       sql`
         DELETE FROM honeytokens
         WHERE
-          agent_id = ?
-          AND token_id = ?;
+          token_id = ?;
       `,
       [token_id],
     );
 
     await commit();
     return true;
-  } catch {
+  } catch (err) {
     await rollback();
+    console.error(Constants.TEXT_RED_COLOR, 'delete_honeytoken_by_token_id failed:', err, Constants.TEXT_DEFAULT_COLOR);
     return false;
   }
 }

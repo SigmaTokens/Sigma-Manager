@@ -103,12 +103,29 @@ function Honeytokens() {
   };
 
   const handleReverseClick = () => {
-    // setHoneytokens((prev) => [...prev].reverse());
     setIsReversed((prev) => !prev);
   };
 
   const renderTextTable = () => {
     const textTokens = honeytokens.filter((t) => t.type_id !== 'api');
+
+    if (textTokens.length === 0) {
+      return (
+        <div className="text-honeytokens-container">
+          <div className="text-table-container">
+            <table className="text-honeytokens-table">
+              <tbody>
+                <tr>
+                  <td colSpan={12} className="no-honeytokens">
+                    No honeytokens found
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      );
+    }
 
     if (isMobile) {
       return (
@@ -205,88 +222,80 @@ function Honeytokens() {
             </thead>
 
             <tbody>
-              {textTokens.length > 0 ? (
-                textTokens.map((honeytoken) => (
-                  <tr key={honeytoken.token_id}>
-                    <td title={honeytoken.agent_id}>{honeytoken.agent_id}</td>
-                    <td title={honeytoken.token_id}>{honeytoken.token_id}</td>
-                    <td title={honeytoken.group_id}>{honeytoken.group_id}</td>
-                    <td title={new Date(honeytoken.creation_date).toLocaleString()}>
-                      {new Date(honeytoken.creation_date).toLocaleString()}
-                    </td>
-                    <td title={new Date(honeytoken.expire_date).toLocaleString()}>
-                      {new Date(honeytoken.expire_date).toLocaleString()}
-                    </td>
-                    <td title={honeytoken.location}>{honeytoken.location}</td>
-                    <td title={honeytoken.file_name}>{honeytoken.file_name}</td>
-                    <td title={honeytoken.data}>{honeytoken.data}</td>
-                    <td title={honeytoken.notes}>{honeytoken.notes}</td>
-                    <td>
-                      <span className={`text-status ${honeytoken.isMonitored ? 'monitored' : 'not-monitored'}`}>
-                        {honeytoken.isMonitored ? 'Monitored' : 'Not Monitored'}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="action-icons-text">
-                        {honeytoken.isMonitored ? (
-                          <button
-                            onClick={() => handleStopMonitoring(honeytoken.token_id)}
-                            onMouseEnter={() => setHoveredIcon(`stop-${honeytoken.token_id}`)}
-                            onMouseLeave={() => setHoveredIcon(null)}
-                            title="Stop Monitoring"
-                            disabled={loadingTokenId === honeytoken.token_id}
-                            style={{
-                              opacity: loadingTokenId === honeytoken.token_id ? 0.5 : 1,
-                              pointerEvents: loadingTokenId === honeytoken.token_id ? 'none' : 'auto',
-                            }}
-                          >
-                            <FaStop
-                              className={`action-icon stop ${hoveredIcon === `stop-${honeytoken.token_id}` ? 'hovered' : ''}`}
-                            />
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => handleStartMonitoringText(honeytoken.token_id)}
-                            onMouseEnter={() => setHoveredIcon(`start-${honeytoken.token_id}`)}
-                            onMouseLeave={() => setHoveredIcon(null)}
-                            title="Start Monitoring"
-                            disabled={loadingTokenId === honeytoken.token_id}
-                            style={{
-                              opacity: loadingTokenId === honeytoken.token_id ? 0.5 : 1,
-                              pointerEvents: loadingTokenId === honeytoken.token_id ? 'none' : 'auto',
-                            }}
-                          >
-                            <FaPlay
-                              className={`action-icon start ${hoveredIcon === `start-${honeytoken.token_id}` ? 'hovered' : ''}`}
-                            />
-                          </button>
-                        )}
+              {textTokens.map((honeytoken) => (
+                <tr key={honeytoken.token_id}>
+                  <td title={honeytoken.agent_id}>{honeytoken.agent_id}</td>
+                  <td title={honeytoken.token_id}>{honeytoken.token_id}</td>
+                  <td title={honeytoken.group_id}>{honeytoken.group_id}</td>
+                  <td title={new Date(honeytoken.creation_date).toLocaleString()}>
+                    {new Date(honeytoken.creation_date).toLocaleString()}
+                  </td>
+                  <td title={new Date(honeytoken.expire_date).toLocaleString()}>
+                    {new Date(honeytoken.expire_date).toLocaleString()}
+                  </td>
+                  <td title={honeytoken.location}>{honeytoken.location}</td>
+                  <td title={honeytoken.file_name}>{honeytoken.file_name}</td>
+                  <td title={honeytoken.data}>{honeytoken.data}</td>
+                  <td title={honeytoken.notes}>{honeytoken.notes}</td>
+                  <td>
+                    <span className={`text-status ${honeytoken.isMonitored ? 'monitored' : 'not-monitored'}`}>
+                      {honeytoken.isMonitored ? 'Monitored' : 'Not Monitored'}
+                    </span>
+                  </td>
+                  <td>
+                    <div className="action-icons-text">
+                      {honeytoken.isMonitored ? (
                         <button
-                          onClick={() => handleDeleteHoneytoken(honeytoken.token_id)}
-                          onMouseEnter={() => setHoveredIcon(`delete-${honeytoken.token_id}`)}
+                          onClick={() => handleStopMonitoring(honeytoken.token_id)}
+                          onMouseEnter={() => setHoveredIcon(`stop-${honeytoken.token_id}`)}
                           onMouseLeave={() => setHoveredIcon(null)}
-                          title="Delete Honeytoken"
+                          title="Stop Monitoring"
                           disabled={loadingTokenId === honeytoken.token_id}
                           style={{
                             opacity: loadingTokenId === honeytoken.token_id ? 0.5 : 1,
                             pointerEvents: loadingTokenId === honeytoken.token_id ? 'none' : 'auto',
                           }}
                         >
-                          <FaTrash
-                            className={`action-icon delete ${hoveredIcon === `delete-${honeytoken.token_id}` ? 'hovered' : ''}`}
+                          <FaStop
+                            className={`action-icon stop ${hoveredIcon === `stop-${honeytoken.token_id}` ? 'hovered' : ''}`}
                           />
                         </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={12} className="no-honeytokens">
-                    No honeytokens found
+                      ) : (
+                        <button
+                          onClick={() => handleStartMonitoringText(honeytoken.token_id)}
+                          onMouseEnter={() => setHoveredIcon(`start-${honeytoken.token_id}`)}
+                          onMouseLeave={() => setHoveredIcon(null)}
+                          title="Start Monitoring"
+                          disabled={loadingTokenId === honeytoken.token_id}
+                          style={{
+                            opacity: loadingTokenId === honeytoken.token_id ? 0.5 : 1,
+                            pointerEvents: loadingTokenId === honeytoken.token_id ? 'none' : 'auto',
+                          }}
+                        >
+                          <FaPlay
+                            className={`action-icon start ${hoveredIcon === `start-${honeytoken.token_id}` ? 'hovered' : ''}`}
+                          />
+                        </button>
+                      )}
+                      <button
+                        onClick={() => handleDeleteHoneytoken(honeytoken.token_id)}
+                        onMouseEnter={() => setHoveredIcon(`delete-${honeytoken.token_id}`)}
+                        onMouseLeave={() => setHoveredIcon(null)}
+                        title="Delete Honeytoken"
+                        disabled={loadingTokenId === honeytoken.token_id}
+                        style={{
+                          opacity: loadingTokenId === honeytoken.token_id ? 0.5 : 1,
+                          pointerEvents: loadingTokenId === honeytoken.token_id ? 'none' : 'auto',
+                        }}
+                      >
+                        <FaTrash
+                          className={`action-icon delete ${hoveredIcon === `delete-${honeytoken.token_id}` ? 'hovered' : ''}`}
+                        />
+                      </button>
+                    </div>
                   </td>
                 </tr>
-              )}
+              ))}
             </tbody>
           </table>
         </div>

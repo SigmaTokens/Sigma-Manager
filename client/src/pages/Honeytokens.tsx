@@ -20,7 +20,7 @@ import '../styles/ApiHoneytoken.css';
 
 function Honeytokens() {
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'text' | 'api'>('text');
+  const [activeTab, setActiveTab] = useState<'text' | 'api'>(window.location.hash === '#api' ? 'api' : 'text');
   const [loadingGroupId, setLoadingGroupId] = useState<string | null>(null);
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
   const [selectedToken, setSelectedToken] = useState<IHoneytoken | null>(null);
@@ -73,10 +73,26 @@ function Honeytokens() {
     !onlineAgents.has(t.agent_id) ? 'not-connected' : t.isMonitored ? 'monitored' : 'not-monitored';
 
   useEffect(() => {
+    const onHash = () => setActiveTab(window.location.hash === '#api' ? 'api' : 'text');
+
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
+
+    window.addEventListener('hashchange', onHash);
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+
+    onHash();
+    handleResize();
+
+    return () => {
+      window.removeEventListener('hashchange', onHash);
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
+
+  const selectTab = (tab: 'text' | 'api') => {
+    setActiveTab(tab);
+    if (window.location.hash !== `#${tab}`) history.replaceState(null, '', `#${tab}`);
+  };
 
   const handleDeleteHoneytoken = async (tokenId: string) => {
     try {
@@ -660,10 +676,11 @@ function Honeytokens() {
       <h1 className="honeytokens-title">Honeytokens Dashboard</h1>
 
       <div className="tab-buttons">
-        <button className={`tab-button ${activeTab === 'text' ? 'active' : ''}`} onClick={() => setActiveTab('text')}>
+        <button className={`tab-button ${activeTab === 'text' ? 'active' : ''}`} onClick={() => selectTab('text')}>
           Text Tokens
         </button>
-        <button className={`tab-button ${activeTab === 'api' ? 'active' : ''}`} onClick={() => setActiveTab('api')}>
+
+        <button className={`tab-button ${activeTab === 'api' ? 'active' : ''}`} onClick={() => selectTab('api')}>
           API Tokens
         </button>
       </div>

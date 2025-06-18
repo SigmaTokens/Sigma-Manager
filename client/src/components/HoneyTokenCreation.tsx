@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './popup';
+import { Card, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './Popup';
 import { createHoneytokenText, createHoneytokenApi } from '../models/Honeytoken';
 import { IHoneytokenType, CreateHoneytokenFormProps } from '../../../server/interfaces/agent';
 import { FiPlus, FiMinus } from 'react-icons/fi';
@@ -79,7 +79,7 @@ const CreateHoneytokenForm = ({ types, onClose }: CreateHoneytokenFormProps) => 
         return;
       }
       onClose();
-      if (window.location.pathname !== '/honeytokens') window.location.href = '/honeytokens';
+      if (window.location.pathname !== '/honeytokens#api') window.location.href = '/honeytokens#api';
     } catch (error) {
       console.error('error: ', error);
     }
@@ -104,7 +104,7 @@ const CreateHoneytokenForm = ({ types, onClose }: CreateHoneytokenFormProps) => 
       }
 
       onClose();
-      if (window.location.pathname !== '/honeytokens') window.location.href = '/honeytokens';
+      if (window.location.pathname !== '/honeytokens#text') window.location.href = '/honeytokens#text';
     } catch (error) {
       console.error('Request failed:', error);
       alert('Something went wrong while creating the honeytoken.');

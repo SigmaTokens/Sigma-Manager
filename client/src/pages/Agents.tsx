@@ -20,15 +20,12 @@ function AgentsPage() {
   const agentsTokensMap = new Map<string, IHoneytoken[]>();
 
   for (const token of honeytokens) {
-    const list = agentsTokensMap.get(token.agent_id);
-
-    if (list) list.push(token);
-    else agentsTokensMap.set(token.agent_id, [token]);
-  }
-  for (const token of honeytokens) {
-    const list = agentsTokensMap.get(token.agent_id) ?? [];
+    let list = agentsTokensMap.get(token.agent_id);
+    if (!list) {
+      list = [];
+      agentsTokensMap.set(token.agent_id, list);
+    }
     list.push(token);
-    agentsTokensMap.set(token.agent_id, list);
   }
 
   useEffect(() => {

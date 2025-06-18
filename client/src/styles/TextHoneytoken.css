@@ -59,7 +59,7 @@
   white-space: nowrap;
 }
 .text-honeytokens-table td:first-child {
-  text-align: left;
+  text-align: center;
   padding-left: 1rem;
 }
 .text-honeytokens-table th.actions-col,

@@ -20,7 +20,6 @@ import '../styles/ApiHoneytoken.css';
 
 function Honeytokens() {
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null);
-  const [isReversed, setIsReversed] = useState(false);
   const [activeTab, setActiveTab] = useState<'text' | 'api'>('text');
   const [loadingGroupId, setLoadingGroupId] = useState<string | null>(null);
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
@@ -28,6 +27,19 @@ function Honeytokens() {
   const [selectedGroupToken, setSelectedGroupToken] = useState<IHoneytoken | null>(null);
   const [loadingTokenId, setLoadingTokenId] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  const [sortKey, setSortKey] = useState<
+    'agent' | 'token' | 'group' | 'created' | 'expire' | 'location' | 'file' | 'data' | 'notes'
+  >('agent');
+  const [sortDesc, setSortDesc] = useState(false);
+
+  const clickSort = (key: typeof sortKey) => () => {
+    if (key === sortKey) setSortDesc((prev) => !prev);
+    else {
+      setSortKey(key);
+      setSortDesc(false);
+    }
+  };
 
   const { agents } = useAgents();
   const { honeytokens } = useHoneytokens();
@@ -42,6 +54,18 @@ function Honeytokens() {
     }
     list.push(token);
   }
+
+  const cmp: Record<typeof sortKey, (a: IHoneytoken, b: IHoneytoken) => number> = {
+    agent: (a, b) => a.agent_id.localeCompare(b.agent_id),
+    token: (a, b) => a.token_id.localeCompare(b.token_id),
+    group: (a, b) => a.group_id.localeCompare(b.group_id),
+    created: (a, b) => new Date(a.creation_date).getTime() - new Date(b.creation_date).getTime(),
+    expire: (a, b) => new Date(a.expire_date).getTime() - new Date(b.expire_date).getTime(),
+    location: (a, b) => a.location.localeCompare(b.location),
+    file: (a, b) => a.file_name.localeCompare(b.file_name),
+    data: (a, b) => a.data.localeCompare(b.data),
+    notes: (a, b) => a.notes!.localeCompare(b.notes!),
+  };
 
   const onlineAgents = new Set(agents.filter((a) => a.status === 'online').map((a) => a.agent_id));
 
@@ -120,12 +144,8 @@ function Honeytokens() {
     }
   };
 
-  const handleReverseClick = () => {
-    setIsReversed((prev) => !prev);
-  };
-
   const renderTextTable = () => {
-    const textTokens = honeytokens.filter((t) => t.type_id !== 'api');
+    let textTokens = honeytokens.filter((t) => t.type_id !== 'api');
 
     if (textTokens.length === 0) {
       return (
@@ -144,6 +164,11 @@ function Honeytokens() {
         </div>
       );
     }
+
+    textTokens = [...textTokens].sort((a, b) => {
+      const diff = cmp[sortKey](a, b);
+      return sortDesc ? -diff : diff;
+    });
 
     if (isMobile) {
       return (
@@ -216,33 +241,123 @@ function Honeytokens() {
           <table className="text-honeytokens-table">
             <thead>
               <tr>
-                <th onClick={handleReverseClick} style={{ cursor: 'pointer' }} title="Agent ID">
-                  Agent ID {isReversed ? <FiChevronUp /> : <FiChevronDown />}
+                <th onClick={clickSort('agent')} title="Agent ID">
+                  Agent ID{' '}
+                  {sortKey === 'agent' ? (
+                    sortDesc ? (
+                      <FiChevronDown />
+                    ) : (
+                      <FiChevronUp />
+                    )
+                  ) : (
+                    <FiChevronUp style={{ opacity: 0.3 }} />
+                  )}
                 </th>
-                <th onClick={handleReverseClick} style={{ cursor: 'pointer' }} title="Token ID">
-                  Token ID {isReversed ? <FiChevronUp /> : <FiChevronDown />}
+
+                <th onClick={clickSort('token')} title="Token ID">
+                  Token ID{' '}
+                  {sortKey === 'token' ? (
+                    sortDesc ? (
+                      <FiChevronDown />
+                    ) : (
+                      <FiChevronUp />
+                    )
+                  ) : (
+                    <FiChevronUp style={{ opacity: 0.3 }} />
+                  )}
                 </th>
-                <th onClick={handleReverseClick} style={{ cursor: 'pointer' }} title="Group ID">
-                  Group ID {isReversed ? <FiChevronUp /> : <FiChevronDown />}
+
+                <th onClick={clickSort('group')} title="Group ID">
+                  Group ID{' '}
+                  {sortKey === 'group' ? (
+                    sortDesc ? (
+                      <FiChevronDown />
+                    ) : (
+                      <FiChevronUp />
+                    )
+                  ) : (
+                    <FiChevronUp style={{ opacity: 0.3 }} />
+                  )}
                 </th>
-                <th onClick={handleReverseClick} style={{ cursor: 'pointer' }} title="Creation Date">
-                  Creation Date {isReversed ? <FiChevronUp /> : <FiChevronDown />}
+
+                <th onClick={clickSort('created')} title="Creation Date">
+                  Creation Date{' '}
+                  {sortKey === 'created' ? (
+                    sortDesc ? (
+                      <FiChevronDown />
+                    ) : (
+                      <FiChevronUp />
+                    )
+                  ) : (
+                    <FiChevronUp style={{ opacity: 0.3 }} />
+                  )}
                 </th>
-                <th onClick={handleReverseClick} style={{ cursor: 'pointer' }} title="Expire Date">
-                  Expire Date {isReversed ? <FiChevronUp /> : <FiChevronDown />}
+
+                <th onClick={clickSort('expire')} title="Expire Date">
+                  Expire Date{' '}
+                  {sortKey === 'expire' ? (
+                    sortDesc ? (
+                      <FiChevronDown />
+                    ) : (
+                      <FiChevronUp />
+                    )
+                  ) : (
+                    <FiChevronUp style={{ opacity: 0.3 }} />
+                  )}
                 </th>
-                <th onClick={handleReverseClick} style={{ cursor: 'pointer' }} title="Location">
-                  Location {isReversed ? <FiChevronUp /> : <FiChevronDown />}
+
+                <th onClick={clickSort('location')} title="Location">
+                  Location{' '}
+                  {sortKey === 'location' ? (
+                    sortDesc ? (
+                      <FiChevronDown />
+                    ) : (
+                      <FiChevronUp />
+                    )
+                  ) : (
+                    <FiChevronUp style={{ opacity: 0.3 }} />
+                  )}
                 </th>
-                <th onClick={handleReverseClick} style={{ cursor: 'pointer' }} title="File Name">
-                  File Name {isReversed ? <FiChevronUp /> : <FiChevronDown />}
+
+                <th onClick={clickSort('file')} title="File Name">
+                  File Name{' '}
+                  {sortKey === 'file' ? (
+                    sortDesc ? (
+                      <FiChevronDown />
+                    ) : (
+                      <FiChevronUp />
+                    )
+                  ) : (
+                    <FiChevronUp style={{ opacity: 0.3 }} />
+                  )}
                 </th>
-                <th onClick={handleReverseClick} style={{ cursor: 'pointer' }} title="Data">
-                  Data {isReversed ? <FiChevronUp /> : <FiChevronDown />}
+
+                <th onClick={clickSort('data')} title="Data">
+                  Data{' '}
+                  {sortKey === 'data' ? (
+                    sortDesc ? (
+                      <FiChevronDown />
+                    ) : (
+                      <FiChevronUp />
+                    )
+                  ) : (
+                    <FiChevronUp style={{ opacity: 0.3 }} />
+                  )}
                 </th>
-                <th onClick={handleReverseClick} style={{ cursor: 'pointer' }} title="Notes">
-                  Notes {isReversed ? <FiChevronUp /> : <FiChevronDown />}
+
+                <th onClick={clickSort('notes')} title="Notes">
+                  Notes{' '}
+                  {sortKey === 'notes' ? (
+                    sortDesc ? (
+                      <FiChevronDown />
+                    ) : (
+                      <FiChevronUp />
+                    )
+                  ) : (
+                    <FiChevronUp style={{ opacity: 0.3 }} />
+                  )}
                 </th>
+
                 <th title="Status">Status</th>
                 <th title="Actions">Actions</th>
               </tr>

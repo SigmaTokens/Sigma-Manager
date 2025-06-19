@@ -60,7 +60,9 @@ export function serveAgents() {
         } catch {}
         socket.disconnect();
       }
-      if (!closed_remote) console.warn(Constants.TEXT_YELLOW_COLOR, 'failed to close agent:', agent_id);
+      if (!closed_remote)
+        console.warn(Constants.TEXT_YELLOW_COLOR, 'failed to close agent:', agent_id, Constants.TEXT_DEFAULT_COLOR);
+
       sseUpdateAgents();
       return void res.status(200).json({ success: true });
     } catch (error) {
@@ -98,7 +100,7 @@ export function serveAgents() {
           if (response.status === 'started') {
             sseUpdateAgents();
             return void res.status(200).json({ success: true });
-          } else return void res.status(500).json({ success: false });
+          }
         } catch {}
       }
 
@@ -120,13 +122,15 @@ export function serveAgents() {
       const { agent_id } = req.body;
 
       const socket = Globals.agentSockets.get(agent_id);
-      if (socket) {
-        const response: any = await socket.timeout(2000).emitWithAck('STOP_AGENT');
 
-        if (response.status === 'stopped') {
-          sseUpdateAgents();
-          return void res.status(200).json({ success: true });
-        } else return void res.status(500).json({ success: false });
+      if (socket) {
+        try {
+          const response: any = await socket.timeout(2000).emitWithAck('STOP_AGENT');
+          if (response.status === 'stopped') {
+            sseUpdateAgents();
+            return void res.status(200).json({ success: true });
+          }
+        } catch {}
       }
 
       console.error(

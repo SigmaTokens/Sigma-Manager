@@ -19,12 +19,8 @@ async function checkAgentMonitoring(agent_id: string): Promise<boolean> {
   if (socket) {
     try {
       const response: any = await socket.timeout(2000).emitWithAck('STATUS_AGENT');
-      if (response.status === 'monitoring') {
-        return true;
-      }
-    } catch {
-      return false;
-    }
+      if (response.status === 'monitoring') return true;
+    } catch {}
   }
   return false;
 }

@@ -80,26 +80,31 @@ export function serveHoneytokens() {
         data: data,
       };
 
+      let created_remote = false;
+
       const socket = Globals.agentSockets.get(agent_id);
       if (socket) {
         try {
           const response: any = await socket.timeout(2000).emitWithAck('CREATE_HONEYTOKEN_TEXT', token_data);
-          if (response.status === 'created')
+          if (response.status === 'created') {
             console.log(
               Constants.TEXT_GREEN_COLOR,
               'created honeytoken for agent:',
               agent_id,
               Constants.TEXT_DEFAULT_COLOR,
             );
-        } catch {
-          console.warn(
-            Constants.TEXT_YELLOW_COLOR,
-            'Failed fetching socket to create honeytoken for agent:',
-            agent_id,
-            Constants.TEXT_DEFAULT_COLOR,
-          );
-        }
+            created_remote = true;
+          }
+        } catch {}
       }
+
+      if (!created_remote)
+        console.warn(
+          Constants.TEXT_YELLOW_COLOR,
+          'Failed fetching socket to create honeytoken for agent:',
+          agent_id,
+          Constants.TEXT_DEFAULT_COLOR,
+        );
       return void res.status(200).json({ success: true });
     } catch (error) {
       console.error(Constants.TEXT_RED_COLOR, 'Failed to create honeytoken text:', error, Constants.TEXT_DEFAULT_COLOR);
@@ -174,21 +179,31 @@ export function serveHoneytokens() {
         apis: apis_test,
       };
 
+      let created_remote = false;
+
       const socket = Globals.agentSockets.get(agent_id);
       if (socket) {
         try {
           const response: any = await socket.timeout(2000).emitWithAck('CREATE_HONEYTOKEN_API', token_data);
           if (response.status === 'created') {
-          } else {
+            console.log(
+              Constants.TEXT_GREEN_COLOR,
+              'created honeytoken for agent:',
+              agent_id,
+              Constants.TEXT_DEFAULT_COLOR,
+            );
+            created_remote = true;
           }
         } catch {}
       }
-      console.warn(
-        Constants.TEXT_YELLOW_COLOR,
-        'Failed fetching socket to create honeytoken for agent:',
-        agent_id,
-        Constants.TEXT_DEFAULT_COLOR,
-      );
+
+      if (!created_remote)
+        console.warn(
+          Constants.TEXT_YELLOW_COLOR,
+          'Failed fetching socket to create honeytoken for agent:',
+          agent_id,
+          Constants.TEXT_DEFAULT_COLOR,
+        );
 
       return void res.status(200).json({ success: true });
     } catch (error) {
@@ -208,18 +223,38 @@ export function serveHoneytokens() {
       const token = await get_honeytoken_by_token_id(token_id);
       if (!token) return void res.status(500).json({ success: false });
 
-      const socket = Globals.agentSockets.get(token.agent_id);
-      if (socket)
-        socket.emit('DELETE_HONEYTOKEN_TEXT', token_id, async (response: any) => {
-          if (response.status === 'deleted') {
-          } else {
-          }
-        });
       const isDeleted = await delete_honeytoken_by_token_id(token_id);
-      if (isDeleted) {
-        sseUpdateHoneytokens();
-        return void res.status(200).json({ success: true });
-      } else return void res.status(500).json({ success: false });
+
+      if (!isDeleted) return void res.status(500).json({ success: false });
+
+      let delete_remote = false;
+
+      const socket = Globals.agentSockets.get(token.agent_id);
+      if (socket) {
+        try {
+          const response: any = await socket.timeout(2000).emitWithAck('DELETE_HONEYTOKEN_TEXT', token_id);
+          if (response.status === 'deleted') {
+            console.log(
+              Constants.TEXT_GREEN_COLOR,
+              'successfully deleted honeytoken:',
+              token_id,
+              Constants.TEXT_DEFAULT_COLOR,
+            );
+            delete_remote = true;
+          }
+        } catch {}
+      }
+
+      if (!delete_remote)
+        console.warn(
+          Constants.TEXT_YELLOW_COLOR,
+          'failed to delete honeytoken:',
+          token_id,
+          Constants.TEXT_DEFAULT_COLOR,
+        );
+
+      sseUpdateHoneytokens();
+      return void res.status(200).json({ success: true });
     } catch (error) {
       console.error(Constants.TEXT_RED_COLOR, 'Failed to delete honeytoken text:', error, Constants.TEXT_DEFAULT_COLOR);
       return void res.status(500).json({ success: false });
@@ -239,20 +274,40 @@ export function serveHoneytokens() {
 
       if (!tokens || tokens.length === 0) return void res.status(500).json({ success: false });
 
+      const isDeleted = await delete_honeytokens_by_group_id(group_id);
+
+      if (!isDeleted) return void res.status(500).json({ success: false });
+
+      let delete_remote = false;
+
       const header = tokens[0];
 
       const socket = Globals.agentSockets.get(header.agent_id);
-      if (socket)
-        socket.emit('DELETE_HONEYTOKEN_API', group_id, async (response: any) => {
+      if (socket) {
+        try {
+          const response: any = await socket.timeout(2000).emitWithAck('DELETE_HONEYTOKEN_API', group_id);
           if (response.status === 'deleted') {
-          } else {
+            console.log(
+              Constants.TEXT_GREEN_COLOR,
+              'successfully deleted honeytoken group:',
+              group_id,
+              Constants.TEXT_DEFAULT_COLOR,
+            );
+            delete_remote = true;
           }
-        });
-      const isDeleted = await delete_honeytokens_by_group_id(group_id);
-      if (isDeleted) {
-        sseUpdateHoneytokens();
-        return void res.status(200).json({ success: true });
-      } else return void res.status(500).json({ success: false });
+        } catch {}
+      }
+
+      if (!delete_remote)
+        console.warn(
+          Constants.TEXT_YELLOW_COLOR,
+          'failed to delete honeytoken group:',
+          group_id,
+          Constants.TEXT_DEFAULT_COLOR,
+        );
+
+      sseUpdateHoneytokens();
+      return void res.status(200).json({ success: true });
     } catch (error) {
       console.error(
         Constants.TEXT_RED_COLOR,
@@ -277,21 +332,22 @@ export function serveHoneytokens() {
       if (!token) return void res.status(500).json({ success: false });
 
       const socket = Globals.agentSockets.get(token.agent_id);
-      if (socket)
-        socket.emit('START_HONEYTOKEN_TEXT', token_id, async (response: any) => {
+      if (socket) {
+        try {
+          const response: any = await socket.timeout(2000).emitWithAck('START_HONEYTOKEN_TEXT', token_id);
           if (response.status === 'monitoring') {
             sseUpdateHoneytokens();
             return void res.status(200).json({ success: true });
-          } else return void res.status(500).json({ success: false });
-        });
-      else {
-        console.error(
-          Constants.TEXT_RED_COLOR,
-          'failed getting socket for honeytoken text start!',
-          Constants.TEXT_DEFAULT_COLOR,
-        );
-        return void res.status(500).json({ success: false });
+          }
+        } catch {}
       }
+
+      console.error(
+        Constants.TEXT_RED_COLOR,
+        'failed getting socket for honeytoken text start!',
+        Constants.TEXT_DEFAULT_COLOR,
+      );
+      return void res.status(500).json({ success: false });
     } catch (error) {
       console.error(
         Constants.TEXT_RED_COLOR,
@@ -319,16 +375,24 @@ export function serveHoneytokens() {
 
       const socket = Globals.agentSockets.get(token.agent_id);
       if (socket) {
-        socket.emit('START_HONEYTOKEN_API', group_id);
-        sseUpdateHoneytokens();
-        return void res.status(200).json({ success: true });
-      } else {
-        console.error(Constants.TEXT_RED_COLOR, 'failed getting socket for honeytoken text start!');
-        return void res.status(500).json({ success: false });
+        try {
+          const response: any = await socket.timeout(2000).emitWithAck('START_HONEYTOKEN_API', group_id);
+          if (response.status === 'monitoring') {
+            sseUpdateHoneytokens();
+            return void res.status(200).json({ success: true });
+          }
+        } catch {}
       }
+
+      console.error(
+        Constants.TEXT_RED_COLOR,
+        'failed getting socket for honeytoken api start!',
+        Constants.TEXT_DEFAULT_COLOR,
+      );
+      return void res.status(500).json({ success: false });
     } catch (error) {
       console.error(Constants.TEXT_RED_COLOR, 'Failed to start monitor on group:', error, Constants.TEXT_DEFAULT_COLOR);
-      res.status(500).json({ failure: error });
+      return void res.status(500).json({ success: false });
     }
   });
 
@@ -344,22 +408,24 @@ export function serveHoneytokens() {
       const token = await get_honeytoken_by_token_id(token_id);
 
       if (!token) return void res.status(500).json({ success: false });
+
       const socket = Globals.agentSockets.get(token.agent_id);
-      if (socket)
-        socket.emit('STOP_HONEYTOKEN_TEXT', token_id, async (response: any) => {
+      if (socket) {
+        try {
+          const response: any = await socket.timeout(2000).emitWithAck('STOP_HONEYTOKEN_TEXT', token_id);
           if (response.status === 'not monitoring') {
             sseUpdateHoneytokens();
             return void res.status(200).json({ success: true });
-          } else return void res.status(500).json({ success: false });
-        });
-      else {
-        console.error(
-          Constants.TEXT_RED_COLOR,
-          'failed getting socket for honeytoken text stop!',
-          Constants.TEXT_DEFAULT_COLOR,
-        );
-        return void res.status(500).json({ success: false });
+          }
+        } catch {}
       }
+
+      console.error(
+        Constants.TEXT_RED_COLOR,
+        'failed getting socket for honeytoken text stop!',
+        Constants.TEXT_DEFAULT_COLOR,
+      );
+      return void res.status(500).json({ success: false });
     } catch (error) {
       console.error(
         Constants.TEXT_RED_COLOR,
@@ -388,16 +454,24 @@ export function serveHoneytokens() {
 
       const socket = Globals.agentSockets.get(token.agent_id);
       if (socket) {
-        socket.emit('STOP_HONEYTOKEN_API', group_id);
-        sseUpdateHoneytokens();
-        return void res.status(200).json({ success: true });
-      } else {
-        console.error(Constants.TEXT_RED_COLOR, 'failed getting socket for honeytoken text stop!');
-        return void res.status(500).json({ success: false });
+        try {
+          const response: any = await socket.timeout(2000).emitWithAck('STOP_HONEYTOKEN_API', group_id);
+          if (response.status === 'not monitoring') {
+            sseUpdateHoneytokens();
+            return void res.status(200).json({ success: true });
+          }
+        } catch {}
       }
+
+      console.error(
+        Constants.TEXT_RED_COLOR,
+        'failed getting socket for honeytoken text stop!',
+        Constants.TEXT_DEFAULT_COLOR,
+      );
+      return void res.status(500).json({ success: false });
     } catch (error) {
       console.error(Constants.TEXT_RED_COLOR, 'Failed to start monitor on group:', error, Constants.TEXT_DEFAULT_COLOR);
-      res.status(500).json({ failure: error });
+      return void res.status(500).json({ success: false });
     }
   });
 

@@ -42,16 +42,27 @@ export function serveAgents() {
       if (!result) return void res.status(500).json({ success: false });
 
       const socket = Globals.agentSockets.get(agent_id);
+
+      let closed_remote = false;
+
       if (socket) {
-        socket.emit('CLOSE_AGENT', () => {
-          socket.disconnect();
-          sseUpdateAgents();
-          return void res.status(200).json({ success: true });
-        });
-      } else {
-        console.warn(Constants.TEXT_YELLOW_COLOR, 'failed getting socket for closing!');
-        return void res.status(500).json({ success: false });
+        try {
+          const response: any = await socket.timeout(2000).emitWithAck('CLOSE_AGENT');
+          if (response.status === 'closed') {
+            console.log(
+              Constants.TEXT_GREEN_COLOR,
+              'successfully closed agent:',
+              agent_id,
+              Constants.TEXT_DEFAULT_COLOR,
+            );
+            closed_remote = true;
+          }
+        } catch {}
+        socket.disconnect();
       }
+      if (!closed_remote) console.warn(Constants.TEXT_YELLOW_COLOR, 'failed to close agent:', agent_id);
+      sseUpdateAgents();
+      return void res.status(200).json({ success: true });
     } catch (error) {
       console.error(Constants.TEXT_RED_COLOR, 'Failed to erase agent:', error, Constants.TEXT_DEFAULT_COLOR);
       return void res.status(500).json({ success: false });
@@ -80,19 +91,24 @@ export function serveAgents() {
       const { agent_id } = req.body;
 
       const socket = Globals.agentSockets.get(agent_id);
-      if (socket)
-        socket.emit('START_AGENT', (response: any) => {
+
+      if (socket) {
+        try {
+          const response: any = await socket.timeout(2000).emitWithAck('START_AGENT');
           if (response.status === 'started') {
             sseUpdateAgents();
             return void res.status(200).json({ success: true });
-          } else {
-            return void res.status(500).json({ success: false });
-          }
-        });
-      else {
-        console.error(Constants.TEXT_RED_COLOR, 'Failed fetching socket to start!', Constants.TEXT_DEFAULT_COLOR);
-        return void res.status(500).json({ success: false });
+          } else return void res.status(500).json({ success: false });
+        } catch {}
       }
+
+      console.error(
+        Constants.TEXT_RED_COLOR,
+        'Failed fetching socket to start agent:',
+        agent_id,
+        Constants.TEXT_DEFAULT_COLOR,
+      );
+      return void res.status(500).json({ success: false });
     } catch (error) {
       console.error(Constants.TEXT_RED_COLOR, 'Failed to start agent:', error, Constants.TEXT_DEFAULT_COLOR);
       return void res.status(500).json({ success: false });
@@ -104,19 +120,22 @@ export function serveAgents() {
       const { agent_id } = req.body;
 
       const socket = Globals.agentSockets.get(agent_id);
-      if (socket)
-        socket.emit('STOP_AGENT', (response: any) => {
-          if (response.status === 'stopped') {
-            sseUpdateAgents();
-            return void res.status(200).json({ success: true });
-          } else {
-            return void res.status(500).json({ success: false });
-          }
-        });
-      else {
-        console.error(Constants.TEXT_RED_COLOR, 'Failed fetching socket to stop!', Constants.TEXT_DEFAULT_COLOR);
-        return void res.status(500).json({ success: false });
+      if (socket) {
+        const response: any = await socket.timeout(2000).emitWithAck('STOP_AGENT');
+
+        if (response.status === 'stopped') {
+          sseUpdateAgents();
+          return void res.status(200).json({ success: true });
+        } else return void res.status(500).json({ success: false });
       }
+
+      console.error(
+        Constants.TEXT_RED_COLOR,
+        'Failed fetching socket to stop agent:',
+        agent_id,
+        Constants.TEXT_DEFAULT_COLOR,
+      );
+      return void res.status(500).json({ success: false });
     } catch (error) {
       console.error(Constants.TEXT_RED_COLOR, 'Failed to stop agent:', error, Constants.TEXT_DEFAULT_COLOR);
       return void res.status(500).json({ success: false });

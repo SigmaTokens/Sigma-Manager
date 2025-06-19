@@ -201,18 +201,24 @@ const CreateHoneytokenForm = ({ types, onClose }: CreateHoneytokenFormProps) => 
 
             {selectedType === HoneytokenType.API && (
               <div className="api-section">
-                <div id="this is port" className="field">
-                  <label>
-                    Port <span className="required-star">*</span>
-                  </label>
-                  <Input
-                    type="number"
-                    min={0}
-                    max={65535}
-                    value={port}
-                    onChange={(e) => setPort(Number(e.target.value))}
-                    className={errors.port ? 'input-error' : ''}
-                  />
+                <div className="port-and-add">
+                  <div className="field">
+                    <label>
+                      Port <span className="required-star">*</span>
+                    </label>
+                    <Input
+                      type="number"
+                      min={0}
+                      max={65535}
+                      value={port}
+                      onChange={(e) => setPort(Number(e.target.value))}
+                      className={errors.port ? 'input-error' : ''}
+                    />
+                  </div>
+
+                  <button type="button" className="add-route-btn" onClick={addApiRow}>
+                    <FiPlus size={10} /> Add Route
+                  </button>
                 </div>
                 <div className="api-table-wrapper">
                   <div className="api-table-container">
@@ -262,10 +268,14 @@ const CreateHoneytokenForm = ({ types, onClose }: CreateHoneytokenFormProps) => 
                                             onChange={(e) => handleApiChange(index, 'response', e.target.value)}
                                           />
                                         </td>
-                                        <td className="api-action-cell">
-                                          <FiMinus className="api-minus-icon" onClick={() => removeApiRow(index)} />
-
-                                          <FiPlus className="api-plus-icon" onClick={addApiRow} />
+                                        <td>
+                                          <button
+                                            type="button"
+                                            className="remove-route-btn"
+                                            onClick={() => removeApiRow(index)}
+                                          >
+                                            <FiMinus size={10} />
+                                          </button>
                                         </td>
                                       </tr>
                                     )}

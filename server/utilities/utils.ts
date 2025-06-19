@@ -17,11 +17,14 @@ async function checkAgentStatus(id: string): Promise<string> {
 async function checkAgentMonitoring(agent_id: string): Promise<boolean> {
   const socket = Globals.agentSockets.get(agent_id);
   if (socket) {
-    const response = await socket.emitWithAck('STATUS_AGENT');
-    if (response.status === 'monitoring') {
-      return true;
+    try {
+      const response: any = await socket.timeout(2000).emitWithAck('STATUS_AGENT');
+      if (response.status === 'monitoring') {
+        return true;
+      }
+    } catch {
+      return false;
     }
-    return false;
   }
   return false;
 }
@@ -52,14 +55,18 @@ async function getHoneytokenStatuses(
   api_tokens: Record<string, boolean>,
 ) {
   for (const agent of agents) {
-    const socket = Globals.agentSockets.get(agent);
-    if (!socket) continue;
-    const response_api = await socket.emitWithAck('STATUSES_HONEYTOKENS_API');
-    const response_text = await socket.emitWithAck('STATUSES_HONEYTOKENS_TEXT');
-    const statuses_api: Record<string, boolean> = response_api.message || {};
-    const statuses_text: Record<string, boolean> = response_text.message || {};
-    Object.assign(api_tokens, statuses_api);
-    Object.assign(text_tokens, statuses_text);
+    try {
+      const socket = Globals.agentSockets.get(agent);
+      if (!socket) continue;
+      const response_api = await socket.timeout(2000).emitWithAck('STATUSES_HONEYTOKENS_API');
+      const response_text = await socket.timeout(2000).emitWithAck('STATUSES_HONEYTOKENS_TEXT');
+      const statuses_api: Record<string, boolean> = response_api.message || {};
+      const statuses_text: Record<string, boolean> = response_text.message || {};
+      Object.assign(api_tokens, statuses_api);
+      Object.assign(text_tokens, statuses_text);
+    } catch {
+      continue;
+    }
   }
 }
 

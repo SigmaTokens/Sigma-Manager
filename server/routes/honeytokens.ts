@@ -20,7 +20,7 @@ export function serveHoneytokens() {
   const router = Router();
 
   router.use(auth());
-
+  //✔️
   router.post('/honeytokens/text', async (req, res) => {
     try {
       const user_id: string = (req as any).user.id;
@@ -81,26 +81,32 @@ export function serveHoneytokens() {
       };
 
       const socket = Globals.agentSockets.get(agent_id);
-      if (socket)
-        socket.emit('CREATE_HONEYTOKEN_TEXT', token_data, async (response: any) => {
-          if (response.status === 'created') {
-          } else {
-          }
-        });
-      else
-        console.error(
-          Constants.TEXT_RED_COLOR,
-          'Failed fetching socket to create honeytoken!',
-          Constants.TEXT_DEFAULT_COLOR,
-        );
-
+      if (socket) {
+        try {
+          const response: any = await socket.timeout(2000).emitWithAck('CREATE_HONEYTOKEN_TEXT', token_data);
+          if (response.status === 'created')
+            console.log(
+              Constants.TEXT_GREEN_COLOR,
+              'created honeytoken for agent:',
+              agent_id,
+              Constants.TEXT_DEFAULT_COLOR,
+            );
+        } catch {
+          console.warn(
+            Constants.TEXT_YELLOW_COLOR,
+            'Failed fetching socket to create honeytoken for agent:',
+            agent_id,
+            Constants.TEXT_DEFAULT_COLOR,
+          );
+        }
+      }
       return void res.status(200).json({ success: true });
     } catch (error) {
       console.error(Constants.TEXT_RED_COLOR, 'Failed to create honeytoken text:', error, Constants.TEXT_DEFAULT_COLOR);
       return void res.status(500).json({ success: false });
     }
   });
-
+  //✔️
   router.post('/honeytokens/api', async (req, res) => {
     try {
       const user_id: string = (req as any).user.id;
@@ -169,18 +175,20 @@ export function serveHoneytokens() {
       };
 
       const socket = Globals.agentSockets.get(agent_id);
-      if (socket)
-        socket.emit('CREATE_HONEYTOKEN_API', token_data, async (response: any) => {
+      if (socket) {
+        try {
+          const response: any = await socket.timeout(2000).emitWithAck('CREATE_HONEYTOKEN_API', token_data);
           if (response.status === 'created') {
           } else {
           }
-        });
-      else
-        console.error(
-          Constants.TEXT_RED_COLOR,
-          'Failed fetching socket to create honeytoken!',
-          Constants.TEXT_DEFAULT_COLOR,
-        );
+        } catch {}
+      }
+      console.warn(
+        Constants.TEXT_YELLOW_COLOR,
+        'Failed fetching socket to create honeytoken for agent:',
+        agent_id,
+        Constants.TEXT_DEFAULT_COLOR,
+      );
 
       return void res.status(200).json({ success: true });
     } catch (error) {
@@ -188,7 +196,7 @@ export function serveHoneytokens() {
       return void res.status(500).json({ success: false });
     }
   });
-
+  //✔️
   router.delete('/honeytokens/token/:token_id', async (req, res) => {
     try {
       const user_id: string = (req as any).user.id;
@@ -217,7 +225,7 @@ export function serveHoneytokens() {
       return void res.status(500).json({ success: false });
     }
   });
-
+  //✔️
   router.delete('/honeytokens/group/:group_id', async (req, res) => {
     try {
       const user_id: string = (req as any).user.id;
@@ -233,22 +241,18 @@ export function serveHoneytokens() {
 
       const header = tokens[0];
 
-      let isDeleted = false;
-
       const socket = Globals.agentSockets.get(header.agent_id);
-      if (socket) {
+      if (socket)
         socket.emit('DELETE_HONEYTOKEN_API', group_id, async (response: any) => {
-          isDeleted = await delete_honeytokens_by_group_id(group_id);
-          if (isDeleted) {
-            sseUpdateHoneytokens();
-            return void res.status(200).json({ success: true });
-          } else return void res.status(500).json({ success: false });
+          if (response.status === 'deleted') {
+          } else {
+          }
         });
-      } else {
-        isDeleted = await delete_honeytokens_by_group_id(group_id);
+      const isDeleted = await delete_honeytokens_by_group_id(group_id);
+      if (isDeleted) {
         sseUpdateHoneytokens();
         return void res.status(200).json({ success: true });
-      }
+      } else return void res.status(500).json({ success: false });
     } catch (error) {
       console.error(
         Constants.TEXT_RED_COLOR,
@@ -259,7 +263,7 @@ export function serveHoneytokens() {
       return void res.status(500).json({ success: false });
     }
   });
-
+  //✔️
   router.put('/honeytokens/start', async (req, res) => {
     try {
       const user_id: string = (req as any).user.id;
@@ -298,7 +302,7 @@ export function serveHoneytokens() {
       return void res.status(500).json({ success: false });
     }
   });
-  //✔️
+
   router.put('/honeytokens/api/start', async (req, res) => {
     try {
       const user_id: string = (req as any).user.id;

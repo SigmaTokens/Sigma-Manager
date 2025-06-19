@@ -20,8 +20,8 @@ function Alerts() {
 
   const archiveTypes = [
     { id: 2, name: 'All' },
-    { id: 1, name: 'Unarchived' },
-    { id: 0, name: 'Archive' },
+    { id: 1, name: 'UnSolved' },
+    { id: 0, name: 'Solved' },
   ];
 
   useEffect(() => {

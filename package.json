@@ -3,7 +3,7 @@
   "scripts": {
     "format": "prettier --write \"**/*.{js,ts,jsx,tsx,json,md}\"",
     "prod-client": "npm --prefix client run build --silent",
-    "prod-server": "npm --prefix server run start --silent",
+    "prod-server": "npm --prefix server run build --silent && npm --prefix server run start --silent",
     "prod": "concurrently \"npm run prod-server --silent\" \"npm run prod-client --silent\"",
     "dev-client": "npm --prefix client run dev --silent",
     "dev-server": "npm --prefix server run dev --silent",

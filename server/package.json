@@ -8,36 +8,37 @@
   "type": "module",
   "scripts": {
     "format": "prettier --write \"**/*.{js,ts,jsx,tsx,json,md}\"",
-    "start": "cross-env NODE_ENV=production ts-node index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "cross-env NODE_ENV=production node --experimental-wasm-modules --loader ts-node/esm --experimental-specifier-resolution=node index.ts",
     "dev": "nodemon  --ext ts     --exec \"node         --experimental-wasm-modules         --loader ts-node/esm         --experimental-specifier-resolution=node         --trace-uncaught\"     index.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@biscuit-auth/biscuit-wasm": "^0.6.0-beta.1",
     "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.10",
     "@types/ping": "^0.4.4",
-    "@biscuit-auth/biscuit-wasm": "^0.6.0-beta.1",
-    "cross-env": "^7.0.3",
     "argon2": "^0.43.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "express": "^4.21.2",
     "is-elevated": "^4.0.0",
     "kysely": "^0.28.2",
     "nanoid": "^5.1.5",
+    "nodemon": "^3.1.9",
     "sigmatokens": "file:..",
     "socket.io": "^4.8.1",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
-    "uuid": "^11.1.0",
-    "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
+    "tsx": "^4.19.4",
     "typescript": "^5.8.2",
-    "tsx": "^4.19.4"
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "prettier": "3.5.3"

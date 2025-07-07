@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export const serveClient = () => {
-  const clientBuildPath = path.join(__dirname, '../client/dist');
+  const clientBuildPath = path.resolve(__dirname, '../../client/dist');
 
   if (process.env.MODE === 'prod') {
     Globals.app.use(express.static(clientBuildPath));

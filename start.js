@@ -11,9 +11,11 @@ function main() {
   const mode = get_mode();
   init_database_file();
   const root_dir = get_root_dir();
-  setup_prettier_config(root_dir);
-  setup_vscode_settings(root_dir);
-  install_extensions();
+  if(get_mode() === 'dev') { 
+    setup_prettier_config(root_dir);
+    setup_vscode_settings(root_dir);
+    install_extensions();
+  }
   install_deps();
   setup_environment_file();
   run_sigmatokens(mode);

@@ -36,8 +36,8 @@ function get_mode() {
   const mode = process.argv[2];
   return mode.includes('dev')
     ? 'dev'
-    : mode.includes(process.env.MODE)
-      ? process.env.MODE
+    : mode.includes('prod')
+      ? 'prod'
       : (console.error(
           Constants.TEXT_RED_COLOR,
           'Please specify a mode to run the project: dev or prod',

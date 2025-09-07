@@ -11,7 +11,7 @@ function main() {
   const mode = get_mode();
   init_database_file();
   const root_dir = get_root_dir();
-  if(get_mode() === 'dev') { 
+  if (get_mode() === 'dev') {
     setup_prettier_config(root_dir);
     setup_vscode_settings(root_dir);
     install_extensions();
@@ -36,8 +36,8 @@ function get_mode() {
   const mode = process.argv[2];
   return mode.includes('dev')
     ? 'dev'
-    : mode.includes('prod')
-      ? 'prod'
+    : mode.includes(process.env.MODE)
+      ? process.env.MODE
       : (console.error(
           Constants.TEXT_RED_COLOR,
           'Please specify a mode to run the project: dev or prod',

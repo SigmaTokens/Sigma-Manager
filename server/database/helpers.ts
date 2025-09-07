@@ -26,28 +26,28 @@ export async function is_table_exists(table_name: string) {
 export async function init_tables() {
   if (!(await is_table_exists('types'))) {
     await init_types_table();
-    if ('prod' === 'dev')
+    if (process.env.MODE === 'dev')
       console.log(Constants.TEXT_GREEN_COLOR, 'Initiated types table successfully', Constants.TEXT_DEFAULT_COLOR);
   }
   if (!(await is_table_exists('honeytokens'))) {
     await init_honeytokens_table();
-    if ('prod' === 'dev')
+    if (process.env.MODE === 'dev')
       console.log(Constants.TEXT_GREEN_COLOR, 'Initiated honeytokens table successfully', Constants.TEXT_DEFAULT_COLOR);
   }
   if (!(await is_table_exists('alerts'))) {
     await init_alerts_table();
-    if ('prod' === 'dev')
+    if (process.env.MODE === 'dev')
       console.log(Constants.TEXT_GREEN_COLOR, 'Initiated alerts table successfully', Constants.TEXT_DEFAULT_COLOR);
   }
   if (!(await is_table_exists('agents'))) {
     await init_agents_table();
-    if ('prod' === 'dev')
+    if (process.env.MODE === 'dev')
       console.log(Constants.TEXT_GREEN_COLOR, 'Initiated agents table successfully', Constants.TEXT_DEFAULT_COLOR);
   }
 
   if (!(await is_table_exists('users'))) {
     await init_users_table();
-    if ('prod' === 'dev')
+    if (process.env.MODE === 'dev')
       console.log(Constants.TEXT_GREEN_COLOR, 'Initiated users table successfully', Constants.TEXT_DEFAULT_COLOR);
   }
 }
@@ -60,14 +60,14 @@ export async function print_table(table_name: string) {
       FROM
         ${table_name}
     `);
-    if ('prod' === 'dev')
+    if (process.env.MODE === 'dev')
       console.log(
         Constants.TEXT_GREEN_COLOR,
         `Table '${table_name}' data (${rows.length} rows): ${rows}`,
         Constants.TEXT_DEFAULT_COLOR,
       );
   } catch (error) {
-    if ('prod' === 'dev')
+    if (process.env.MODE === 'dev')
       console.error(
         Constants.TEXT_RED_COLOR,
         `Failed to fetch data from table '${table_name}': ${error}`,

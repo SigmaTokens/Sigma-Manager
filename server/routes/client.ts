@@ -11,7 +11,7 @@ const __dirname = dirname(__filename);
 export const serveClient = () => {
   const clientBuildPath = path.resolve(__dirname, '../../client/dist');
 
-  if (process.env.MODE === 'prod') {
+  if ('prod' === 'prod') {
     Globals.app.use(express.static(clientBuildPath));
 
     Globals.app.get('*', (req: any, res: any) => {

@@ -17,7 +17,7 @@ import { get_all_agents, insert_agent } from './database/agents';
 import { get_all_agent_honeytokens } from './database/honeytokens';
 import { serveSSE, sseUpdateAgents, sseUpdateAlerts } from './routes/sse';
 
-main();
+main(); //sigmatokens 2025-09-07
 
 function main(): void {
   const app = express();

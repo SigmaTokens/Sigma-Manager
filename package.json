@@ -4,10 +4,10 @@
     "format": "prettier --write \"**/*.{js,ts,jsx,tsx,json,md}\"",
     "prod-client": "npm --prefix client run build",
     "prod-server": "npm --prefix server run build && npm --prefix server run start",
-    "prod": "start /B cmd /c \"npm run prod-server\" & start /B cmd /c \"npm run prod-client\"",
+    "prod": "npm run prod-client && npm run prod-server",
     "dev-client": "npm --prefix client run dev",
     "dev-server": "npm --prefix server run dev",
-    "dev": "start /B cmd /c \"npm --prefix server run dev\" & start /B cmd /c \"npm --prefix client run dev\"",
+    "dev": "node -e \"const {spawn}=require('child_process'); const o={shell:true,stdio:'inherit'}; spawn('npm --prefix server run dev', o); spawn('npm --prefix client run dev', o);\"",
     "start-dev": "node start.js dev",
     "start-prod": "node start.js prod",
     "start": "npm run start-prod"

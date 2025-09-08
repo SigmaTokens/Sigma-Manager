@@ -157,13 +157,13 @@ function setup_vscode_settings(rootDir) {
 function install_deps() {
   try {
     console.log(Constants.TEXT_YELLOW_COLOR, 'Updating deps for root', Constants.TEXT_DEFAULT_COLOR);
-    execSync('npm install --silent ', { stdio: 'inherit' });
+    execSync('npm install ', { stdio: 'inherit' });
 
     console.log(Constants.TEXT_YELLOW_COLOR, 'Updating deps for client', Constants.TEXT_DEFAULT_COLOR);
-    execSync('npm install --silent  --prefix client', { stdio: 'inherit' });
+    execSync('npm install  --prefix client', { stdio: 'inherit' });
 
     console.log(Constants.TEXT_YELLOW_COLOR, 'Updating deps for server', Constants.TEXT_DEFAULT_COLOR);
-    execSync('npm install --silent --prefix server', { stdio: 'inherit' });
+    execSync('npm install --prefix server', { stdio: 'inherit' });
 
     console.log(Constants.TEXT_GREEN_COLOR, 'Deps update complete', Constants.TEXT_DEFAULT_COLOR);
   } catch (error) {

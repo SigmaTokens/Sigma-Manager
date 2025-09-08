@@ -9,7 +9,7 @@
   "scripts": {
     "format": "prettier --write \"**/*.{js,ts,jsx,tsx,json,md}\"",
     "build": "tsc -p tsconfig.json",
-    "start": "cross-env NODE_ENV=production node --experimental-wasm-modules --loader ts-node/esm --experimental-specifier-resolution=node index.ts",
+    "start": "node --experimental-wasm-modules --loader ts-node/esm --experimental-specifier-resolution=node index.ts",
     "dev": "nodemon  --ext ts     --exec \"node         --experimental-wasm-modules         --loader ts-node/esm         --experimental-specifier-resolution=node         --trace-uncaught\"     index.ts"
   },
   "keywords": [],
@@ -25,7 +25,6 @@
     "argon2": "^0.43.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
-    "cross-env": "^7.0.3",
     "express": "^4.21.2",
     "is-elevated": "^4.0.0",
     "kysely": "^0.28.2",

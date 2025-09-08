@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -24,7 +24,6 @@ function main(): void {
   app.use(express.json());
   app.use(cors());
   app.use(express.urlencoded({ extended: true }));
-  dotenv.config({ path: '../.env' });
   app.use(cookieParser());
 
   const port = process.env.PORT || 3000;

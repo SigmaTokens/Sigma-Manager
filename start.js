@@ -3,7 +3,7 @@ import { execSync, exec } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import { Constants } from './server/constants.js';
-import dotenv from 'dotenv';
+
 
 main();
 
@@ -176,7 +176,6 @@ function setup_environment_file() {
   //init empty env
   const env_path = path.resolve(process.cwd(), '.env');
   if (!fs.existsSync(env_path)) fs.appendFileSync(env_path, '');
-  dotenv.config();
   //
 
   if (!process.env[Constants.PRIVATE_KEY_BISCUIT]) {

@@ -227,8 +227,8 @@ function Home() {
           <div className="chart-title-with-legend">
             <h3 className="chart-title">Honeytoken Type</h3>
             <div className="custom-legend">
-              <span className="legend-item purple">Type api</span>
-              <span className="legend-item green">Type text</span>
+              <span className="legend-item purple">Type text</span>
+              <span className="legend-item green">Type api</span>
             </div>
           </div>
 

@@ -10,11 +10,11 @@
     "dev": "concurrently \"npm run dev-server --silent\" \"npm run dev-client --silent\"",
     "start-dev": "npm install --silent cross-env && cross-env MODE=dev node start.js dev",
     "start-prod": "npm install --silent cross-env && cross-env MODE=prod node start.js prod",
-    "start": "npm run start-prod"
+    "start": "npm run prod"
   },
   "name": "sigmatokens",
   "version": "1.0.0",
-  "description": "**Add stuff here later on**",
+  "description": "**Honeytokens**",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SigmaTokens/SigmaTokens.git"

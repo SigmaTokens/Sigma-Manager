@@ -1,4 +1,4 @@
-
+import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -17,13 +17,14 @@ import { get_all_agents, insert_agent } from './database/agents';
 import { get_all_agent_honeytokens } from './database/honeytokens';
 import { serveSSE, sseUpdateAgents, sseUpdateAlerts } from './routes/sse';
 
-main(); //sigmatokens 2025-09-07
+main();
 
 function main(): void {
   const app = express();
   app.use(express.json());
   app.use(cors());
   app.use(express.urlencoded({ extended: true }));
+  dotenv.config({ path: '../.env' });
   app.use(cookieParser());
 
   const port = process.env.PORT || 3000;

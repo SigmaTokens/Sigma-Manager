@@ -3,6 +3,7 @@ import { execSync, exec } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import { Constants } from './server/constants.js';
+import dotenv from 'dotenv';
 
 main();
 

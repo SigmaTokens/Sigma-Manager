@@ -23,6 +23,13 @@ export function serveHoneytokens() {
   //✔️
   router.post('/honeytokens/text', async (req, res) => {
     try {
+      console.log(
+        Constants.TEXT_CYAN_COLOR,
+        '[Start] Deploying Text-File honeytoken, the current unix epoch time is:',
+        Math.floor(Date.now()),
+        Constants.TEXT_DEFAULT_COLOR,
+      );
+
       const user_id: string = (req as any).user.id;
       const { type, file_name, location, grade, expiration_date, notes, data, agent_id } = req.body;
 
@@ -94,6 +101,12 @@ export function serveHoneytokens() {
               Constants.TEXT_DEFAULT_COLOR,
             );
             created_remote = true;
+            console.log(
+              Constants.TEXT_MAGENTA_COLOR,
+              '[End] Deployed Text-File honeytoken, the current unix epoch time is:',
+              Math.floor(Date.now()),
+              Constants.TEXT_DEFAULT_COLOR,
+            );
           }
         } catch {}
       }
@@ -114,6 +127,13 @@ export function serveHoneytokens() {
   //✔️
   router.post('/honeytokens/api', async (req, res) => {
     try {
+      console.log(
+        Constants.TEXT_CYAN_COLOR,
+        '[Start] Deploying API-Endpoint honeytoken, the current unix epoch time is:',
+        Math.floor(Date.now()),
+        Constants.TEXT_DEFAULT_COLOR,
+      );
+
       const user_id: string = (req as any).user.id;
       const { type, grade, expiration_date, notes, agent_id, api_port, apis } = req.body;
 
@@ -193,6 +213,12 @@ export function serveHoneytokens() {
               Constants.TEXT_DEFAULT_COLOR,
             );
             created_remote = true;
+            console.log(
+              Constants.TEXT_MAGENTA_COLOR,
+              '[End] Deployed API-Endpoint honeytoken, the current unix epoch time is:',
+              Math.floor(Date.now()),
+              Constants.TEXT_DEFAULT_COLOR,
+            );
           }
         } catch {}
       }

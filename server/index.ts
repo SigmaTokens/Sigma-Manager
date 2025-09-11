@@ -81,6 +81,13 @@ function main(): void {
       try {
         const { token_id, alert_epoch, accessed_by, log } = payload;
 
+        console.log(
+          Constants.TEXT_CYAN_COLOR,
+          '[Start] Found API-Endpoint honeytoken alert, the current unix epoch time is:',
+          Math.floor(alert_epoch),
+          Constants.TEXT_DEFAULT_COLOR,
+        );
+
         const result = await create_honeytoken_alert(token_id, alert_epoch, accessed_by, log);
         sseUpdateAlerts();
 
@@ -88,6 +95,13 @@ function main(): void {
       } catch (error: any) {
         console.error(Constants.TEXT_RED_COLOR, 'Failed to create alert:', error.message, Constants.TEXT_DEFAULT_COLOR);
       }
+
+      console.log(
+        Constants.TEXT_MAGENTA_COLOR,
+        '[End] Registered API-Endpoint honeytoken alert, the current unix epoch time is:',
+        Math.floor(Date.now()),
+        Constants.TEXT_DEFAULT_COLOR,
+      );
     });
 
     socket.on('disconnect', () => {

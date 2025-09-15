@@ -202,9 +202,9 @@ function Alerts() {
                       {alert.token_id}
                     </span>
                   </td>
-                  <td className="truncate-cell" title={formatDate(parseInt(alert.alert_epoch))}>
+                  <td className="truncate-cell" title={new Date(parseInt(alert.alert_epoch)).toLocaleString()}>
                     <span className={expandedDetails === alert.alert_id ? 'expanded' : 'truncated'}>
-                      {formatDate(parseInt(alert.alert_epoch))}
+                      {new Date(parseInt(alert.alert_epoch)).toLocaleString()}
                     </span>
                   </td>
                   <td className="truncate-cell" title={alert.accessed_by}>
